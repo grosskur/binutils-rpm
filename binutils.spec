@@ -1,20 +1,18 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.14.90.0.7
-Release: 1
+Version: 2.14.90.0.8
+Release: 3
 Copyright: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-Patch0: binutils-2.14.90.0.7-eh-frame-ro.patch
-Patch1: binutils-2.14.90.0.7-ltconfig-multilib.patch
-Patch2: binutils-2.14.90.0.7-s390-pie.patch
-Patch3: binutils-2.14.90.0.7-ppc64-pie.patch
-Patch4: binutils-2.14.90.0.7-place-orphan.patch
-Patch5: binutils-2.14.90.0.7-merge-speedup.patch
-Patch6: binutils-2.14.90.0.7-ia64-speedup.patch
-Patch7: binutils-2.14.90.0.7-scrubchars1.patch
-Patch8: binutils-2.14.90.0.7-scrubchars2.patch
+Patch0: binutils-2.14.90.0.8-eh-frame-ro.patch
+Patch1: binutils-2.14.90.0.8-ltconfig-multilib.patch
+Patch2: binutils-2.14.90.0.8-s390-pie.patch
+Patch3: binutils-2.14.90.0.8-ppc64-pie.patch
+Patch4: binutils-2.14.90.0.8-place-orphan.patch
+Patch5: binutils-2.14.90.0.8-relro.patch
+Patch6: binutils-2.14.90.0.8-ppc32-common-pagesize.patch
 
 Buildroot: /var/tmp/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext
@@ -44,10 +42,8 @@ addresses to file and line).
 %patch2 -p0 -b .s390-pie~
 %patch3 -p0 -b .ppc64-pie~
 %patch4 -p0 -b .place-orphan~
-%patch5 -p0 -b .merge-speedup~
-%patch6 -p0 -b .ia64-speedup~
-%patch7 -p0 -b .scrubchars1~
-%patch8 -p0 -b .scrubchars2~
+%patch5 -p0 -b .relro~
+%patch6 -p0 -b .ppc32-common-pagesize~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -89,7 +85,6 @@ gzip -q9f %{buildroot}%{_infodir}/*.info*
 # Rebuild libiberty.a with -fPIC
 make -C libiberty clean
 make CFLAGS="-g -fPIC $RPM_OPT_FLAGS" -C libiberty
-make CFLAGS="-g -fPIC $RPM_OPT_FLAGS" -C libiberty old_demangler
 
 install -m 644 libiberty/libiberty.a %{buildroot}%{_prefix}/%{_lib}
 install -m 644 ../include/libiberty.h %{buildroot}%{_prefix}/include
@@ -157,6 +152,27 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Mon Jan 19 2004 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.8-3
+- fix testcases on s390 and s390x
+
+* Fri Jan 16 2004 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.8-2
+- fix testcases on AMD64
+- fix .got's sh_entsize on IA32/AMD64
+- set COMMONPAGESIZE on s390/s390x
+- set COMMONPAGESIZE on ppc32 (Alan Modra)
+
+* Fri Jan 16 2004 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.8-1
+- update to 2.14.90.0.8
+
+* Tue Jan 13 2004 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.7-4
+- fix -z relro on 64-bit arches
+
+* Mon Jan 12 2004 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.7-3
+- fix some bugs in -z relro support
+
+* Fri Jan  9 2004 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.7-2
+- -z relro support, reordering of RW sections
+
 * Fri Jan  9 2004 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.7-1
 - update to 2.14.90.0.7
 
