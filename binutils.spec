@@ -1,22 +1,22 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.14.90.0.8
-Release: 8.1
+Version: 2.15.90.0.3
+Release: 5
 Copyright: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-Patch0: binutils-2.14.90.0.8-eh-frame-ro.patch
-Patch1: binutils-2.14.90.0.8-ltconfig-multilib.patch
-Patch2: binutils-2.14.90.0.8-s390-pie.patch
-Patch3: binutils-2.14.90.0.8-ppc64-pie.patch
-Patch4: binutils-2.14.90.0.8-place-orphan.patch
-Patch5: binutils-2.14.90.0.8-relro.patch
-Patch6: binutils-2.14.90.0.8-ppc32-common-pagesize.patch
-Patch7: binutils-2.14.90.0.8-ia64-pie.patch
-Patch8: binutils-2.14.90.0.8-sparc32-plt.patch
-Patch9: binutils-2.14.90.0.8-ppc32-pie.patch
-Patch10: binutils-2.14.90.0.8-dt-bind-now.patch
+Patch1: binutils-2.15.90.0.3-eh-frame-ro.patch
+Patch2: binutils-2.15.90.0.3-ltconfig-multilib.patch
+Patch3: binutils-2.15.90.0.3-ppc64-pie.patch
+Patch4: binutils-2.15.90.0.3-place-orphan.patch
+Patch5: binutils-2.15.90.0.3-objdump-plt.patch
+Patch6: binutils-2.15.90.0.3-tbss.patch
+Patch7: binutils-2.15.90.0.3-relro.patch
+Patch8: binutils-2.15.90.0.3-sparc1.patch
+Patch9: binutils-2.15.90.0.3-sparc2.patch
+Patch10: binutils-2.15.90.0.3-x86_64-plt.patch
+Patch11: binutils-2.15.90.0.3-s390-align.patch
 
 Buildroot: /var/tmp/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext
@@ -41,17 +41,17 @@ addresses to file and line).
 
 %prep
 %setup -q
-%patch0 -p0 -b .eh-frame-ro~
-%patch1 -p0 -b .ltconfig-multilib~
-%patch2 -p0 -b .s390-pie~
+%patch1 -p0 -b .eh-frame-ro~
+%patch2 -p0 -b .ltconfig-multilib~
 %patch3 -p0 -b .ppc64-pie~
 %patch4 -p0 -b .place-orphan~
-%patch5 -p0 -b .relro~
-%patch6 -p0 -b .ppc32-common-pagesize~
-%patch7 -p0 -b .ia64-pie~
-%patch8 -p0 -b .sparc32-plt~
-%patch9 -p0 -b .ppc32-pie~
-%patch10 -p0 -b .dt-bind-now~
+%patch5 -p0 -b .objdump-plt~
+%patch6 -p0 -b .tbss~
+%patch7 -p0 -b .relro~
+%patch8 -p0 -b .sparc1~
+%patch9 -p0 -b .sparc2~
+%patch10 -p0 -b .x86_64-plt~
+%patch11 -p0 -b .s390-align~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -160,8 +160,31 @@ fi
 %{_infodir}/*info*
 
 %changelog
-* Tue Mar 02 2004 Elliot Lee <sopwith@redhat.com>
-- rebuilt
+* Tue May  4 2004 Jakub Jelinek <jakub@redhat.com> 2.15.90.0.3-5
+- fix s390{,x} .{,b,p2}align handling
+- ppc/ppc64 testsuite fix
+
+* Mon May  3 2004 Jakub Jelinek <jakub@redhat.com> 2.15.90.0.3-4
+- -z relro ppc/ppc64/ia64 fixes
+- change x86-64 .plt symbol st_size handling to match ia32
+- prettify objdump -d output
+
+* Tue Apr 20 2004 Jakub Jelinek <jakub@redhat.com> 2.15.90.0.3-3
+- several SPARC fixes
+
+* Sun Apr 18 2004 Jakub Jelinek <jakub@redhat.com> 2.15.90.0.3-2
+- yet another fix for .tbss handling
+
+* Fri Apr 16 2004 Jakub Jelinek <jakub@redhat.com> 2.15.90.0.3-1
+- update to 2.15.90.0.3
+
+* Fri Mar 26 2004 Jakub Jelinek <jakub@redhat.com> 2.15.90.0.1.1-2
+- update to 20040326 CVS
+  - fix ppc64 weak .opd symbol handling (Alan Modra, #119086)
+- fix .tbss handling bug introduced
+
+* Fri Mar 26 2004 Jakub Jelinek <jakub@redhat.com> 2.15.90.0.1.1-1
+- update to 2.15.90.0.1.1
 
 * Sat Feb 21 2004 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.8-8
 - with -z now without --enable-new-dtags create DT_BIND_NOW
