@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.11.90.0.27
-Release: 0.03
+Release: 0.05s.1
 Copyright: GPL
 Group: Development/Tools
 URL: http://sourceware.cygnus.com/binutils
@@ -11,8 +11,8 @@ Patch2: binutils-2.11.90.0.4-glibc21.patch
 Patch3: binutils-2.11.90.0.8-dynamic.patch
 Patch4: binutils-2.11.90.0.8-alpha.patch
 Patch5: binutils-2.11.90.0.27-s390.patch 
-Patch6: binutils-2.11.90.0.27-brxlg.patch
 Patch7: binutils-2.11.90.0.27-s390-1.patch
+Patch8: binutils-2.11.90.0.27-s390-2.patch
 Buildroot: /var/tmp/binutils-root
 Prereq: /sbin/install-info
 %ifarch ia64
@@ -34,14 +34,9 @@ addresses to file and line).
 %prep
 %setup -q
 %patch1 -p0 -b .oformat
-#%patch2 -p1 -b .glibc21
-%ifnarch s390 s390x
-%patch3 -p0 -b .dynamic
-%endif
-#%patch4 -p0 -b .alpha
 %patch5 -p1
-%patch6 -p1
 %patch7 -p1
+%patch8 -p1
 mv -f ld/Makefile.in ld/Makefile.in.tmp
 sed -e '/^ALL_EMULATIONS/s/eelf_i386_chaos.o/& eelf_i386_glibc21.o/' < ld/Makefile.in.tmp > ld/Makefile.in
 rm -f ld/Makefile.in.tmp
@@ -125,6 +120,15 @@ fi
 %endif
 
 %changelog
+* Wed Mar 18 2003 D. Marlin <dmarlin@redhat.com>
+- new s390 release number and rebuild for s390 (bug #85960)
+
+* Wed Feb 13 2002 Phil Knirsch <pknirsch@redhat.com>
+- Added another special patch from IBM.
+
+* Wed Jan 30 2002 Florian La Roche <Florian.LaRoche@redhat.de>
+- fix 64 bit support
+
 * Tue Oct 23 2001 Karsten Hopp <karsten@redhat.de>
 - add IBM patch for S/390
 
