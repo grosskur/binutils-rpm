@@ -1,19 +1,19 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.10.0.18
-Release: 5
+Version: 2.10.91.0.2
+Release: 3
 Copyright: GPL
 Group: Development/Tools
 URL: http://sourceware.cygnus.com/binutils
 Source: ftp://ftp.valinux.com/pub/support/hjl/binutils/binutils-%{version}.tar.bz2
-Patch1: binutils-sparc-gas.patch
-Patch2: binutils-sparc64-bfd.patch
-Patch3: binutils-alpha-ld-relax.patch
-Patch4: binutils-alpha-visibility.patch
-Patch5: binutils-sparc64-ultraIII.patch
-Patch6: binutils-alpha-fixes.patch
+Patch1: binutils-2.10.1.0.7-oformat.patch
+Patch2: binutils-2.10.91.0.2-glibc21.patch
+Patch3: binutils-2.10.91.0.2-bgroup.patch
 Buildroot: /var/tmp/binutils-root
-ExcludeArch: ia64
+Prereq: /sbin/install-info
+%ifarch ia64
+Obsoletes: gnupro
+%endif
 
 %description
 Binutils is a collection of binary utilities, including ar (for creating,
@@ -32,22 +32,14 @@ binary files.  Most programmers will want to install binutils.
 
 %prep
 %setup -q
-%patch1 -p0
-%patch2 -p0
-%patch3 -p0
-%patch4 -p0
-%patch5 -p0
-%patch6 -p0
+%patch1 -p0 -b .oformat
+%patch2 -p1 -b .glibc21
+%patch3 -p1 -b .bgroup
 
 %build
-ADDITIONAL_TARGETS=""
-%ifos linux
-%ifarch sparc
-ADDITIONAL_TARGETS="--enable-targets=sparc64-linux"
-%endif
-%endif
-
-%configure --enable-shared $ADDITIONAL_TARGETS
+# Binutils come with its own custom libtool
+%define __libtoolize echo
+%configure --enable-shared
 make tooldir=%{_prefix}usr all info
 
 %install
@@ -63,7 +55,7 @@ install -m 644 include/libiberty.h ${RPM_BUILD_ROOT}%{_prefix}/include
 
 chmod +x ${RPM_BUILD_ROOT}%{_prefix}/%{_lib}/lib*.so*
 
-# This one comes from egcs
+# This one comes from gcc
 rm -f ${RPM_BUILD_ROOT}%{_prefix}/bin/c++filt
 
 %clean
@@ -102,6 +94,26 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Mon Mar 19 2001 Jakub Jelinek <jakub@redhat.com>
+- add -Bgroup support from Ulrich Drepper
+
+* Fri Mar  9 2001 Jakub Jelinek <jakub@redhat.com>
+- hack - add elf_i386_glibc21 emulation
+
+* Fri Feb 16 2001 Jakub Jelinek <jakub@redhat.com>
+- 2.10.91.0.2
+
+* Fri Feb  9 2001 Jakub Jelinek <jakub@redhat.com>
+- 2.10.1.0.7
+- remove ExcludeArch ia64
+- back out the -oformat, -omagic and -output change for now
+
+* Fri Dec 15 2000 Jakub Jelinek <jakub@redhat.com>
+- Prereq /sbin/install-info
+
+* Tue Nov 21 2000 Jakub Jelinek <jakub@redhat.com>
+- 2.10.1.0.2
+
 * Tue Nov 21 2000 Jakub Jelinek <jakub@redhat.com>
 - add one more alpha patch
 
