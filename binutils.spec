@@ -79,8 +79,9 @@ CFLAGS="${CFLAGS:-%optflags}" ../configure \
   --infodir=%{_infodir} --enable-shared $CARGS
 make %{_smp_mflags} tooldir=%{_prefix} all
 make %{_smp_mflags} tooldir=%{_prefix} info
+make -k check < /dev/null > check.log 2>&1 || :
 echo ====================TESTING=========================
-make -k check < /dev/null || :
+cat check.log
 echo ====================TESTING END=====================
 cd ..
 
