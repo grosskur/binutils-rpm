@@ -1,31 +1,17 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.11.93.0.2
-Release: 12
+Version: 2.12.90.0.4
+Release: 0.02
 Copyright: GPL
 Group: Development/Tools
 URL: http://sourceware.cygnus.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-Patch1: binutils-2.11.93.0.2-glibc21.patch
-Patch2: binutils-2.11.93.0.2-combreloc-default.patch
-Patch3: binutils-2.11.93.0.2-dataseg-align.patch
-Patch4: binutils-2.11.93.0.2-dataseg-align2.patch
-Patch5: binutils-2.11.93.0.2-eh_frame.patch
-Patch6: binutils-2.11.93.0.2-c++-symver.patch
-Patch7: binutils-2.11.93.0.2-merge-gc.patch
-Patch8: binutils-2.11.93.0.2-alpha-.text.patch
-Patch9: binutils-2.11.93.0.2-alias-visibility.patch
-Patch10: binutils-2.11.93.0.2-sparc.patch
-Patch11: binutils-2.11.93.0.2-SHN_UNDEF.patch
-Patch12: binutils-2.11.93.0.2-dataseg-align3.patch
-Patch13: binutils-2.11.93.0.2-ia64unw.patch
-Patch14: binutils-2.11.93.0.2-sparc-disp.patch
-Patch15: binutils-2.11.93.0.2-sparc-hidden.patch
-Patch16: binutils-2.11.93.0.2-sparc-nonpic.patch
-Patch17: binutils-2.11.93.0.2-eh_frame2.patch
+Patch1: binutils-2.12.90.0.7-glibc21.patch
+Patch2: binutils-2.11.93.0.2-sparc-nonpic.patch
+Patch3: binutils-2.12.90.0.4-s390-may2002.diff
 
 Buildroot: /var/tmp/binutils-root
-BuildRequires: texinfo >= 4.0
+BuildRequires: texinfo >= 4.0, dejagnu
 Prereq: /sbin/install-info
 %ifarch ia64
 Obsoletes: gnupro
@@ -46,30 +32,18 @@ addresses to file and line).
 %prep
 %setup -q
 %patch1 -p0 -b .glibc21
-%ifarch %{ix86} alpha ia64 sparc sparc64 s390 s390x ppc
-%patch2 -p0 -b .combreloc-default
-%endif
-%patch3 -p0 -b .dataseg-align
-%patch4 -p0 -b .dataseg-align2
-%patch5 -p0 -b .eh_frame
-%patch6 -p0 -b .c++-symver
-%patch7 -p0 -b .merge-gc
-%patch8 -p0 -b .alpha-.text
-%patch9 -p0 -b .alias-visibility
-%patch10 -p0 -b .sparc
-%patch11 -p0 -b .SHN_UNDEF
-%patch12 -p0 -b .dataseg-align3
-%patch13 -p0 -b .ia64unw
-%patch14 -p0 -b .sparc-disp
-%patch15 -p0 -b .sparc-hidden
-%patch16 -p0 -b .sparc-nonpic
-%patch17 -p0 -b .eh_frame2
+%patch2 -p0 -b .sparc-nonpic
+%patch3 -p1
 
 %build
 # Binutils come with its own custom libtool
 %define __libtoolize echo
 %configure --enable-shared
 make tooldir=%{_prefix} all info
+echo ====================TESTING=========================
+make -k check || :
+echo ====================TESTING END=====================
+
 
 %install
 rm -rf ${RPM_BUILD_ROOT}
@@ -97,7 +71,6 @@ rm -rf ${RPM_BUILD_ROOT}
 /sbin/install-info --info-dir=%{_infodir} %{_infodir}/as.info.gz
 /sbin/install-info --info-dir=%{_infodir} %{_infodir}/bfd.info.gz
 /sbin/install-info --info-dir=%{_infodir} %{_infodir}/binutils.info.gz
-/sbin/install-info --info-dir=%{_infodir} %{_infodir}/gasp.info.gz
 /sbin/install-info --info-dir=%{_infodir} %{_infodir}/gprof.info.gz
 /sbin/install-info --info-dir=%{_infodir} %{_infodir}/ld.info.gz
 /sbin/install-info --info-dir=%{_infodir} %{_infodir}/standards.info.gz
@@ -107,7 +80,6 @@ if [ $1 = 0 ] ;then
   /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/as.info.gz
   /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/bfd.info.gz
   /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/binutils.info.gz
-  /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/gasp.info.gz
   /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/gprof.info.gz
   /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/ld.info.gz
   /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/standards.info.gz
@@ -125,6 +97,10 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Mon Apr 29 2002 Jakub Jelinek <jakub@redhat.com> 2.12.90.0.7-1
+- update to 2.12.90.0.7
+- run make check
+
 * Mon Apr 29 2002 Jakub Jelinek <jakub@redhat.com> 2.11.93.0.2-12
 - fix .hidden handling on SPARC (Richard Henderson)
 - don't crash when linking -shared non-pic code with SHF_MERGE
