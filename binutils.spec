@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.11.90.0.8
-Release: 8
+Release: 9
 Copyright: GPL
 Group: Development/Tools
 URL: http://sourceware.cygnus.com/binutils
@@ -15,6 +15,7 @@ Patch6: binutils-2.11.90.0.8-orphan2.patch
 Patch7: binutils-2.11.90.0.8-ia64funcsize.patch
 Patch8: binutils-2.11.90.0.8-combreloc-default.patch
 Patch9: binutils-2.11.90.0.8-ia64unwind.patch
+Patch10: binutils-2.11.90.0.8-alpharelative.patch
 Buildroot: /var/tmp/binutils-root
 Prereq: /sbin/install-info
 %ifarch ia64
@@ -46,6 +47,7 @@ addresses to file and line).
 %patch8 -p0 -b .combreloc-default
 %endif
 %patch9 -p0 -b .ia64unwind
+%patch10 -p0 -b .alpharelative
 mv -f ld/Makefile.in ld/Makefile.in.tmp
 sed -e '/^ALL_EMULATIONS/s/eelf_i386_chaos.o/& eelf_i386_glibc21.o/' < ld/Makefile.in.tmp > ld/Makefile.in
 rm -f ld/Makefile.in.tmp
@@ -108,6 +110,9 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Fri Aug 31 2001 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-9
+- on Alpha, copy *r_offset to R_ALPHA_RELATIVE's r_addend
+
 * Thu Aug 30 2001 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-8
 - on IA-64, put crtend{,S}.o's .IA_64.unwind section last in
   .IA_64.unwind output section (for compatibility with 7.1 eh)
