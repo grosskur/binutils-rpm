@@ -18,7 +18,7 @@ Patch9: binutils-2.15.93.0.2-readelf-overflows.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
-Conflicts: gcc-c++ <= 4.0.0
+Conflicts: gcc-c++ < 4.0.0
 Prereq: /sbin/install-info
 %ifarch ia64
 Obsoletes: gnupro
@@ -161,7 +161,7 @@ fi
 %{_infodir}/*info*
 
 %changelog
-* Mon Feb 28 2005 Jakub Jelinek <jakub@redhat.com> 2.15.94.0.2-2
+* Mon Feb 28 2005 Jakub Jelinek <jakub@redhat.com> 2.15.94.0.2-3
 - fix buffer overflows in readelf (#149506)
 - move c++filt to binutils from gcc-c++, conflict with gcc-c++ < 4.0 (#86333)
 
