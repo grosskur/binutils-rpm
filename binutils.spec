@@ -1,27 +1,25 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.15.90.0.3
-Release: 8
+Version: 2.15.91.0.2
+Release: 4
 Copyright: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-Patch1: binutils-2.15.90.0.3-eh-frame-ro.patch
-Patch2: binutils-2.15.90.0.3-ltconfig-multilib.patch
-Patch3: binutils-2.15.90.0.3-ppc64-pie.patch
-Patch4: binutils-2.15.90.0.3-place-orphan.patch
-Patch5: binutils-2.15.90.0.3-objdump-plt.patch
-Patch6: binutils-2.15.90.0.3-tbss.patch
-Patch7: binutils-2.15.90.0.3-relro.patch
-Patch8: binutils-2.15.90.0.3-sparc1.patch
-Patch9: binutils-2.15.90.0.3-sparc2.patch
-Patch10: binutils-2.15.90.0.3-x86_64-plt.patch
-Patch11: binutils-2.15.90.0.3-s390-align.patch
-Patch12: binutils-2.15.90.0.3-double+-.patch
-Patch13: binutils-2.15.90.0.3-ia64-lib64.patch
+Patch1: binutils-2.15.91.0.2-ltconfig-multilib.patch
+Patch2: binutils-2.15.91.0.2-ppc64-pie.patch
+Patch3: binutils-2.15.91.0.2-place-orphan.patch
+Patch4: binutils-2.15.91.0.2-sparc1.patch
+Patch5: binutils-2.15.91.0.2-ia64-lib64.patch
+Patch6: binutils-2.15.91.0.2-x86-64-fnopic.patch
+Patch7: binutils-2.15.91.0.2-ppc64-killdotsyms1.patch
+Patch8: binutils-2.15.91.0.2-ppc64-killdotsyms2.patch
+Patch9: binutils-2.15.91.0.2-ppc64-killdotsyms3.patch
+Patch10: binutils-2.15.91.0.2-ppc64-killdotsyms4.patch
+Patch11: binutils-2.15.91.0.2-elfvsb-test.patch
 
-Buildroot: /var/tmp/binutils-root
-BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex
+Buildroot: %{_tmppath}/binutils-root
+BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
 Prereq: /sbin/install-info
 %ifarch ia64
 Obsoletes: gnupro
@@ -43,23 +41,21 @@ addresses to file and line).
 
 %prep
 %setup -q
-%patch1 -p0 -b .eh-frame-ro~
-%patch2 -p0 -b .ltconfig-multilib~
-%patch3 -p0 -b .ppc64-pie~
-%patch4 -p0 -b .place-orphan~
-%patch5 -p0 -b .objdump-plt~
-%patch6 -p0 -b .tbss~
-%patch7 -p0 -b .relro~
-%patch8 -p0 -b .sparc1~
-%patch9 -p0 -b .sparc2~
-%patch10 -p0 -b .x86_64-plt~
-%patch11 -p0 -b .s390-align~
-%patch12 -p0 -b .double+-~
+%patch1 -p0 -b .ltconfig-multilib~
+%patch2 -p0 -b .ppc64-pie~
+%patch3 -p0 -b .place-orphan~
+%patch4 -p0 -b .sparc1~
 %ifarch ia64
 %if "%{_lib}" == "lib64"
-%patch13 -p0 -b .ia64-lib64~
+%patch5 -p0 -b .ia64-lib64~
 %endif
 %endif
+%patch6 -p0 -b .x86-64-fnopic~
+%patch7 -p0 -b .ppc64-killdotsyms1~
+%patch8 -p0 -b .ppc64-killdotsyms2~
+%patch9 -p0 -b .ppc64-killdotsyms3~
+%patch10 -p0 -b .ppc64-killdotsyms4~
+%patch11 -p0 -b .elfvsb-test~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -168,9 +164,19 @@ fi
 %{_infodir}/*info*
 
 %changelog
-* Tue Jun 15 2004 Elliot Lee <sopwith@redhat.com>
-- rebuilt
+* Mon Aug 16 2004 Jakub Jelinek <jakub@redhat.com> 2.15.91.0.2-4
+- kill ppc64 dot symbols (Alan Modra)
+- objdump -d support for objects without dot symbols
+- support for overlapping ppc64 .opd entries
 
+* Mon Aug 9 2004 Jakub Jelinek <jakub@redhat.com> 2.15.91.0.2-3
+- fix a newly introduced linker crash on x86-64
+
+* Sun Aug 8 2004 Alan Cox <alan@redhat.com> 2.15.91.0.2-2
+- BuildRequire bison and macroise buildroot - from Steve Grubb
+
+* Fri Jul 30 2004 Jakub Jelinek <jakub@redhat.com> 2.15.91.0.2-1
+- update to 2.15.91.0.2
 - BuildRequire flex (#117763)
 
 * Wed May 19 2004 Jakub Jelinek <jakub@redhat.com> 2.15.90.0.3-7
