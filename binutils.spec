@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.15.90.0.3
-Release: 5
+Release: 6
 Copyright: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -17,6 +17,7 @@ Patch8: binutils-2.15.90.0.3-sparc1.patch
 Patch9: binutils-2.15.90.0.3-sparc2.patch
 Patch10: binutils-2.15.90.0.3-x86_64-plt.patch
 Patch11: binutils-2.15.90.0.3-s390-align.patch
+Patch12: binutils-2.15.90.0.3-double+-.patch
 
 Buildroot: /var/tmp/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext
@@ -52,6 +53,7 @@ addresses to file and line).
 %patch9 -p0 -b .sparc2~
 %patch10 -p0 -b .x86_64-plt~
 %patch11 -p0 -b .s390-align~
+%patch12 -p0 -b .double+-~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -160,6 +162,10 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Sat May 15 2004 Jakub Jelinek <jakub@redhat.com> 2.15.90.0.3-6
+- fix a bug introduced in the ++/-- rejection patch
+  from 2.15.90.0.3 (Alan Modra)
+
 * Tue May  4 2004 Jakub Jelinek <jakub@redhat.com> 2.15.90.0.3-5
 - fix s390{,x} .{,b,p2}align handling
 - ppc/ppc64 testsuite fix
