@@ -1,28 +1,19 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.15.92.0.2
-Release: 11
+Version: 2.15.94.0.2
+Release: 1
 Copyright: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-Patch1: binutils-2.15.92.0.2-ltconfig-multilib.patch
-Patch2: binutils-2.15.92.0.2-ppc64-pie.patch
-Patch3: binutils-2.15.92.0.2-place-orphan.patch
-Patch4: binutils-2.15.92.0.2-ia64-lib64.patch
-Patch5: binutils-2.15.92.0.2-relro-fix.patch
-Patch6: binutils-2.15.92.0.2-ldsoconf.patch
-Patch7: binutils-2.15.92.0.2-elfvsb-test.patch
-Patch8: binutils-2.15.92.0.2-prelink-strip.patch
-Patch9: binutils-2.15.92.0.2-ppc-tlbie.patch
-Patch10: binutils-2.15.92.0.2-strings.patch
-Patch11: binutils-2.15.92.0.2-comdat-linkonce-mix.patch
-Patch12: binutils-2.15.92.0.2-justsymbols.patch
-Patch13: binutils-2.15.92.0.2-ar-xo.patch
-Patch14: binutils-2.15.92.0.2-eh-frame-lsda.patch
-Patch15: binutils-2.15.92.0.2-stt_section-abs.patch
-Patch16: binutils-2.15.92.0.2-ppc64-emit-relocs.patch
-Patch17: binutils-2.15.92.0.2-relro-gap.patch
+Patch1: binutils-2.15.94.0.2-ltconfig-multilib.patch
+Patch2: binutils-2.15.94.0.2-ppc64-pie.patch
+Patch3: binutils-2.15.94.0.2-place-orphan.patch
+Patch4: binutils-2.15.94.0.2-ia64-lib64.patch
+Patch5: binutils-2.15.94.0.2-elfvsb-test.patch
+Patch6: binutils-2.15.94.0.2-ppc64-noteGNUstack.patch
+Patch7: binutils-2.15.94.0.2-script-as-needed.patch
+Patch8: binutils-2.15.94.0.2-strip-dynamic.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -55,19 +46,10 @@ addresses to file and line).
 %patch4 -p0 -b .ia64-lib64~
 %endif
 %endif
-%patch5 -p0 -b .relro-fix~
-%patch6 -p0 -b .ldsoconf~
-%patch7 -p0 -b .elfvsb-test~
-%patch8 -p0 -b .prelink-strip~
-%patch9 -p0 -b .ppc-tlbie~
-%patch10 -p0 -b .strings~
-%patch11 -p0 -b .comdat-linkonce-mix~
-%patch12 -p0 -b .justsymbols~
-%patch13 -p0 -b .ar-xo~
-%patch14 -p0 -b .eh-frame-lsda~
-%patch15 -p0 -b .stt_section-abs~
-%patch16 -p0 -b .ppc64-emit-relocs~
-%patch17 -p0 -b .relro-gap~
+%patch5 -p0 -b .elfvsb-test~
+%patch6 -p0 -b .ppc64-noteGNUstack~
+%patch7 -p0 -b .script-as-needed~
+%patch8 -p0 -b .strip-dynamic~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -177,6 +159,13 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Thu Feb 10 2005 Jakub Jelinek <jakub@redhat.com> 2.15.94.0.2-1
+- update to 2.15.94.0.2
+- fix .note.GNU-stack/PT_GNU_STACK computation in linker on ppc64 (#147296)
+- fix stripping of binaries/libraries that have empty sections right before
+  .dynamic section (with the same starting address; #144038)
+- handle AS_NEEDED (...) in linker script INPUT/GROUP
+
 * Tue Dec 14 2004 Jakub Jelinek <jakub@redhat.com> 2.15.92.0.2-11
 - fix a longstanding -z relro bug
 
