@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.15.92.0.2
-Release: 4
+Release: 5
 Copyright: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -17,6 +17,7 @@ Patch8: binutils-2.15.92.0.2-prelink-strip.patch
 Patch9: binutils-2.15.92.0.2-ppc-tlbie.patch
 Patch10: binutils-2.15.92.0.2-strings.patch
 Patch11: binutils-2.15.92.0.2-comdat-linkonce-mix.patch
+Patch12: binutils-2.15.92.0.2-justsymbols.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -56,6 +57,7 @@ addresses to file and line).
 %patch9 -p0 -b .ppc-tlbie~
 %patch10 -p0 -b .strings~
 %patch11 -p0 -b .comdat-linkonce-mix~
+%patch12 -p0 -b .justsymbols~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -165,6 +167,9 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Wed Oct 20 2004 Jakub Jelinek <jakub@redhat.com> 2.15.92.0.2-5
+- fix --just-symbols on ppc64 (Alan Modra, #135498)
+
 * Fri Oct 15 2004 Jakub Jelinek <jakub@redhat.com> 2.15.92.0.2-4
 - fix code detecting matching linkonce and single member comdat
   group sections (#133078)
