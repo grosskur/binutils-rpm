@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.15.94.0.2
-Release: 3
+Release: 4
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -161,6 +161,9 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Sat Mar  5 2005 Jakub Jelinek <jakub@redhat.com> 2.15.94.0.2-4
+- rebuilt with GCC 4
+
 * Mon Feb 28 2005 Jakub Jelinek <jakub@redhat.com> 2.15.94.0.2-3
 - fix buffer overflows in readelf (#149506)
 - move c++filt to binutils from gcc-c++, conflict with gcc-c++ < 4.0 (#86333)
