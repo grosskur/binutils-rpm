@@ -1,15 +1,21 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.13.90.0.2
-Release: 2
+Version: 2.13.90.0.4
+Release: 1
 Copyright: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-Patch1: binutils-2.13.90.0.2-glibc21.patch
+Patch1: binutils-2.13.90.0.4-glibc21.patch
 Patch2: binutils-2.11.93.0.2-sparc-nonpic.patch
-Patch3: binutils-2.13.90.0.2-gotpc.patch
-Patch4: binutils-2.13.90.0.2-tpoff32.patch
+Patch5: binutils-2.13.90.0.4-ntpoff.patch
+Patch6: binutils-2.13.90.0.4-ppc-rela.patch
+Patch7: binutils-2.13.90.0.4-tls-assert.patch
+Patch8: binutils-2.13.90.0.4-tpoff32-2.patch
+Patch9: binutils-2.13.90.0.4-tls-fixes.patch
+Patch10: binutils-2.13.90.0.4-ia64-brl.patch
+Patch11: binutils-2.13.90.0.4-ia64-pcrel21m.patch
+Patch12: binutils-2.13.90.0.4-jumbo.patch
 
 Buildroot: /var/tmp/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu
@@ -34,16 +40,24 @@ addresses to file and line).
 
 %prep
 %setup -q
-%patch1 -p0 -b .glibc21
+%patch1 -p0 -b .glibc21~
 cp -a ld/Makefile.in ld/Makefile.in.tmp
 sed '/^ALL_EMULATIONS/s/eelf_i386_chaos.o/eelf_i386_chaos.o	eelf_i386_glibc21.o/' ld/Makefile.in.tmp > ld/Makefile.in
 rm ld/Makefile.in.tmp
-%patch2 -p0 -b .sparc-nonpic
-%patch3 -p0 -b .gotpc
-%patch4 -p0 -b .tpoff32
+%patch2 -p0 -b .sparc-nonpic~
+%patch5 -p0 -b .ntpoff~
+%patch6 -p0 -b .ppc-rela~
+%patch7 -p0 -b .tls-assert~
+%patch8 -p0 -b .tpoff32-2~
+%patch9 -p0 -b .tls-fixes~
+%patch10 -p0 -b .ia64-brl~
+%patch11 -p0 -b .ia64-pcrel21m~
+%patch12 -p0 -b .jumbo~
 
 %build
-CFLAGS="${CFLAGS:-%optflags}" ./configure \
+mkdir build-%{_target_platform}
+cd build-%{_target_platform}
+CFLAGS="${CFLAGS:-%optflags}" ../configure \
   %{_target_platform} --prefix=%{_prefix} --exec-prefix=%{_exec_prefix} \
   --bindir=%{_bindir} --sbindir=%{_sbindir} --sysconfdir=%{_sysconfdir} \
   --datadir=%{_datadir} --includedir=%{_includedir} --libdir=%{_libdir} \
@@ -54,18 +68,19 @@ make tooldir=%{_prefix} all info
 echo ====================TESTING=========================
 make -k check || :
 echo ====================TESTING END=====================
-
+cd ..
 
 %install
 rm -rf ${RPM_BUILD_ROOT}
 mkdir -p ${RPM_BUILD_ROOT}%{_prefix}
+cd build-%{_target_platform}
 %makeinstall
 make prefix=${RPM_BUILD_ROOT}%{_prefix} infodir=${RPM_BUILD_ROOT}%{_infodir} install-info
 strip ${RPM_BUILD_ROOT}%{_prefix}/bin/*
 gzip -q9f ${RPM_BUILD_ROOT}%{_infodir}/*.info*
 
 #install -m 644 libiberty/libiberty.a ${RPM_BUILD_ROOT}%{_prefix}/%{_lib}
-install -m 644 include/libiberty.h ${RPM_BUILD_ROOT}%{_prefix}/include
+install -m 644 ../include/libiberty.h ${RPM_BUILD_ROOT}%{_prefix}/include
 # Remove Windows/Novell only man pages
 rm -f ${RPM_BUILD_ROOT}%{_mandir}/man1/{dlltool,nlmconv,windres}*
 
@@ -73,6 +88,17 @@ chmod +x ${RPM_BUILD_ROOT}%{_prefix}/%{_lib}/lib*.so*
 
 # This one comes from gcc
 rm -f ${RPM_BUILD_ROOT}%{_prefix}/bin/c++filt
+
+cd ..
+%find_lang binutils
+%find_lang opcodes
+%find_lang bfd
+%find_lang gas
+%find_lang ld
+cat opcodes.lang >> binutils.lang
+cat bfd.lang >> binutils.lang
+cat gas.lang >> binutils.lang
+cat ld.lang >> binutils.lang
 
 %clean
 rm -rf ${RPM_BUILD_ROOT}
@@ -98,7 +124,7 @@ fi
 
 %postun -p /sbin/ldconfig
 
-%files
+%files -f binutils.lang
 %defattr(-,root,root)
 %doc README
 %{_prefix}/bin/*
@@ -108,6 +134,23 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Tue Oct  1 2002 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.4-1
+- update to 2.13.90.0.4
+- x86-64 TLS support
+- some IA-32 TLS fixes
+- some backported patches from trunk
+- include opcodes, ld, gas and bfd l10n too
+
+* Thu Sep 19 2002 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.2-3
+- allow addends for IA-32 TLS @tpoff, @ntpoff and @dtpoff
+- clear memory at *r_offset of dynamic relocs on PPC
+- avoid ld crash if accessing non-local symbols through LE relocs
+- new IA-32 TLS relocs, bugfixes and testcases
+- use brl insn on IA-64 (Richard Henderson)
+- fix R_IA64_PCREL21{M,F} handling (Richard Henderson)
+- build in separate builddir, so that gasp tests don't fail
+- include localization
+
 * Thu Aug  8 2002 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.2-2
 - fix R_386_TPOFF32 addends (#70824)
 
