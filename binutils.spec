@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.15.91.0.2
-Release: 8
+Release: 9
 Copyright: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -25,6 +25,7 @@ Patch16: binutils-2.15.91.0.2-ppc64-srec.patch
 Patch17: binutils-2.15.91.0.2-ppc64-ld-dotsyms.patch
 Patch18: binutils-2.15.91.0.2-ppc64-killdotsyms5.patch
 Patch19: binutils-2.15.91.0.2-ia64-linkorder.patch
+Patch20: binutils-2.15.91.0.2-relro-fix.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -72,6 +73,7 @@ addresses to file and line).
 %patch17 -p0 -b .ppc64-ld-dotsyms~
 %patch18 -p0 -b .ppc64-killdotsyms5~
 %patch19 -p0 -b .ia64-linkorder~
+%patch20 -p0 -b .relro-fix~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -180,6 +182,12 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Mon Sep 20 2004 Jakub Jelinek <jakub@redhat.com> 2.15.91.0.2-9
+- avoid almost 1MB (sparse) gaps in the middle of -z relro
+  libraries on x86-64 (Andreas Schwab)
+- fix -z relro to make sure end of PT_GNU_RELRO segment is always
+  COMMONPAGESIZE aligned
+
 * Wed Aug 16 2004 Jakub Jelinek <jakub@redhat.com> 2.15.91.0.2-8
 - fix linker segfaults on input objects with SHF_LINK_ORDER with
   incorrect sh_link (H.J.Lu, Nick Clifton, #130198, BZ #290)
