@@ -2,7 +2,7 @@ Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.15.94.0.2
 Release: 1
-Copyright: GPL
+License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
