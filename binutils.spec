@@ -1,19 +1,28 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.11.90.0.27
-Release: 0.05s.1
+Version: 2.11.93.0.2
+Release: 11
 Copyright: GPL
 Group: Development/Tools
 URL: http://sourceware.cygnus.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-Patch1: binutils-2.10.1.0.7-oformat.patch
-Patch2: binutils-2.11.90.0.4-glibc21.patch
-Patch3: binutils-2.11.90.0.8-dynamic.patch
-Patch4: binutils-2.11.90.0.8-alpha.patch
-Patch5: binutils-2.11.90.0.27-s390.patch 
-Patch7: binutils-2.11.90.0.27-s390-1.patch
-Patch8: binutils-2.11.90.0.27-s390-2.patch
+Patch1: binutils-2.11.93.0.2-glibc21.patch
+Patch2: binutils-2.11.93.0.2-combreloc-default.patch
+Patch3: binutils-2.11.93.0.2-dataseg-align.patch
+Patch4: binutils-2.11.93.0.2-dataseg-align2.patch
+Patch5: binutils-2.11.93.0.2-eh_frame.patch
+Patch6: binutils-2.11.93.0.2-c++-symver.patch
+Patch7: binutils-2.11.93.0.2-merge-gc.patch
+Patch8: binutils-2.11.93.0.2-alpha-.text.patch
+Patch9: binutils-2.11.93.0.2-alias-visibility.patch
+Patch10: binutils-2.11.93.0.2-sparc.patch
+Patch11: binutils-2.11.93.0.2-SHN_UNDEF.patch
+Patch12: binutils-2.11.93.0.2-dataseg-align3.patch
+Patch13: binutils-2.11.93.0.2-ia64unw.patch
+Patch14: binutils-2.11.93.0.2-sparc-disp.patch
+
 Buildroot: /var/tmp/binutils-root
+BuildRequires: texinfo >= 4.0
 Prereq: /sbin/install-info
 %ifarch ia64
 Obsoletes: gnupro
@@ -33,32 +42,28 @@ addresses to file and line).
 
 %prep
 %setup -q
-%patch1 -p0 -b .oformat
-%patch5 -p1
-%patch7 -p1
-%patch8 -p1
-mv -f ld/Makefile.in ld/Makefile.in.tmp
-sed -e '/^ALL_EMULATIONS/s/eelf_i386_chaos.o/& eelf_i386_glibc21.o/' < ld/Makefile.in.tmp > ld/Makefile.in
-rm -f ld/Makefile.in.tmp
+%patch1 -p0 -b .glibc21
+%ifarch %{ix86} alpha ia64 sparc sparc64 s390 s390x ppc
+%patch2 -p0 -b .combreloc-default
+%endif
+%patch3 -p0 -b .dataseg-align
+%patch4 -p0 -b .dataseg-align2
+%patch5 -p0 -b .eh_frame
+%patch6 -p0 -b .c++-symver
+%patch7 -p0 -b .merge-gc
+%patch8 -p0 -b .alpha-.text
+%patch9 -p0 -b .alias-visibility
+%patch10 -p0 -b .sparc
+%patch11 -p0 -b .SHN_UNDEF
+%patch12 -p0 -b .dataseg-align3
+%patch13 -p0 -b .ia64unw
+%patch14 -p0 -b .sparc-disp
 
 %build
 # Binutils come with its own custom libtool
 %define __libtoolize echo
-%ifarch s390 s390x
-%configure --enable-shared=no
-%else
-%configure --enable-shared
-%endif
-make tooldir=%{_prefix} all info
-%ifarch s390 s390x
-# S390 needs objdump in /bin to fix object code only IBM moduls during startup
-# no need to disable shared libs completely, therefore this hack:
-mv -f binutils/objdump binutils/objdump_static
-make distclean
 %configure --enable-shared
 make tooldir=%{_prefix} all info
-mv -vf binutils/objdump_static binutils/.libs/objdump
-%endif
 
 %install
 rm -rf ${RPM_BUILD_ROOT}
@@ -70,16 +75,13 @@ gzip -q9f ${RPM_BUILD_ROOT}%{_infodir}/*.info*
 
 #install -m 644 libiberty/libiberty.a ${RPM_BUILD_ROOT}%{_prefix}/%{_lib}
 install -m 644 include/libiberty.h ${RPM_BUILD_ROOT}%{_prefix}/include
+# Remove Windows/Novell only man pages
+rm -f ${RPM_BUILD_ROOT}%{_mandir}/man1/{dlltool,nlmconv,windres}*
 
 chmod +x ${RPM_BUILD_ROOT}%{_prefix}/%{_lib}/lib*.so*
 
 # This one comes from gcc
 rm -f ${RPM_BUILD_ROOT}%{_prefix}/bin/c++filt
-%ifarch s390 s390x
-  mkdir ${RPM_BUILD_ROOT}/bin
-  mv ${RPM_BUILD_ROOT}%{_prefix}/bin/objdump ${RPM_BUILD_ROOT}/bin
-  ln -s ../../bin/objdump ${RPM_BUILD_ROOT}%{_prefix}/bin/objdump
-%endif
 
 %clean
 rm -rf ${RPM_BUILD_ROOT}
@@ -115,29 +117,151 @@ fi
 %{_prefix}/include/*
 %{_prefix}/%{_lib}/*
 %{_infodir}/*info*
-%ifarch s390 s390x
-/bin/*
-%endif
 
 %changelog
-* Wed Mar 18 2003 D. Marlin <dmarlin@redhat.com>
-- new s390 release number and rebuild for s390 (bug #85960)
+* Fri Apr  5 2002 Jakub Jelinek <jakub@redhat.com> 2.11.93.0.2-11
+- don't emit dynamic R_SPARC_DISP* relocs against STV_HIDDEN symbols
+  into shared libraries
 
-* Wed Feb 13 2002 Phil Knirsch <pknirsch@redhat.com>
-- Added another special patch from IBM.
+* Thu Mar 21 2002 Jakub Jelinek <jakub@redhat.com> 2.11.93.0.2-10
+- don't merge IA-64 unwind info sections together during ld -r
 
-* Wed Jan 30 2002 Florian La Roche <Florian.LaRoche@redhat.de>
-- fix 64 bit support
+* Mon Mar 11 2002 Jakub Jelinek <jakub@redhat.com> 2.11.93.0.2-9
+- fix DATA_SEGMENT_ALIGN on ia64/alpha/sparc/sparc64
 
-* Tue Oct 23 2001 Karsten Hopp <karsten@redhat.de>
-- add IBM patch for S/390
+* Fri Mar  8 2002 Jakub Jelinek <jakub@redhat.com> 2.11.93.0.2-8
+- don't crash on SHN_UNDEF local dynsyms (Andrew MacLeod)
 
-* Sat Sep 15 2001 Florian La Roche <Florian.LaRoche@redhat.de>
-- add "brxlg" patch from alpha web-page
+* Thu Mar  7 2002 Jakub Jelinek <jakub@redhat.com> 2.11.93.0.2-7
+- fix bfd configury bug (Alan Modra)
 
-* Mon Aug 13 2001 Karsten Hopp <karsten@redhat.de>
-- S/390 needs objdump during startup (before mounting /usr)
-  link objdump staticly and move it to /bin (only on S/390)
+* Tue Mar  5 2002 Jakub Jelinek <jakub@redhat.com> 2.11.93.0.2-6
+- don't copy visibility when equating symbols
+- fix alpha .text/.data with .previous directive bug
+
+* Tue Mar  5 2002 Jakub Jelinek <jakub@redhat.com> 2.11.93.0.2-5
+- fix SHF_MERGE crash with --gc-sections (#60369)
+- C++ symbol versioning patch
+
+* Fri Feb 22 2002 Jakub Jelinek <jakub@redhat.com> 2.11.93.0.2-4
+- add DW_EH_PE_absptr -> DW_EH_PE_pcrel optimization for shared libs,
+  if DW_EH_PE_absptr cannot be converted that way, don't build the
+  .eh_frame_hdr search table
+
+* Fri Feb 15 2002 Jakub Jelinek <jakub@redhat.com> 2.11.93.0.2-3
+- fix ld -N broken by last patch
+
+* Tue Feb 12 2002 Jakub Jelinek <jakub@redhat.com> 2.11.93.0.2-2
+- trade one saved runtime page for data segment (=almost always not shared)
+  for up to one page of disk space where possible
+
+* Fri Feb  8 2002 Jakub Jelinek <jakub@redhat.com> 2.11.93.0.2-1
+- update to 2.11.93.0.2
+- use %%{ix86} instead of i386 for -z combreloc default (#59086)
+
+* Thu Jan 31 2002 Jakub Jelinek <jakub@redhat.com> 2.11.92.0.12-10
+- don't create SHN_UNDEF STB_WEAK symbols unless there are any relocations
+  against them
+
+* Wed Jan 30 2002 Bill Nottingham <notting@redhat.com> 2.11.92.0.12-9.1
+- rebuild (fix ia64 miscompilation)
+
+* Wed Jan 09 2002 Tim Powers <timp@redhat.com>
+- automated rebuild
+
+* Fri Dec 28 2001 Jakub Jelinek <jakub@redhat.com> 2.11.92.0.12-8
+- two further .eh_frame patch fixes
+
+* Wed Dec 19 2001 Jakub Jelinek <jakub@redhat.com> 2.11.92.0.12-7
+- as ld is currently not able to shrink input sections to zero size
+  during discard_info, build a fake minimal CIE in that case
+- update elf-strtab patch to what was commited
+
+* Mon Dec 17 2001 Jakub Jelinek <jakub@redhat.com> 2.11.92.0.12-6
+- one more .eh_frame patch fix
+- fix alpha .eh_frame handling
+- optimize elf-strtab finalize
+
+* Sat Dec 15 2001 Jakub Jelinek <jakub@redhat.com> 2.11.92.0.12-5
+- yet another fix for the .eh_frame patch
+
+* Fri Dec 14 2001 Jakub Jelinek <jakub@redhat.com> 2.11.92.0.12-4
+- Alan Modra's patch to avoid crash if there is no dynobj
+
+* Thu Dec 13 2001 Jakub Jelinek <jakub@redhat.com> 2.11.92.0.12-3
+- H.J.'s patch to avoid crash if input files are not ELF
+- don't crash if a SHF_MERGE for some reason could not be merged
+- fix objcopy/strip to preserve SHF_MERGE sh_entsize
+- optimize .eh_frame sections, add PT_GNU_EH_FRAME support
+- support anonymous version tags in version script
+
+* Tue Nov 27 2001 Jakub Jelinek <jakub@redhat.com> 2.11.92.0.12-2
+- fix IA-64 SHF_MERGE handling
+
+* Tue Nov 27 2001 Jakub Jelinek <jakub@redhat.com> 2.11.92.0.12-1
+- update to 2.11.92.0.12
+  - optimize .dynstr and .shstrtab sections (#55524)
+  - fix ld.1 glitch (#55459)
+- turn relocs against SHF_MERGE local symbols with zero addend
+  into STT_SECTION + addend
+- remove man pages for programs not included (nlmconv, windres, dlltool;
+  #55456, #55461)
+- add BuildRequires for texinfo
+
+* Thu Oct 25 2001 Jakub Jelinek <jakub@redhat.com> 2.11.92.0.7-2
+- duh, fix strings on bfd objects (#55084)
+
+* Sat Oct 20 2001 Jakub Jelinek <jakub@redhat.com> 2.11.92.0.7-1
+- update to 2.11.92.0.7
+- remove .rel{,a}.dyn from output if it is empty
+
+* Thu Oct 11 2001 Jakub Jelinek <jakub@redhat.com> 2.11.92.0.5-2
+- fix strings patch
+- use getc_unlocked in strings to speed it up by 50% on large files
+
+* Wed Oct 10 2001 Jakub Jelinek <jakub@redhat.com> 2.11.92.0.5-1
+- update to 2.11.92.0.5
+  - binutils localization (#45148)
+  - fix typo in REPORT_BUGS_TO (#54325)
+- support files bigger than 2GB in strings (#54406)
+
+* Wed Sep 26 2001 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-12
+- on IA-64, don't mix R_IA64_IPLTLSB relocs with non-PLT relocs in
+  .rela.dyn section.
+
+* Tue Sep 25 2001 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-11
+- add iplt support for IA-64 (Richard Henderson)
+- switch to new section flags for SHF_MERGE and SHF_STRINGS, put
+  in compatibility code
+- "s" section flag for small data sections on IA-64 and Alpha
+  (Richard Henderson)
+- fix sparc64 .plt[32768+] handling
+- don't emit .rela.stab on sparc
+
+* Mon Sep 10 2001 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-10
+- fix SHF_MERGE on Sparc
+
+* Fri Aug 31 2001 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-9
+- on Alpha, copy *r_offset to R_ALPHA_RELATIVE's r_addend
+
+* Thu Aug 30 2001 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-8
+- on IA-64, put crtend{,S}.o's .IA_64.unwind section last in
+  .IA_64.unwind output section (for compatibility with 7.1 eh)
+
+* Fri Aug 24 2001 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-7
+- put RELATIVE relocs first, not last
+- enable -z combreloc by default on IA-{32,64}, Alpha, Sparc*
+
+* Thu Aug 23 2001 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-6
+- support for -z combreloc
+- remove .dynamic patch, -z combreloc patch does this better
+- set STT_FUNC default symbol sizes in .endp directive on IA-64
+
+* Mon Jul 16 2001 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-5
+- fix last patch (H.J.Lu)
+
+* Fri Jul 13 2001 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-4
+- fix placing of orphan sections
 
 * Sat Jun 23 2001 Jakub Jelinek <jakub@redhat.com>
 - fix SHF_MERGE support on Alpha
