@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.15.91.0.2
-Release: 6
+Release: 7
 Copyright: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -23,6 +23,7 @@ Patch14: binutils-2.15.91.0.2-ppc64-crossref.patch
 Patch15: binutils-2.15.91.0.2-ppc64-selective.patch
 Patch16: binutils-2.15.91.0.2-ppc64-srec.patch
 Patch17: binutils-2.15.91.0.2-ppc64-ld-dotsyms.patch
+Patch18: binutils-2.15.91.0.2-ppc64-killdotsyms5.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -68,6 +69,7 @@ addresses to file and line).
 %patch15 -p0 -b .ppc64-selective~
 %patch16 -p0 -b .ppc64-srec~
 %patch17 -p0 -b .ppc64-ld-dotsyms~
+%patch18 -p0 -b .ppc64-killdotsyms5~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -176,6 +178,10 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Wed Aug 16 2004 Jakub Jelinek <jakub@redhat.com> 2.15.91.0.2-7
+- resolve all undefined ppc64 .* syms to the function bodies through
+  .opd, not just those used in brach instructions (Alan Modra)
+
 * Tue Aug 16 2004 Jakub Jelinek <jakub@redhat.com> 2.15.91.0.2-6
 - fix ppc64 ld --dotsyms (Alan Modra)
 
