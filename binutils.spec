@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.15.92.0.2
-Release: 2
+Release: 3
 Copyright: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -13,6 +13,8 @@ Patch4: binutils-2.15.92.0.2-ia64-lib64.patch
 Patch5: binutils-2.15.92.0.2-relro-fix.patch
 Patch6: binutils-2.15.92.0.2-ldsoconf.patch
 Patch7: binutils-2.15.92.0.2-elfvsb-test.patch
+Patch8: binutils-2.15.92.0.2-prelink-strip.patch
+Patch9: binutils-2.15.92.0.2-ppc-tlbie.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -48,6 +50,8 @@ addresses to file and line).
 %patch5 -p0 -b .relro-fix~
 %patch6 -p0 -b .ldsoconf~
 %patch7 -p0 -b .elfvsb-test~
+%patch8 -p0 -b .prelink-strip~
+%patch9 -p0 -b .ppc-tlbie~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -156,6 +160,11 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Mon Oct 11 2004 Jakub Jelinek <jakub@redhat.com> 2.15.92.0.2-3
+- revert Sep 09 change to make ppc L second argument e.g. for tlbie
+  non-optional
+- fix stripping of prelinked binaries and libraries (#133734)
+
 * Mon Oct  4 2004 Jakub Jelinek <jakub@redhat.com> 2.15.92.0.2-2
 - update to 2.15.92.0.2
 - change ld's ld.so.conf parser to match ldconfig's (#129340)
