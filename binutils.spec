@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.15.91.0.2
-Release: 7
+Release: 8
 Copyright: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -24,6 +24,7 @@ Patch15: binutils-2.15.91.0.2-ppc64-selective.patch
 Patch16: binutils-2.15.91.0.2-ppc64-srec.patch
 Patch17: binutils-2.15.91.0.2-ppc64-ld-dotsyms.patch
 Patch18: binutils-2.15.91.0.2-ppc64-killdotsyms5.patch
+Patch19: binutils-2.15.91.0.2-ia64-linkorder.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -70,6 +71,7 @@ addresses to file and line).
 %patch16 -p0 -b .ppc64-srec~
 %patch17 -p0 -b .ppc64-ld-dotsyms~
 %patch18 -p0 -b .ppc64-killdotsyms5~
+%patch19 -p0 -b .ia64-linkorder~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -178,6 +180,10 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Wed Aug 16 2004 Jakub Jelinek <jakub@redhat.com> 2.15.91.0.2-8
+- fix linker segfaults on input objects with SHF_LINK_ORDER with
+  incorrect sh_link (H.J.Lu, Nick Clifton, #130198, BZ #290)
+
 * Wed Aug 16 2004 Jakub Jelinek <jakub@redhat.com> 2.15.91.0.2-7
 - resolve all undefined ppc64 .* syms to the function bodies through
   .opd, not just those used in brach instructions (Alan Modra)
