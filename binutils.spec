@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.15.94.0.2
-Release: 4
+Version: 2.15.94.0.2.2
+Release: 1
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -17,6 +17,7 @@ Patch8: binutils-2.15.94.0.2-strip-dynamic.patch
 Patch9: binutils-2.15.93.0.2-readelf-overflows.patch
 Patch10: binutils-2.15.94.0.2-gcc4.patch
 Patch11: binutils-2.15.94.0.2-arhdr.patch
+Patch12: binutils-2.15.94.0.2-ld-speedup.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -57,6 +58,7 @@ addresses to file and line).
 %patch9 -p0 -b .readelf-overflows~
 %patch10 -p0 -b .gcc4~
 %patch11 -p0 -b .arhdr~
+%patch12 -p0 -b .ld-speedup~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -165,6 +167,10 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Tue Mar 29 2005 Jakub Jelinek <jakub@redhat.com> 2.15.94.0.2.2-1
+- update to 2.15.94.0.2.2
+- speed up walk_wild_section (Robert O'Callahan)
+
 * Mon Mar  7 2005 Jakub Jelinek <jakub@redhat.com> 2.15.94.0.2-4
 - rebuilt with GCC 4
 
