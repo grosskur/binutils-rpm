@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.15.92.0.2
-Release: 5
+Release: 6
 Copyright: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -18,6 +18,7 @@ Patch9: binutils-2.15.92.0.2-ppc-tlbie.patch
 Patch10: binutils-2.15.92.0.2-strings.patch
 Patch11: binutils-2.15.92.0.2-comdat-linkonce-mix.patch
 Patch12: binutils-2.15.92.0.2-justsymbols.patch
+Patch13: binutils-2.15.92.0.2-ar-xo.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -58,6 +59,7 @@ addresses to file and line).
 %patch10 -p0 -b .strings~
 %patch11 -p0 -b .comdat-linkonce-mix~
 %patch12 -p0 -b .justsymbols~
+%patch13 -p0 -b .ar-xo~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -167,6 +169,9 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Wed Oct 27 2004 Jakub Jelinek <jakub@redhat.com> 2.15.92.0.2-6
+- fix ar xo (#104344)
+
 * Wed Oct 20 2004 Jakub Jelinek <jakub@redhat.com> 2.15.92.0.2-5
 - fix --just-symbols on ppc64 (Alan Modra, #135498)
 
