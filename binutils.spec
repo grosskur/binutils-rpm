@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.11.90.0.8
-Release: 9
+Release: 12
 Copyright: GPL
 Group: Development/Tools
 URL: http://sourceware.cygnus.com/binutils
@@ -16,6 +16,13 @@ Patch7: binutils-2.11.90.0.8-ia64funcsize.patch
 Patch8: binutils-2.11.90.0.8-combreloc-default.patch
 Patch9: binutils-2.11.90.0.8-ia64unwind.patch
 Patch10: binutils-2.11.90.0.8-alpharelative.patch
+Patch11: binutils-2.11.90.0.8-sparc.patch
+Patch12: binutils-2.11.90.0.8-sparc2.patch
+Patch13: binutils-2.11.90.0.8-sparc3.patch
+Patch14: binutils-2.11.90.0.8-ia64iplt.patch
+Patch15: binutils-2.11.90.0.8-secflag.patch
+Patch16: binutils-2.11.90.0.8-secflag2.patch
+Patch17: binutils-2.11.90.0.8-combrelocplt.patch
 Buildroot: /var/tmp/binutils-root
 Prereq: /sbin/install-info
 %ifarch ia64
@@ -48,6 +55,13 @@ addresses to file and line).
 %endif
 %patch9 -p0 -b .ia64unwind
 %patch10 -p0 -b .alpharelative
+%patch11 -p0 -b .sparc
+%patch12 -p0 -b .sparc2
+%patch13 -p0 -b .sparc3
+%patch14 -p0 -b .ia64iplt
+%patch15 -p0 -b .secflag
+%patch16 -p0 -b .secflag2
+%patch17 -p0 -b .combrelocplt
 mv -f ld/Makefile.in ld/Makefile.in.tmp
 sed -e '/^ALL_EMULATIONS/s/eelf_i386_chaos.o/& eelf_i386_glibc21.o/' < ld/Makefile.in.tmp > ld/Makefile.in
 rm -f ld/Makefile.in.tmp
@@ -110,6 +124,22 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Wed Sep 26 2001 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-12
+- on IA-64, don't mix R_IA64_IPLTLSB relocs with non-PLT relocs in
+  .rela.dyn section.
+
+* Tue Sep 25 2001 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-11
+- add iplt support for IA-64 (Richard Henderson)
+- switch to new section flags for SHF_MERGE and SHF_STRINGS, put
+  in compatibility code
+- "s" section flag for small data sections on IA-64 and Alpha
+  (Richard Henderson)
+- fix sparc64 .plt[32768+] handling
+- don't emit .rela.stab on sparc
+
+* Mon Sep 10 2001 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-10
+- fix SHF_MERGE on Sparc
+
 * Fri Aug 31 2001 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-9
 - on Alpha, copy *r_offset to R_ALPHA_RELATIVE's r_addend
 
