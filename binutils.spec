@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.15.92.0.2
-Release: 3
+Release: 4
 Copyright: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -16,6 +16,7 @@ Patch7: binutils-2.15.92.0.2-elfvsb-test.patch
 Patch8: binutils-2.15.92.0.2-prelink-strip.patch
 Patch9: binutils-2.15.92.0.2-ppc-tlbie.patch
 Patch10: binutils-2.15.92.0.2-strings.patch
+Patch11: binutils-2.15.92.0.2-comdat-linkonce-mix.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -54,6 +55,7 @@ addresses to file and line).
 %patch8 -p0 -b .prelink-strip~
 %patch9 -p0 -b .ppc-tlbie~
 %patch10 -p0 -b .strings~
+%patch11 -p0 -b .comdat-linkonce-mix~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -163,6 +165,10 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Fri Oct 15 2004 Jakub Jelinek <jakub@redhat.com> 2.15.92.0.2-4
+- fix code detecting matching linkonce and single member comdat
+  group sections (#133078)
+
 * Mon Oct 11 2004 Jakub Jelinek <jakub@redhat.com> 2.15.92.0.2-3
 - revert Sep 09 change to make ppc L second argument e.g. for tlbie
   non-optional
