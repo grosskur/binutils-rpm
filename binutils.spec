@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.15.90.0.3
-Release: 7
+Release: 8
 Copyright: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -21,7 +21,7 @@ Patch12: binutils-2.15.90.0.3-double+-.patch
 Patch13: binutils-2.15.90.0.3-ia64-lib64.patch
 
 Buildroot: /var/tmp/binutils-root
-BuildRequires: texinfo >= 4.0, dejagnu, gettext
+BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex
 Prereq: /sbin/install-info
 %ifarch ia64
 Obsoletes: gnupro
@@ -168,6 +168,11 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Tue Jun 15 2004 Elliot Lee <sopwith@redhat.com>
+- rebuilt
+
+- BuildRequire flex (#117763)
+
 * Wed May 19 2004 Jakub Jelinek <jakub@redhat.com> 2.15.90.0.3-7
 - use lib64 instead of lib directories on ia64 if %%{_lib} is
   set to lib64 by rpm
