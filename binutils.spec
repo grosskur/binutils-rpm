@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.15.92.0.2
-Release: 10
+Release: 11
 Copyright: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -177,6 +177,9 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Tue Dec 14 2004 Jakub Jelinek <jakub@redhat.com> 2.15.92.0.2-11
+- fix a longstanding -z relro bug
+
 * Mon Dec 13 2004 Jakub Jelinek <jakub@redhat.com> 2.15.92.0.2-10
 - avoid unnecessary gap with -z relro showing on i686 libc.so
 - ppc64 --emit-relocs fix (Alan Modra)
