@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.15.92.0.2
-Release: 1
+Release: 2
 Copyright: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -156,7 +156,7 @@ fi
 %{_infodir}/*info*
 
 %changelog
-* Mon Oct  4 2004 Jakub Jelinek <jakub@redhat.com> 2.15.92.0.2-1
+* Mon Oct  4 2004 Jakub Jelinek <jakub@redhat.com> 2.15.92.0.2-2
 - update to 2.15.92.0.2
 - change ld's ld.so.conf parser to match ldconfig's (#129340)
 
