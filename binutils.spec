@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.14.90.0.6
-Release: 3
+Release: 4
 Copyright: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -17,6 +17,8 @@ Patch7: binutils-2.14.90.0.6-ia64-sdata.patch
 Patch8: binutils-2.14.90.0.6-merge-speedup.patch
 Patch9: binutils-2.14.90.0.6-ia64-speedup.patch
 Patch10: binutils-2.14.90.0.6-ia64-howto.patch
+Patch11: binutils-2.14.90.0.6-scrubchars1.patch
+Patch12: binutils-2.14.90.0.6-scrubchars2.patch
 
 Buildroot: /var/tmp/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext
@@ -52,6 +54,8 @@ addresses to file and line).
 %patch8 -p0 -b .merge-speedup~
 %patch9 -p0 -b .ia64-speedup~
 %patch10 -p0 -b .ia64-howto~
+%patch11 -p0 -b .scrubchars1~
+%patch12 -p0 -b .scrubchars2~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -161,6 +165,10 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Mon Nov 24 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.6-4
+- fix assembly parsing of foo=(.-bar)/4 (Alan Modra)
+- fix IA-64 assembly parsing of (p7) hint @pause
+
 * Tue Sep 30 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.6-3
 - don't abort on some linker warnings/errors on IA-64
 
