@@ -1,14 +1,20 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.10.91.0.2
-Release: 3
+Version: 2.11.90.0.8
+Release: 8
 Copyright: GPL
 Group: Development/Tools
 URL: http://sourceware.cygnus.com/binutils
-Source: ftp://ftp.valinux.com/pub/support/hjl/binutils/binutils-%{version}.tar.bz2
+Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
 Patch1: binutils-2.10.1.0.7-oformat.patch
-Patch2: binutils-2.10.91.0.2-glibc21.patch
-Patch3: binutils-2.10.91.0.2-bgroup.patch
+Patch2: binutils-2.11.90.0.4-glibc21.patch
+Patch3: binutils-2.11.90.0.8-combreloc.patch
+Patch4: binutils-2.11.90.0.8-alpha.patch
+Patch5: binutils-2.11.90.0.8-orphan.patch
+Patch6: binutils-2.11.90.0.8-orphan2.patch
+Patch7: binutils-2.11.90.0.8-ia64funcsize.patch
+Patch8: binutils-2.11.90.0.8-combreloc-default.patch
+Patch9: binutils-2.11.90.0.8-ia64unwind.patch
 Buildroot: /var/tmp/binutils-root
 Prereq: /sbin/install-info
 %ifarch ia64
@@ -16,31 +22,39 @@ Obsoletes: gnupro
 %endif
 
 %description
-Binutils is a collection of binary utilities, including ar (for creating,
-modifying and extracting from archives), nm (for listing symbols from
-object files), objcopy (for copying and translating object files),
-objdump (for displaying information from object files), ranlib (for
-generating an index for the contents of an archive), size (for listing
-the section sizes of an object or archive file), strings (for listing
-printable strings from files), strip (for discarding symbols), c++filt
-(a filter for demangling encoded C++ symbols), addr2line (for converting
-addresses to file and line), and nlmconv (for converting object code into
-an NLM). 
-
-Install binutils if you need to perform any of these types of actions on
-binary files.  Most programmers will want to install binutils.
+Binutils is a collection of binary utilities, including ar (for
+creating, modifying and extracting from archives), as (a family of GNU
+assemblers), gprof (for displaying call graph profile data), ld (the
+GNU linker), nm (for listing symbols from object files), objcopy (for
+copying and translating object files), objdump (for displaying
+information from object files), ranlib (for generating an index for
+the contents of an archive), size (for listing the section sizes of an
+object or archive file), strings (for listing printable strings from
+files), strip (for discarding symbols), and addr2line (for converting
+addresses to file and line).
 
 %prep
 %setup -q
 %patch1 -p0 -b .oformat
 %patch2 -p1 -b .glibc21
-%patch3 -p1 -b .bgroup
+%patch3 -p0 -b .combreloc
+%patch4 -p0 -b .alpha
+%patch5 -p0 -b .orphan
+%patch6 -p0 -b .orphan2
+%patch7 -p0 -b .ia64funcsize
+%ifarch i386 alpha ia64 sparc sparc64
+%patch8 -p0 -b .combreloc-default
+%endif
+%patch9 -p0 -b .ia64unwind
+mv -f ld/Makefile.in ld/Makefile.in.tmp
+sed -e '/^ALL_EMULATIONS/s/eelf_i386_chaos.o/& eelf_i386_glibc21.o/' < ld/Makefile.in.tmp > ld/Makefile.in
+rm -f ld/Makefile.in.tmp
 
 %build
 # Binutils come with its own custom libtool
 %define __libtoolize echo
 %configure --enable-shared
-make tooldir=%{_prefix}usr all info
+make tooldir=%{_prefix} all info
 
 %install
 rm -rf ${RPM_BUILD_ROOT}
@@ -94,6 +108,43 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Thu Aug 30 2001 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-8
+- on IA-64, put crtend{,S}.o's .IA_64.unwind section last in
+  .IA_64.unwind output section (for compatibility with 7.1 eh)
+
+* Fri Aug 24 2001 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-7
+- put RELATIVE relocs first, not last
+- enable -z combreloc by default on IA-{32,64}, Alpha, Sparc*
+
+* Thu Aug 23 2001 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-6
+- support for -z combreloc
+- remove .dynamic patch, -z combreloc patch does this better
+- set STT_FUNC default symbol sizes in .endp directive on IA-64
+
+* Mon Jul 16 2001 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-5
+- fix last patch (H.J.Lu)
+
+* Fri Jul 13 2001 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-4
+- fix placing of orphan sections
+
+* Sat Jun 23 2001 Jakub Jelinek <jakub@redhat.com>
+- fix SHF_MERGE support on Alpha
+
+* Fri Jun  8 2001 Jakub Jelinek <jakub@redhat.com>
+- 2.11.90.0.8
+  - some SHF_MERGE suport fixes
+- don't build with tooldir /usrusr instead of /usr (#40937)
+- reserve few .dynamic entries for prelinking
+
+* Mon Apr 16 2001 Jakub Jelinek <jakub@redhat.com>
+- 2.11.90.0.5
+  - SHF_MERGE support
+
+* Tue Apr  3 2001 Jakub Jelinek <jakub@redhat.com>
+- 2.11.90.0.4
+  - fix uleb128 support, so that CVS gcc bootstraps
+  - some ia64 fixes
+
 * Mon Mar 19 2001 Jakub Jelinek <jakub@redhat.com>
 - add -Bgroup support from Ulrich Drepper
 
