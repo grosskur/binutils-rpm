@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.15.91.0.2
-Release: 5
+Release: 6
 Copyright: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -22,6 +22,7 @@ Patch13: binutils-2.15.91.0.2-ia64unw.patch
 Patch14: binutils-2.15.91.0.2-ppc64-crossref.patch
 Patch15: binutils-2.15.91.0.2-ppc64-selective.patch
 Patch16: binutils-2.15.91.0.2-ppc64-srec.patch
+Patch17: binutils-2.15.91.0.2-ppc64-ld-dotsyms.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -66,6 +67,7 @@ addresses to file and line).
 %patch14 -p0 -b .ppc64-crossref~
 %patch15 -p0 -b .ppc64-selective~
 %patch16 -p0 -b .ppc64-srec~
+%patch17 -p0 -b .ppc64-ld-dotsyms~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -174,6 +176,9 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Tue Aug 16 2004 Jakub Jelinek <jakub@redhat.com> 2.15.91.0.2-6
+- fix ppc64 ld --dotsyms (Alan Modra)
+
 * Tue Aug 16 2004 Jakub Jelinek <jakub@redhat.com> 2.15.91.0.2-5
 - various ppc64 make check fixes when using non-dot-syms gcc (Alan Modra)
 - fix --gc-sections
