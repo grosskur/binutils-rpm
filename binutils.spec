@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.11.90.0.8
-Release: 12
+Release: 13
 Copyright: GPL
 Group: Development/Tools
 URL: http://sourceware.cygnus.com/binutils
@@ -23,6 +23,7 @@ Patch14: binutils-2.11.90.0.8-ia64iplt.patch
 Patch15: binutils-2.11.90.0.8-secflag.patch
 Patch16: binutils-2.11.90.0.8-secflag2.patch
 Patch17: binutils-2.11.90.0.8-combrelocplt.patch
+Patch18: binutils-2.11.90.0.8-disable-zdefs.patch
 Buildroot: /var/tmp/binutils-root
 Prereq: /sbin/install-info
 %ifarch ia64
@@ -62,6 +63,7 @@ addresses to file and line).
 %patch15 -p0 -b .secflag
 %patch16 -p0 -b .secflag2
 %patch17 -p0 -b .combrelocplt
+%patch18 -p0 -b .disable-zdefs
 mv -f ld/Makefile.in ld/Makefile.in.tmp
 sed -e '/^ALL_EMULATIONS/s/eelf_i386_chaos.o/& eelf_i386_glibc21.o/' < ld/Makefile.in.tmp > ld/Makefile.in
 rm -f ld/Makefile.in.tmp
@@ -124,6 +126,9 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Thu May 16 2002 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-13
+- silently disable -z defs (#64733)
+
 * Wed Sep 26 2001 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-12
 - on IA-64, don't mix R_IA64_IPLTLSB relocs with non-PLT relocs in
   .rela.dyn section.
