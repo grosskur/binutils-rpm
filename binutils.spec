@@ -15,6 +15,8 @@ Patch6: binutils-2.15.94.0.2-ppc64-noteGNUstack.patch
 Patch7: binutils-2.15.94.0.2-script-as-needed.patch
 Patch8: binutils-2.15.94.0.2-strip-dynamic.patch
 Patch9: binutils-2.15.93.0.2-readelf-overflows.patch
+Patch10: binutils-2.15.94.0.2-gcc4.patch
+Patch11: binutils-2.15.94.0.2-arhdr.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -53,6 +55,8 @@ addresses to file and line).
 %patch7 -p0 -b .script-as-needed~
 %patch8 -p0 -b .strip-dynamic~
 %patch9 -p0 -b .readelf-overflows~
+%patch10 -p0 -b .gcc4~
+%patch11 -p0 -b .arhdr~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -161,7 +165,7 @@ fi
 %{_infodir}/*info*
 
 %changelog
-* Sat Mar  5 2005 Jakub Jelinek <jakub@redhat.com> 2.15.94.0.2-4
+* Mon Mar  7 2005 Jakub Jelinek <jakub@redhat.com> 2.15.94.0.2-4
 - rebuilt with GCC 4
 
 * Mon Feb 28 2005 Jakub Jelinek <jakub@redhat.com> 2.15.94.0.2-3
