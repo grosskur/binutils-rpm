@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.11.93.0.2
-Release: 11
+Release: 12
 Copyright: GPL
 Group: Development/Tools
 URL: http://sourceware.cygnus.com/binutils
@@ -20,6 +20,9 @@ Patch11: binutils-2.11.93.0.2-SHN_UNDEF.patch
 Patch12: binutils-2.11.93.0.2-dataseg-align3.patch
 Patch13: binutils-2.11.93.0.2-ia64unw.patch
 Patch14: binutils-2.11.93.0.2-sparc-disp.patch
+Patch15: binutils-2.11.93.0.2-sparc-hidden.patch
+Patch16: binutils-2.11.93.0.2-sparc-nonpic.patch
+Patch17: binutils-2.11.93.0.2-eh_frame2.patch
 
 Buildroot: /var/tmp/binutils-root
 BuildRequires: texinfo >= 4.0
@@ -58,6 +61,9 @@ addresses to file and line).
 %patch12 -p0 -b .dataseg-align3
 %patch13 -p0 -b .ia64unw
 %patch14 -p0 -b .sparc-disp
+%patch15 -p0 -b .sparc-hidden
+%patch16 -p0 -b .sparc-nonpic
+%patch17 -p0 -b .eh_frame2
 
 %build
 # Binutils come with its own custom libtool
@@ -119,6 +125,12 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Mon Apr 29 2002 Jakub Jelinek <jakub@redhat.com> 2.11.93.0.2-12
+- fix .hidden handling on SPARC (Richard Henderson)
+- don't crash when linking -shared non-pic code with SHF_MERGE
+- fix .eh_frame_hdr for DW_EH_PE_aligned
+- correctly adjust DW_EH_PE_pcrel encoded personalities in CIEs
+
 * Fri Apr  5 2002 Jakub Jelinek <jakub@redhat.com> 2.11.93.0.2-11
 - don't emit dynamic R_SPARC_DISP* relocs against STV_HIDDEN symbols
   into shared libraries
