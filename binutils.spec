@@ -1,31 +1,25 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.13.90.0.18
-Release: 9
+Version: 2.14.90.0.6
+Release: 3
 Copyright: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-Patch0: binutils-2.13.90.0.18-20030206.patch.bz2
-Patch1: binutils-2.13.90.0.18-sparc-nonpic.patch
-Patch2: binutils-2.13.90.0.18-ia64-brl.patch
-Patch3: binutils-2.13.90.0.18-eh-frame-ro.patch
-Patch4: binutils-2.13.90.0.18-array-sects-compat.patch
-Patch5: binutils-2.13.90.0.18-ltconfig-multilib.patch
-Patch6: binutils-2.13.90.0.18-searchdir.patch
-Patch7: binutils-2.13.90.0.18-libpath-suffix.patch
-Patch8: binutils-2.13.90.0.18-alpha-relax.patch
-Patch9: binutils-2.13.90.0.18-s390-noreladyn.patch
-Patch10: binutils-2.13.90.0.18-eh-frame-hdr.patch
-Patch11: binutils-2.13.90.0.18-compatsym.patch
-Patch12: binutils-2.13.90.0.18-ppc64-tls1.patch
-Patch13: binutils-2.13.90.0.18-ppc64-tls2.patch
-Patch14: binutils-2.13.90.0.18-s390-file-loc.patch
-Patch15: binutils-2.13.90.0.18-sub-same.patch
-Patch16: binutils-2.13.90.0.18-ld-r.patch
+Patch0: binutils-2.14.90.0.6-sparc-nonpic.patch
+Patch1: binutils-2.14.90.0.6-eh-frame-ro.patch
+Patch2: binutils-2.14.90.0.6-ltconfig-multilib.patch
+Patch3: binutils-2.14.90.0.6-s390-pie.patch
+Patch4: binutils-2.14.90.0.6-ppc64-pie.patch
+Patch5: binutils-2.14.90.0.6-place-orphan.patch
+Patch6: binutils-2.14.90.0.6-sparc-cfi.patch
+Patch7: binutils-2.14.90.0.6-ia64-sdata.patch
+Patch8: binutils-2.14.90.0.6-merge-speedup.patch
+Patch9: binutils-2.14.90.0.6-ia64-speedup.patch
+Patch10: binutils-2.14.90.0.6-ia64-howto.patch
 
 Buildroot: /var/tmp/binutils-root
-BuildRequires: texinfo >= 4.0, dejagnu
+BuildRequires: texinfo >= 4.0, dejagnu, gettext
 Prereq: /sbin/install-info
 %ifarch ia64
 Obsoletes: gnupro
@@ -47,25 +41,22 @@ addresses to file and line).
 
 %prep
 %setup -q
-%patch0 -p0 -b .20030206~
-%patch1 -p0 -b .sparc-nonpic~
-%patch2 -p0 -b .ia64-brl~
-%patch3 -p0 -b .eh-frame-ro~
-%ifarch %{ix86}
-%patch4 -p0 -b .array-sects-compat~
-%endif
-%patch5 -p0 -b .ltconfig-multilib~
-%patch6 -p0 -b .searchdir~
-%patch7 -p0 -b .libpath-suffix~
-%patch8 -p0 -b .alpha-relax~
-%patch9 -p0 -b .s390-noreladyn~
-%patch10 -p0 -b .eh-frame-hdr~
-%patch11 -p0 -b .compatsym~
-%patch12 -p0 -b .ppc64-tls1~
-%patch13 -p0 -b .ppc64-tls2~
-%patch14 -p0 -b .s390-file-loc~
-%patch15 -p0 -b .sub-same~
-%patch16 -p0 -b .ld-r~
+%patch0 -p0 -b .sparc-nonpic~
+%patch1 -p0 -b .eh-frame-ro~
+%patch2 -p0 -b .ltconfig-multilib~
+%patch3 -p0 -b .s390-pie~
+%patch4 -p0 -b .ppc64-pie~
+%patch5 -p0 -b .place-orphan~
+%patch6 -p0 -b .sparc-cfi~
+%patch7 -p0 -b .ia64-sdata~
+%patch8 -p0 -b .merge-speedup~
+%patch9 -p0 -b .ia64-speedup~
+%patch10 -p0 -b .ia64-howto~
+# libtool sucks
+perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
+# LTP sucks
+perl -pi -e 's/i\[3-7\]86/i[34567]86/g' */conf*
+touch */configure
 
 %build
 mkdir build-%{_target_platform}
@@ -84,7 +75,8 @@ CFLAGS="${CFLAGS:-%optflags}" ../configure \
   --libexecdir=%{_libexecdir} --localstatedir=%{_localstatedir} \
   --sharedstatedir=%{_sharedstatedir} --mandir=%{_mandir} \
   --infodir=%{_infodir} --enable-shared $CARGS
-make %{_smp_mflags} tooldir=%{_prefix} all info
+make %{_smp_mflags} tooldir=%{_prefix} all
+make %{_smp_mflags} tooldir=%{_prefix} info
 echo ====================TESTING=========================
 make -k check || :
 echo ====================TESTING END=====================
@@ -98,7 +90,12 @@ cd build-%{_target_platform}
 make prefix=%{buildroot}%{_prefix} infodir=%{buildroot}%{_infodir} install-info
 gzip -q9f %{buildroot}%{_infodir}/*.info*
 
-#install -m 644 libiberty/libiberty.a %{buildroot}%{_prefix}/%{_lib}
+# Rebuild libiberty.a with -fPIC
+make -C libiberty clean
+make CFLAGS="-g -fPIC $RPM_OPT_FLAGS" -C libiberty
+make CFLAGS="-g -fPIC $RPM_OPT_FLAGS" -C libiberty old_demangler
+
+install -m 644 libiberty/libiberty.a %{buildroot}%{_prefix}/%{_lib}
 install -m 644 ../include/libiberty.h %{buildroot}%{_prefix}/include
 # Remove Windows/Novell only man pages
 rm -f %{buildroot}%{_mandir}/man1/{dlltool,nlmconv,windres}*
@@ -108,6 +105,9 @@ chmod +x %{buildroot}%{_prefix}/%{_lib}/lib*.so*
 # Prevent programs to link against libbfd and libopcodes dynamically,
 # they are changing far too often
 rm -f %{buildroot}%{_prefix}/%{_lib}/lib{bfd,opcodes}.so
+
+# Remove libtool files, which reference the .so libs
+rm -f %{buildroot}%{_prefix}/%{_lib}/lib{bfd,opcodes}.la
 
 # This one comes from gcc
 rm -f %{buildroot}%{_prefix}/bin/c++filt
@@ -120,10 +120,12 @@ cd ..
 %find_lang bfd
 %find_lang gas
 %find_lang ld
+%find_lang gprof
 cat opcodes.lang >> binutils.lang
 cat bfd.lang >> binutils.lang
 cat gas.lang >> binutils.lang
 cat ld.lang >> binutils.lang
+cat gprof.lang >> binutils.lang
 
 %clean
 rm -rf %{buildroot}
@@ -155,10 +157,172 @@ fi
 %{_prefix}/bin/*
 %{_mandir}/man1/*
 %{_prefix}/include/*
-%{_prefix}/%{_lib}/*
+%{_prefix}/%{_lib}/lib*
 %{_infodir}/*info*
 
 %changelog
+* Tue Sep 30 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.6-3
+- don't abort on some linker warnings/errors on IA-64
+
+* Sat Sep 20 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.6-2
+- fix up merge2.s to use .p2align instead of .align
+
+* Sat Sep 20 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.6-1
+- update to 2.14.90.0.6
+- speed up string merging (Lars Knoll, Michael Matz, Alan Modra)
+- speed up IA-64 local symbol handling during linking
+
+* Fri Sep  5 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.5-7
+- avoid ld -s segfaults introduced in 2.14.90.0.5-5 (Dmitry V. Levin,
+  #103180)
+
+* Fri Aug 29 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.5-6
+- build old demangler into libiberty.a (#102268)
+- SPARC .cfi* support
+
+* Tue Aug  5 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.5-5
+- fix orphan section placement
+
+* Tue Jul 29 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.5-4
+- fix ppc64 elfvsb linker tests
+- some more 64-bit cleanliness fixes, give ppc64 fdesc symbols
+  type and size (Alan Modra)
+
+* Tue Jul 29 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.5-3
+- fix 64-bit unclean code in ppc-opc.c
+
+* Mon Jul 28 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.5-2
+- fix 64-bit unclean code in tc-ppc.c
+
+* Mon Jul 28 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.5-1
+- update to 2.14.90.0.5
+- fix ld -r on ppc64 (Alan Modra)
+
+* Fri Jul 18 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.4-23
+- rebuilt
+
+* Thu Jul 17 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.4-22
+- fix elfNN_ia64_dynamic_symbol_p (Richard Henderson, #86661)
+- don't access memory beyond what was allocated in readelf
+  (Richard Henderson)
+
+* Thu Jul 10 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.4-21
+- add .cfi_* support on ppc{,64} and s390{,x}
+
+* Tue Jul  8 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.4-20
+- remove lib{bfd,opcodes}.la (#98190)
+
+* Mon Jul  7 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.4-19
+- fix -pie support on amd64, s390, s390x and ppc64
+- issue relocation overflow errors for s390/s390x -fpic code when
+  accessing .got slots above 4096 bytes from .got start
+
+* Thu Jul  3 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.4-18
+- rebuilt
+
+* Thu Jul  3 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.4-17
+- fix ia64 -pie support
+- require no undefined non-weak symbols in PIEs like required for normal
+  binaries
+
+* Wed Jul  2 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.4-16
+- fix readelf -d on IA-64
+- build libiberty.a with -fPIC, so that it can be lined into shared
+  libraries
+
+* Wed Jun 25 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.4-15
+- rebuilt
+
+* Wed Jun 25 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.4-14
+- added support for Intel Prescott instructions
+- fix hint@pause for ia64
+- add workaround for LTP sillyness (#97934)
+
+* Wed Jun 18 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.4-13
+- update CFI stuff to 2003-06-18
+- make sure .eh_frame is aligned to 8 bytes on 64-bit arches,
+  remove padding within one .eh_frame section
+
+* Tue Jun 17 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.4-12
+- rebuilt
+
+* Tue Jun 17 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.4-11
+- one more fix for the same patch
+
+* Tue Jun 17 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.4-10
+- fix previous patch
+
+* Mon Jun 16 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.4-9
+- ensure R_PPC64_{RELATIVE,ADDR64} have *r_offset == r_addend
+  and the other relocs have *r_offset == 0
+
+* Tue Jun 10 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.4-8
+- remove some unnecessary provides in ppc64 linker script
+  which were causing e.g. empty .ctors/.dtors section creation
+
+* Fri Jun  6 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.4-7
+- some CFI updates/fixes
+- don't create dynamic relocations against symbols defined in PIE
+  exported from its .dynsym
+
+* Wed Jun  4 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.4-6
+- update gas to 20030604
+- PT_GNU_STACK support
+
+* Mon Jun  2 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.4-5
+- buildrequire gettext (#91838)
+
+* Sat May 31 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.4-4
+- fix shared libraries with >= 8192 .plt slots on ppc32
+
+* Thu May 29 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.4-3
+- rebuilt
+
+* Thu May 29 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.4-2
+- rename ld --dynamic option to --pic-executable or --pie
+- fix ld --help output
+- document --pie/--pic-executable in ld.info and ld.1
+
+* Wed May 28 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.4-1
+- update to 2.14.90.0.4-1
+- gas CFI updates (Richard Henderson)
+- dynamic executables (Ulrich Drepper)
+
+* Tue May 20 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.2-2
+- fix ELF visibility handling
+- tidy plt entries on IA-32, ppc and ppc64
+
+* Mon May 19 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.2-1
+- update to 2.14.90.0.2-1
+
+* Tue May 13 2003 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.20-8
+- fix bfd_elf_hash on 64-bit arches (Andrew Haley)
+
+* Wed Apr 30 2003 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.20-7
+- rebuilt
+
+* Mon Apr 14 2003 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.20-6
+- optimize DW_CFA_advance_loc4 in gas even if there is 'z' augmentation
+  with size 0 in FDE
+
+* Fri Apr 11 2003 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.20-5
+- fix SPARC build
+
+* Thu Apr  3 2003 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.20-4
+- fix ppc32 plt reference counting
+- don't include %{_prefix}/%{_lib}/debug in the non-debuginfo package
+  (#87729)
+
+* Mon Mar 31 2003 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.20-3
+- make elf64ppc target native extra on ppc and elf32ppc native extra
+  on ppc64.
+
+* Fri Mar 28 2003 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.20-2
+- fix TLS on IA-64 with ld relaxation
+
+* Sat Mar 22 2003 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.20-1
+- update to 2.13.90.0.20
+
 * Mon Feb 24 2003 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.18-9
 - rebuilt
 
