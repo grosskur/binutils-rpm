@@ -1,11 +1,14 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.10.0.18
-Release: 1
+Release: 3
 Copyright: GPL
 Group: Development/Tools
 URL: http://sourceware.cygnus.com/binutils
 Source: ftp://ftp.valinux.com/pub/support/hjl/binutils/binutils-%{version}.tar.bz2
+Patch1: binutils-sparc-gas.patch
+Patch2: binutils-sparc64-bfd.patch
+Patch3: binutils-alpha-ld-relax.patch
 Buildroot: /var/tmp/binutils-root
 ExcludeArch: ia64
 
@@ -26,6 +29,9 @@ binary files.  Most programmers will want to install binutils.
 
 %prep
 %setup -q
+%patch1 -p0
+%patch2 -p0
+%patch3 -p0
 
 %build
 ADDITIONAL_TARGETS=""
@@ -90,6 +96,12 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Fri Sep 15 2000 Jakub Jelinek <jakub@redhat.com>
+- and one more alpha patch
+
+* Fri Sep 15 2000 Jakub Jelinek <jakub@redhat.com>
+- two sparc patches
+
 * Mon Jul 24 2000 Jakub Jelinek <jakub@redhat.com>
 - 2.10.0.18
 
