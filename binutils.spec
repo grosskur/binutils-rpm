@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.15.91.0.2
-Release: 4
+Release: 5
 Copyright: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -17,6 +17,11 @@ Patch8: binutils-2.15.91.0.2-ppc64-killdotsyms2.patch
 Patch9: binutils-2.15.91.0.2-ppc64-killdotsyms3.patch
 Patch10: binutils-2.15.91.0.2-ppc64-killdotsyms4.patch
 Patch11: binutils-2.15.91.0.2-elfvsb-test.patch
+Patch12: binutils-2.15.91.0.2-gcsections.patch
+Patch13: binutils-2.15.91.0.2-ia64unw.patch
+Patch14: binutils-2.15.91.0.2-ppc64-crossref.patch
+Patch15: binutils-2.15.91.0.2-ppc64-selective.patch
+Patch16: binutils-2.15.91.0.2-ppc64-srec.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -56,6 +61,11 @@ addresses to file and line).
 %patch9 -p0 -b .ppc64-killdotsyms3~
 %patch10 -p0 -b .ppc64-killdotsyms4~
 %patch11 -p0 -b .elfvsb-test~
+%patch12 -p0 -b .gcsections~
+%patch13 -p0 -b .ia64unw~
+%patch14 -p0 -b .ppc64-crossref~
+%patch15 -p0 -b .ppc64-selective~
+%patch16 -p0 -b .ppc64-srec~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -164,6 +174,12 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Tue Aug 16 2004 Jakub Jelinek <jakub@redhat.com> 2.15.91.0.2-5
+- various ppc64 make check fixes when using non-dot-syms gcc (Alan Modra)
+- fix --gc-sections
+- on ia64 create empty .gnu.linkonce.ia64unw*.* sections for
+  .gnu.linkonce.t.* function doesn't need unwind info
+
 * Mon Aug 16 2004 Jakub Jelinek <jakub@redhat.com> 2.15.91.0.2-4
 - kill ppc64 dot symbols (Alan Modra)
 - objdump -d support for objects without dot symbols
