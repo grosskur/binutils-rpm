@@ -10,7 +10,7 @@ Patch1: binutils-2.15.92.0.2-ltconfig-multilib.patch
 Patch2: binutils-2.15.92.0.2-ppc64-pie.patch
 Patch3: binutils-2.15.92.0.2-place-orphan.patch
 Patch4: binutils-2.15.92.0.2-ia64-lib64.patch
-Patch5: binutils-2.15.91.0.2-relro-fix.patch
+Patch5: binutils-2.15.92.0.2-relro-fix.patch
 Patch6: binutils-2.15.92.0.2-ldsoconf.patch
 
 Buildroot: %{_tmppath}/binutils-root
