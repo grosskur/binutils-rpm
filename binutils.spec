@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.15.92.0.2
-Release: 6
+Release: 10
 Copyright: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -19,6 +19,10 @@ Patch10: binutils-2.15.92.0.2-strings.patch
 Patch11: binutils-2.15.92.0.2-comdat-linkonce-mix.patch
 Patch12: binutils-2.15.92.0.2-justsymbols.patch
 Patch13: binutils-2.15.92.0.2-ar-xo.patch
+Patch14: binutils-2.15.92.0.2-eh-frame-lsda.patch
+Patch15: binutils-2.15.92.0.2-stt_section-abs.patch
+Patch16: binutils-2.15.92.0.2-ppc64-emit-relocs.patch
+Patch17: binutils-2.15.92.0.2-relro-gap.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -60,6 +64,10 @@ addresses to file and line).
 %patch11 -p0 -b .comdat-linkonce-mix~
 %patch12 -p0 -b .justsymbols~
 %patch13 -p0 -b .ar-xo~
+%patch14 -p0 -b .eh-frame-lsda~
+%patch15 -p0 -b .stt_section-abs~
+%patch16 -p0 -b .ppc64-emit-relocs~
+%patch17 -p0 -b .relro-gap~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -169,7 +177,15 @@ fi
 %{_infodir}/*info*
 
 %changelog
-* Wed Oct 27 2004 Jakub Jelinek <jakub@redhat.com> 2.15.92.0.2-6
+* Mon Dec 13 2004 Jakub Jelinek <jakub@redhat.com> 2.15.92.0.2-10
+- avoid unnecessary gap with -z relro showing on i686 libc.so
+- ppc64 --emit-relocs fix (Alan Modra)
+- don't crash if STT_SECTION symbol has incorrect st_shndx (e.g. SHN_ABS,
+  as created by nasm; #142181)
+- don't try to make absptr LSDAs relative if they don't have relocations
+  against them (Alan Modra, #141162)
+
+* Wed Oct 27 2004 Jakub Jelinek <jakub@redhat.com> 2.15.92.0.2-5.EL4
 - fix ar xo (#104344)
 
 * Wed Oct 20 2004 Jakub Jelinek <jakub@redhat.com> 2.15.92.0.2-5
