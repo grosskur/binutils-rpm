@@ -1,31 +1,17 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.15.91.0.2
-Release: 9
+Version: 2.15.92.0.2
+Release: 1
 Copyright: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-Patch1: binutils-2.15.91.0.2-ltconfig-multilib.patch
-Patch2: binutils-2.15.91.0.2-ppc64-pie.patch
-Patch3: binutils-2.15.91.0.2-place-orphan.patch
-Patch4: binutils-2.15.91.0.2-sparc1.patch
-Patch5: binutils-2.15.91.0.2-ia64-lib64.patch
-Patch6: binutils-2.15.91.0.2-x86-64-fnopic.patch
-Patch7: binutils-2.15.91.0.2-ppc64-killdotsyms1.patch
-Patch8: binutils-2.15.91.0.2-ppc64-killdotsyms2.patch
-Patch9: binutils-2.15.91.0.2-ppc64-killdotsyms3.patch
-Patch10: binutils-2.15.91.0.2-ppc64-killdotsyms4.patch
-Patch11: binutils-2.15.91.0.2-elfvsb-test.patch
-Patch12: binutils-2.15.91.0.2-gcsections.patch
-Patch13: binutils-2.15.91.0.2-ia64unw.patch
-Patch14: binutils-2.15.91.0.2-ppc64-crossref.patch
-Patch15: binutils-2.15.91.0.2-ppc64-selective.patch
-Patch16: binutils-2.15.91.0.2-ppc64-srec.patch
-Patch17: binutils-2.15.91.0.2-ppc64-ld-dotsyms.patch
-Patch18: binutils-2.15.91.0.2-ppc64-killdotsyms5.patch
-Patch19: binutils-2.15.91.0.2-ia64-linkorder.patch
-Patch20: binutils-2.15.91.0.2-relro-fix.patch
+Patch1: binutils-2.15.92.0.2-ltconfig-multilib.patch
+Patch2: binutils-2.15.92.0.2-ppc64-pie.patch
+Patch3: binutils-2.15.92.0.2-place-orphan.patch
+Patch4: binutils-2.15.92.0.2-ia64-lib64.patch
+Patch5: binutils-2.15.91.0.2-relro-fix.patch
+Patch6: binutils-2.15.92.0.2-ldsoconf.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -53,27 +39,13 @@ addresses to file and line).
 %patch1 -p0 -b .ltconfig-multilib~
 %patch2 -p0 -b .ppc64-pie~
 %patch3 -p0 -b .place-orphan~
-%patch4 -p0 -b .sparc1~
 %ifarch ia64
 %if "%{_lib}" == "lib64"
-%patch5 -p0 -b .ia64-lib64~
+%patch4 -p0 -b .ia64-lib64~
 %endif
 %endif
-%patch6 -p0 -b .x86-64-fnopic~
-%patch7 -p0 -b .ppc64-killdotsyms1~
-%patch8 -p0 -b .ppc64-killdotsyms2~
-%patch9 -p0 -b .ppc64-killdotsyms3~
-%patch10 -p0 -b .ppc64-killdotsyms4~
-%patch11 -p0 -b .elfvsb-test~
-%patch12 -p0 -b .gcsections~
-%patch13 -p0 -b .ia64unw~
-%patch14 -p0 -b .ppc64-crossref~
-%patch15 -p0 -b .ppc64-selective~
-%patch16 -p0 -b .ppc64-srec~
-%patch17 -p0 -b .ppc64-ld-dotsyms~
-%patch18 -p0 -b .ppc64-killdotsyms5~
-%patch19 -p0 -b .ia64-linkorder~
-%patch20 -p0 -b .relro-fix~
+%patch5 -p0 -b .relro-fix~
+%patch6 -p0 -b .ldsoconf~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -182,6 +154,10 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Mon Oct  4 2004 Jakub Jelinek <jakub@redhat.com> 2.15.92.0.2-1
+- update to 2.15.92.0.2
+- change ld's ld.so.conf parser to match ldconfig's (#129340)
+
 * Mon Sep 20 2004 Jakub Jelinek <jakub@redhat.com> 2.15.91.0.2-9
 - avoid almost 1MB (sparse) gaps in the middle of -z relro
   libraries on x86-64 (Andreas Schwab)
