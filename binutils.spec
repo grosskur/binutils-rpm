@@ -1,14 +1,15 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.12.90.0.4
-Release: 0.02
+Version: 2.13.90.0.2
+Release: 2
 Copyright: GPL
 Group: Development/Tools
-URL: http://sourceware.cygnus.com/binutils
+URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-Patch1: binutils-2.12.90.0.7-glibc21.patch
+Patch1: binutils-2.13.90.0.2-glibc21.patch
 Patch2: binutils-2.11.93.0.2-sparc-nonpic.patch
-Patch3: binutils-2.12.90.0.4-s390-may2002.diff
+Patch3: binutils-2.13.90.0.2-gotpc.patch
+Patch4: binutils-2.13.90.0.2-tpoff32.patch
 
 Buildroot: /var/tmp/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu
@@ -16,6 +17,8 @@ Prereq: /sbin/install-info
 %ifarch ia64
 Obsoletes: gnupro
 %endif
+
+%define _gnu %{nil}
 
 %description
 Binutils is a collection of binary utilities, including ar (for
@@ -32,13 +35,21 @@ addresses to file and line).
 %prep
 %setup -q
 %patch1 -p0 -b .glibc21
+cp -a ld/Makefile.in ld/Makefile.in.tmp
+sed '/^ALL_EMULATIONS/s/eelf_i386_chaos.o/eelf_i386_chaos.o	eelf_i386_glibc21.o/' ld/Makefile.in.tmp > ld/Makefile.in
+rm ld/Makefile.in.tmp
 %patch2 -p0 -b .sparc-nonpic
-%patch3 -p1
+%patch3 -p0 -b .gotpc
+%patch4 -p0 -b .tpoff32
 
 %build
-# Binutils come with its own custom libtool
-%define __libtoolize echo
-%configure --enable-shared
+CFLAGS="${CFLAGS:-%optflags}" ./configure \
+  %{_target_platform} --prefix=%{_prefix} --exec-prefix=%{_exec_prefix} \
+  --bindir=%{_bindir} --sbindir=%{_sbindir} --sysconfdir=%{_sysconfdir} \
+  --datadir=%{_datadir} --includedir=%{_includedir} --libdir=%{_libdir} \
+  --libexecdir=%{_libexecdir} --localstatedir=%{_localstatedir} \
+  --sharedstatedir=%{_sharedstatedir} --mandir=%{_mandir} \
+  --infodir=%{_infodir} --enable-shared
 make tooldir=%{_prefix} all info
 echo ====================TESTING=========================
 make -k check || :
@@ -97,6 +108,26 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Thu Aug  8 2002 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.2-2
+- fix R_386_TPOFF32 addends (#70824)
+
+* Sat Aug  3 2002 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.2-1
+- update to 2.13.90.0.2
+  - fix ld TLS assertion failure (#70084)
+  - fix readelf --debug-dump= handling to match man page and --help
+    (#68997)
+- fix _GLOBAL_OFFSET_TABLE gas handling (#70241)
+
+* Wed Jul 24 2002 Jakub Jelinek <jakub@redhat.com> 2.12.90.0.15-1
+- update to 2.12.90.0.15
+- TLS .tbss fix
+- don't use rpm %%configure macro, it is broken too often (#69366)
+
+* Thu May 30 2002 Jakub Jelinek <jakub@redhat.com> 2.12.90.0.9-1
+- update to 2.12.90.0.9
+  - TLS support
+- remove gasp.info from %%post/%%preun (#65400)
+
 * Mon Apr 29 2002 Jakub Jelinek <jakub@redhat.com> 2.12.90.0.7-1
 - update to 2.12.90.0.7
 - run make check
