@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.14.90.0.8
-Release: 4
+Release: 8.1
 Copyright: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -14,6 +14,9 @@ Patch4: binutils-2.14.90.0.8-place-orphan.patch
 Patch5: binutils-2.14.90.0.8-relro.patch
 Patch6: binutils-2.14.90.0.8-ppc32-common-pagesize.patch
 Patch7: binutils-2.14.90.0.8-ia64-pie.patch
+Patch8: binutils-2.14.90.0.8-sparc32-plt.patch
+Patch9: binutils-2.14.90.0.8-ppc32-pie.patch
+Patch10: binutils-2.14.90.0.8-dt-bind-now.patch
 
 Buildroot: /var/tmp/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext
@@ -46,6 +49,9 @@ addresses to file and line).
 %patch5 -p0 -b .relro~
 %patch6 -p0 -b .ppc32-common-pagesize~
 %patch7 -p0 -b .ia64-pie~
+%patch8 -p0 -b .sparc32-plt~
+%patch9 -p0 -b .ppc32-pie~
+%patch10 -p0 -b .dt-bind-now~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -154,6 +160,23 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Tue Mar 02 2004 Elliot Lee <sopwith@redhat.com>
+- rebuilt
+
+* Sat Feb 21 2004 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.8-8
+- with -z now without --enable-new-dtags create DT_BIND_NOW
+  dynamic entry in addition to DT_FLAGS_1 with DF_1_NOW bit set
+
+* Fri Feb 20 2004 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.8-7
+- fix -pie on ppc32
+
+* Fri Feb 20 2004 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.8-6
+- clear .plt sh_entsize on sparc32
+- put whole .got into relro area with -z now -z relro
+
+* Fri Feb 13 2004 Elliot Lee <sopwith@redhat.com>
+- rebuilt
+
 * Thu Jan 22 2004 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.8-4
 - fix -pie on IA64
 
