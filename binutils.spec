@@ -1,29 +1,18 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.11.90.0.8
-Release: 14
+Version: 2.11.90.0.27
+Release: 0.03
 Copyright: GPL
 Group: Development/Tools
 URL: http://sourceware.cygnus.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
 Patch1: binutils-2.10.1.0.7-oformat.patch
 Patch2: binutils-2.11.90.0.4-glibc21.patch
-Patch3: binutils-2.11.90.0.8-combreloc.patch
+Patch3: binutils-2.11.90.0.8-dynamic.patch
 Patch4: binutils-2.11.90.0.8-alpha.patch
-Patch5: binutils-2.11.90.0.8-orphan.patch
-Patch6: binutils-2.11.90.0.8-orphan2.patch
-Patch7: binutils-2.11.90.0.8-ia64funcsize.patch
-Patch8: binutils-2.11.90.0.8-combreloc-default.patch
-Patch9: binutils-2.11.90.0.8-ia64unwind.patch
-Patch10: binutils-2.11.90.0.8-alpharelative.patch
-Patch11: binutils-2.11.90.0.8-sparc.patch
-Patch12: binutils-2.11.90.0.8-sparc2.patch
-Patch13: binutils-2.11.90.0.8-sparc3.patch
-Patch14: binutils-2.11.90.0.8-ia64iplt.patch
-Patch15: binutils-2.11.90.0.8-secflag.patch
-Patch16: binutils-2.11.90.0.8-secflag2.patch
-Patch17: binutils-2.11.90.0.8-combrelocplt.patch
-Patch18: binutils-2.11.90.0.8-ldshared.patch
+Patch5: binutils-2.11.90.0.27-s390.patch 
+Patch6: binutils-2.11.90.0.27-brxlg.patch
+Patch7: binutils-2.11.90.0.27-s390-1.patch
 Buildroot: /var/tmp/binutils-root
 Prereq: /sbin/install-info
 %ifarch ia64
@@ -45,25 +34,14 @@ addresses to file and line).
 %prep
 %setup -q
 %patch1 -p0 -b .oformat
-%patch2 -p1 -b .glibc21
-%patch3 -p0 -b .combreloc
-%patch4 -p0 -b .alpha
-%patch5 -p0 -b .orphan
-%patch6 -p0 -b .orphan2
-%patch7 -p0 -b .ia64funcsize
-%ifarch i386 alpha ia64 sparc sparc64
-%patch8 -p0 -b .combreloc-default
+#%patch2 -p1 -b .glibc21
+%ifnarch s390 s390x
+%patch3 -p0 -b .dynamic
 %endif
-%patch9 -p0 -b .ia64unwind
-%patch10 -p0 -b .alpharelative
-%patch11 -p0 -b .sparc
-%patch12 -p0 -b .sparc2
-%patch13 -p0 -b .sparc3
-%patch14 -p0 -b .ia64iplt
-%patch15 -p0 -b .secflag
-%patch16 -p0 -b .secflag2
-%patch17 -p0 -b .combrelocplt
-%patch18 -p0 -b .ldshared
+#%patch4 -p0 -b .alpha
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
 mv -f ld/Makefile.in ld/Makefile.in.tmp
 sed -e '/^ALL_EMULATIONS/s/eelf_i386_chaos.o/& eelf_i386_glibc21.o/' < ld/Makefile.in.tmp > ld/Makefile.in
 rm -f ld/Makefile.in.tmp
@@ -71,8 +49,21 @@ rm -f ld/Makefile.in.tmp
 %build
 # Binutils come with its own custom libtool
 %define __libtoolize echo
+%ifarch s390 s390x
+%configure --enable-shared=no
+%else
+%configure --enable-shared
+%endif
+make tooldir=%{_prefix} all info
+%ifarch s390 s390x
+# S390 needs objdump in /bin to fix object code only IBM moduls during startup
+# no need to disable shared libs completely, therefore this hack:
+mv -f binutils/objdump binutils/objdump_static
+make distclean
 %configure --enable-shared
 make tooldir=%{_prefix} all info
+mv -vf binutils/objdump_static binutils/.libs/objdump
+%endif
 
 %install
 rm -rf ${RPM_BUILD_ROOT}
@@ -89,6 +80,11 @@ chmod +x ${RPM_BUILD_ROOT}%{_prefix}/%{_lib}/lib*.so*
 
 # This one comes from gcc
 rm -f ${RPM_BUILD_ROOT}%{_prefix}/bin/c++filt
+%ifarch s390 s390x
+  mkdir ${RPM_BUILD_ROOT}/bin
+  mv ${RPM_BUILD_ROOT}%{_prefix}/bin/objdump ${RPM_BUILD_ROOT}/bin
+  ln -s ../../bin/objdump ${RPM_BUILD_ROOT}%{_prefix}/bin/objdump
+%endif
 
 %clean
 rm -rf ${RPM_BUILD_ROOT}
@@ -124,52 +120,20 @@ fi
 %{_prefix}/include/*
 %{_prefix}/%{_lib}/*
 %{_infodir}/*info*
+%ifarch s390 s390x
+/bin/*
+%endif
 
 %changelog
-* Mon Apr 29 2002 Alexandre Petit-Bianco <apbianco@redhat.com> 2.11.90.0.8-14
-- binutils/testsuite/binutils-all/readelf.r: Fixed regexp.
-- ld/testsuite/ld-srec/srec.exp: use -Tdata on alpha to get XFAIL
+* Tue Oct 23 2001 Karsten Hopp <karsten@redhat.de>
+- add IBM patch for S/390
 
-* Thu Apr 25 2002 Andrew MacLeod <amacleod@redhat.com> 2.11.90.0.8-13
-- Skip invalid -Bsymbolic tests on linux.
+* Sat Sep 15 2001 Florian La Roche <Florian.LaRoche@redhat.de>
+- add "brxlg" patch from alpha web-page
 
-* Wed Sep 26 2001 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-12
-- on IA-64, don't mix R_IA64_IPLTLSB relocs with non-PLT relocs in
-  .rela.dyn section.
-
-* Tue Sep 25 2001 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-11
-- add iplt support for IA-64 (Richard Henderson)
-- switch to new section flags for SHF_MERGE and SHF_STRINGS, put
-  in compatibility code
-- "s" section flag for small data sections on IA-64 and Alpha
-  (Richard Henderson)
-- fix sparc64 .plt[32768+] handling
-- don't emit .rela.stab on sparc
-
-* Mon Sep 10 2001 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-10
-- fix SHF_MERGE on Sparc
-
-* Fri Aug 31 2001 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-9
-- on Alpha, copy *r_offset to R_ALPHA_RELATIVE's r_addend
-
-* Thu Aug 30 2001 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-8
-- on IA-64, put crtend{,S}.o's .IA_64.unwind section last in
-  .IA_64.unwind output section (for compatibility with 7.1 eh)
-
-* Fri Aug 24 2001 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-7
-- put RELATIVE relocs first, not last
-- enable -z combreloc by default on IA-{32,64}, Alpha, Sparc*
-
-* Thu Aug 23 2001 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-6
-- support for -z combreloc
-- remove .dynamic patch, -z combreloc patch does this better
-- set STT_FUNC default symbol sizes in .endp directive on IA-64
-
-* Mon Jul 16 2001 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-5
-- fix last patch (H.J.Lu)
-
-* Fri Jul 13 2001 Jakub Jelinek <jakub@redhat.com> 2.11.90.0.8-4
-- fix placing of orphan sections
+* Mon Aug 13 2001 Karsten Hopp <karsten@redhat.de>
+- S/390 needs objdump during startup (before mounting /usr)
+  link objdump staticly and move it to /bin (only on S/390)
 
 * Sat Jun 23 2001 Jakub Jelinek <jakub@redhat.com>
 - fix SHF_MERGE support on Alpha
