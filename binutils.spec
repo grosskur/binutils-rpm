@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.15.94.0.2
-Release: 1
+Release: 2
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -14,9 +14,11 @@ Patch5: binutils-2.15.94.0.2-elfvsb-test.patch
 Patch6: binutils-2.15.94.0.2-ppc64-noteGNUstack.patch
 Patch7: binutils-2.15.94.0.2-script-as-needed.patch
 Patch8: binutils-2.15.94.0.2-strip-dynamic.patch
+Patch9: binutils-2.15.93.0.2-readelf-overflows.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
+Conflicts: gcc-c++ <= 4.0.0
 Prereq: /sbin/install-info
 %ifarch ia64
 Obsoletes: gnupro
@@ -50,6 +52,7 @@ addresses to file and line).
 %patch6 -p0 -b .ppc64-noteGNUstack~
 %patch7 -p0 -b .script-as-needed~
 %patch8 -p0 -b .strip-dynamic~
+%patch9 -p0 -b .readelf-overflows~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -108,7 +111,6 @@ rm -f %{buildroot}%{_prefix}/%{_lib}/lib{bfd,opcodes}.so
 rm -f %{buildroot}%{_prefix}/%{_lib}/lib{bfd,opcodes}.la
 
 # This one comes from gcc
-rm -f %{buildroot}%{_prefix}/bin/c++filt
 rm -f %{buildroot}%{_infodir}/dir
 rm -rf %{buildroot}%{_prefix}/%{_target_platform}
 
@@ -159,6 +161,10 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Mon Feb 28 2005 Jakub Jelinek <jakub@redhat.com> 2.15.94.0.2-2
+- fix buffer overflows in readelf (#149506)
+- move c++filt to binutils from gcc-c++, conflict with gcc-c++ < 4.0 (#86333)
+
 * Thu Feb 10 2005 Jakub Jelinek <jakub@redhat.com> 2.15.94.0.2-1
 - update to 2.15.94.0.2
 - fix .note.GNU-stack/PT_GNU_STACK computation in linker on ppc64 (#147296)
