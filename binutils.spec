@@ -1,24 +1,20 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.14.90.0.6
-Release: 4
+Version: 2.14.90.0.7
+Release: 1
 Copyright: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-Patch0: binutils-2.14.90.0.6-sparc-nonpic.patch
-Patch1: binutils-2.14.90.0.6-eh-frame-ro.patch
-Patch2: binutils-2.14.90.0.6-ltconfig-multilib.patch
-Patch3: binutils-2.14.90.0.6-s390-pie.patch
-Patch4: binutils-2.14.90.0.6-ppc64-pie.patch
-Patch5: binutils-2.14.90.0.6-place-orphan.patch
-Patch6: binutils-2.14.90.0.6-sparc-cfi.patch
-Patch7: binutils-2.14.90.0.6-ia64-sdata.patch
-Patch8: binutils-2.14.90.0.6-merge-speedup.patch
-Patch9: binutils-2.14.90.0.6-ia64-speedup.patch
-Patch10: binutils-2.14.90.0.6-ia64-howto.patch
-Patch11: binutils-2.14.90.0.6-scrubchars1.patch
-Patch12: binutils-2.14.90.0.6-scrubchars2.patch
+Patch0: binutils-2.14.90.0.7-eh-frame-ro.patch
+Patch1: binutils-2.14.90.0.7-ltconfig-multilib.patch
+Patch2: binutils-2.14.90.0.7-s390-pie.patch
+Patch3: binutils-2.14.90.0.7-ppc64-pie.patch
+Patch4: binutils-2.14.90.0.7-place-orphan.patch
+Patch5: binutils-2.14.90.0.7-merge-speedup.patch
+Patch6: binutils-2.14.90.0.7-ia64-speedup.patch
+Patch7: binutils-2.14.90.0.7-scrubchars1.patch
+Patch8: binutils-2.14.90.0.7-scrubchars2.patch
 
 Buildroot: /var/tmp/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext
@@ -43,19 +39,15 @@ addresses to file and line).
 
 %prep
 %setup -q
-%patch0 -p0 -b .sparc-nonpic~
-%patch1 -p0 -b .eh-frame-ro~
-%patch2 -p0 -b .ltconfig-multilib~
-%patch3 -p0 -b .s390-pie~
-%patch4 -p0 -b .ppc64-pie~
-%patch5 -p0 -b .place-orphan~
-%patch6 -p0 -b .sparc-cfi~
-%patch7 -p0 -b .ia64-sdata~
-%patch8 -p0 -b .merge-speedup~
-%patch9 -p0 -b .ia64-speedup~
-%patch10 -p0 -b .ia64-howto~
-%patch11 -p0 -b .scrubchars1~
-%patch12 -p0 -b .scrubchars2~
+%patch0 -p0 -b .eh-frame-ro~
+%patch1 -p0 -b .ltconfig-multilib~
+%patch2 -p0 -b .s390-pie~
+%patch3 -p0 -b .ppc64-pie~
+%patch4 -p0 -b .place-orphan~
+%patch5 -p0 -b .merge-speedup~
+%patch6 -p0 -b .ia64-speedup~
+%patch7 -p0 -b .scrubchars1~
+%patch8 -p0 -b .scrubchars2~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -165,6 +157,9 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Fri Jan  9 2004 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.7-1
+- update to 2.14.90.0.7
+
 * Mon Nov 24 2003 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.6-4
 - fix assembly parsing of foo=(.-bar)/4 (Alan Modra)
 - fix IA-64 assembly parsing of (p7) hint @pause
