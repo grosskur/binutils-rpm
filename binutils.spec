@@ -1,21 +1,28 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.13.90.0.4
-Release: 1
+Version: 2.13.90.0.18
+Release: 9
 Copyright: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-Patch1: binutils-2.13.90.0.4-glibc21.patch
-Patch2: binutils-2.11.93.0.2-sparc-nonpic.patch
-Patch5: binutils-2.13.90.0.4-ntpoff.patch
-Patch6: binutils-2.13.90.0.4-ppc-rela.patch
-Patch7: binutils-2.13.90.0.4-tls-assert.patch
-Patch8: binutils-2.13.90.0.4-tpoff32-2.patch
-Patch9: binutils-2.13.90.0.4-tls-fixes.patch
-Patch10: binutils-2.13.90.0.4-ia64-brl.patch
-Patch11: binutils-2.13.90.0.4-ia64-pcrel21m.patch
-Patch12: binutils-2.13.90.0.4-jumbo.patch
+Patch0: binutils-2.13.90.0.18-20030206.patch.bz2
+Patch1: binutils-2.13.90.0.18-sparc-nonpic.patch
+Patch2: binutils-2.13.90.0.18-ia64-brl.patch
+Patch3: binutils-2.13.90.0.18-eh-frame-ro.patch
+Patch4: binutils-2.13.90.0.18-array-sects-compat.patch
+Patch5: binutils-2.13.90.0.18-ltconfig-multilib.patch
+Patch6: binutils-2.13.90.0.18-searchdir.patch
+Patch7: binutils-2.13.90.0.18-libpath-suffix.patch
+Patch8: binutils-2.13.90.0.18-alpha-relax.patch
+Patch9: binutils-2.13.90.0.18-s390-noreladyn.patch
+Patch10: binutils-2.13.90.0.18-eh-frame-hdr.patch
+Patch11: binutils-2.13.90.0.18-compatsym.patch
+Patch12: binutils-2.13.90.0.18-ppc64-tls1.patch
+Patch13: binutils-2.13.90.0.18-ppc64-tls2.patch
+Patch14: binutils-2.13.90.0.18-s390-file-loc.patch
+Patch15: binutils-2.13.90.0.18-sub-same.patch
+Patch16: binutils-2.13.90.0.18-ld-r.patch
 
 Buildroot: /var/tmp/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu
@@ -40,54 +47,72 @@ addresses to file and line).
 
 %prep
 %setup -q
-%patch1 -p0 -b .glibc21~
-cp -a ld/Makefile.in ld/Makefile.in.tmp
-sed '/^ALL_EMULATIONS/s/eelf_i386_chaos.o/eelf_i386_chaos.o	eelf_i386_glibc21.o/' ld/Makefile.in.tmp > ld/Makefile.in
-rm ld/Makefile.in.tmp
-%patch2 -p0 -b .sparc-nonpic~
-%patch5 -p0 -b .ntpoff~
-%patch6 -p0 -b .ppc-rela~
-%patch7 -p0 -b .tls-assert~
-%patch8 -p0 -b .tpoff32-2~
-%patch9 -p0 -b .tls-fixes~
-%patch10 -p0 -b .ia64-brl~
-%patch11 -p0 -b .ia64-pcrel21m~
-%patch12 -p0 -b .jumbo~
+%patch0 -p0 -b .20030206~
+%patch1 -p0 -b .sparc-nonpic~
+%patch2 -p0 -b .ia64-brl~
+%patch3 -p0 -b .eh-frame-ro~
+%ifarch %{ix86}
+%patch4 -p0 -b .array-sects-compat~
+%endif
+%patch5 -p0 -b .ltconfig-multilib~
+%patch6 -p0 -b .searchdir~
+%patch7 -p0 -b .libpath-suffix~
+%patch8 -p0 -b .alpha-relax~
+%patch9 -p0 -b .s390-noreladyn~
+%patch10 -p0 -b .eh-frame-hdr~
+%patch11 -p0 -b .compatsym~
+%patch12 -p0 -b .ppc64-tls1~
+%patch13 -p0 -b .ppc64-tls2~
+%patch14 -p0 -b .s390-file-loc~
+%patch15 -p0 -b .sub-same~
+%patch16 -p0 -b .ld-r~
 
 %build
 mkdir build-%{_target_platform}
 cd build-%{_target_platform}
+CARGS=
+%ifarch sparc ppc s390
+CARGS=--enable-64-bit-bfd
+%endif
+%ifarch ia64
+CARGS=--enable-targets=i386-linux
+%endif
 CFLAGS="${CFLAGS:-%optflags}" ../configure \
   %{_target_platform} --prefix=%{_prefix} --exec-prefix=%{_exec_prefix} \
   --bindir=%{_bindir} --sbindir=%{_sbindir} --sysconfdir=%{_sysconfdir} \
   --datadir=%{_datadir} --includedir=%{_includedir} --libdir=%{_libdir} \
   --libexecdir=%{_libexecdir} --localstatedir=%{_localstatedir} \
   --sharedstatedir=%{_sharedstatedir} --mandir=%{_mandir} \
-  --infodir=%{_infodir} --enable-shared
-make tooldir=%{_prefix} all info
+  --infodir=%{_infodir} --enable-shared $CARGS
+make %{_smp_mflags} tooldir=%{_prefix} all info
 echo ====================TESTING=========================
 make -k check || :
 echo ====================TESTING END=====================
 cd ..
 
 %install
-rm -rf ${RPM_BUILD_ROOT}
-mkdir -p ${RPM_BUILD_ROOT}%{_prefix}
+rm -rf %{buildroot}
+mkdir -p %{buildroot}%{_prefix}
 cd build-%{_target_platform}
 %makeinstall
-make prefix=${RPM_BUILD_ROOT}%{_prefix} infodir=${RPM_BUILD_ROOT}%{_infodir} install-info
-strip ${RPM_BUILD_ROOT}%{_prefix}/bin/*
-gzip -q9f ${RPM_BUILD_ROOT}%{_infodir}/*.info*
+make prefix=%{buildroot}%{_prefix} infodir=%{buildroot}%{_infodir} install-info
+gzip -q9f %{buildroot}%{_infodir}/*.info*
 
-#install -m 644 libiberty/libiberty.a ${RPM_BUILD_ROOT}%{_prefix}/%{_lib}
-install -m 644 ../include/libiberty.h ${RPM_BUILD_ROOT}%{_prefix}/include
+#install -m 644 libiberty/libiberty.a %{buildroot}%{_prefix}/%{_lib}
+install -m 644 ../include/libiberty.h %{buildroot}%{_prefix}/include
 # Remove Windows/Novell only man pages
-rm -f ${RPM_BUILD_ROOT}%{_mandir}/man1/{dlltool,nlmconv,windres}*
+rm -f %{buildroot}%{_mandir}/man1/{dlltool,nlmconv,windres}*
 
-chmod +x ${RPM_BUILD_ROOT}%{_prefix}/%{_lib}/lib*.so*
+chmod +x %{buildroot}%{_prefix}/%{_lib}/lib*.so*
+
+# Prevent programs to link against libbfd and libopcodes dynamically,
+# they are changing far too often
+rm -f %{buildroot}%{_prefix}/%{_lib}/lib{bfd,opcodes}.so
 
 # This one comes from gcc
-rm -f ${RPM_BUILD_ROOT}%{_prefix}/bin/c++filt
+rm -f %{buildroot}%{_prefix}/bin/c++filt
+rm -f %{buildroot}%{_infodir}/dir
+rm -rf %{buildroot}%{_prefix}/%{_target_platform}
 
 cd ..
 %find_lang binutils
@@ -101,7 +126,7 @@ cat gas.lang >> binutils.lang
 cat ld.lang >> binutils.lang
 
 %clean
-rm -rf ${RPM_BUILD_ROOT}
+rm -rf %{buildroot}
 
 %post
 /sbin/ldconfig
@@ -134,6 +159,103 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Mon Feb 24 2003 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.18-9
+- rebuilt
+
+* Mon Feb 24 2003 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.18-8
+- don't strip binaries in %%install, so that there is non-empty
+  debuginfo
+
+* Mon Feb 24 2003 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.18-7
+- don't optimize .eh_frame during ld -r
+
+* Thu Feb 13 2003 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.18-6
+- don't clear elf_link_hash_flags in the .symver patch
+- only use TC_FORCE_RELOCATION in s390's TC_FORCE_RELOCATION_SUB_SAME
+  (Alan Modra)
+
+* Mon Feb 10 2003 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.18-5
+- fix the previous .symver change
+- remove libbfd.so and libopcodes.so symlinks, so that other packages
+  link statically, not dynamically against libbfd and libopcodes
+  whose ABI is everything but stable
+
+* Mon Feb 10 2003 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.18-4
+- do .symver x, x@FOO handling earlier
+- support .file and .loc on s390*
+
+* Mon Feb 10 2003 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.18-3
+- handle .symver x, x@FOO in ld such that relocs against x become
+  dynamic relocations against x@FOO (#83325)
+- two PPC64 TLS patches (Alan Modra)
+
+* Sun Feb 09 2003 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.18-2
+- fix SEARCH_DIR on x86_64/s390x
+- fix Alpha --relax
+- create DT_RELA{,SZ,ENT} on s390 even if there is just .rela.plt
+  and no .rela.dyn section
+- support IA-32 on IA-64 (#83752)
+- .eh_frame_hdr fix (Andreas Schwab)
+
+* Thu Feb 06 2003 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.18-1
+- update to 2.13.90.0.18 + 20030121->20030206 CVS diff
+
+* Tue Feb 04 2003 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.16-8
+- alpha TLS fixes
+- use .debug_line directory table to make the section tiny bit smaller
+- libtool fix from Jens Petersen
+
+* Sun Feb 02 2003 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.16-7
+- sparc32 TLS
+
+* Fri Jan 24 2003 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.16-6
+- s390{,x} TLS and two other mainframe patches
+
+* Fri Jan 17 2003 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.16-5
+- fix IA-64 TLS IE in shared libs
+- .{preinit,init,fini}_array compat hack from Alexandre Oliva
+
+* Thu Jan 16 2003 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.16-4
+- IA-64 TLS fixes
+- fix .plt sh_entsize on Alpha
+- build with %%_smp_mflags
+
+* Sat Nov 30 2002 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.16-3
+- fix strip on TLS binaries and libraries
+
+* Fri Nov 29 2002 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.16-2
+- fix IA-64 ld bootstrap
+
+* Thu Nov 28 2002 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.16-1
+- update to 2.13.90.0.16
+- STT_TLS SHN_UNDEF fix
+
+* Wed Nov 27 2002 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.10-4
+- pad .rodata.cstNN sections at the end if they aren't sized to multiple
+  of sh_entsize
+- temporary patch to make .eh_frame and .gcc_except_table sections
+  readonly if possible (should be removed when AUTO_PLACE is implemented)
+- fix .PPC.EMB.apuinfo section flags
+
+* Wed Oct 23 2002 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.10-3
+- fix names and content of alpha non-alloced .rela.* sections (#76583)
+- delete unpackaged files from the buildroot
+
+* Tue Oct 15 2002 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.10-2
+- enable s390x resp. s390 emulation in linker too
+
+* Mon Oct 14 2002 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.10-1
+- update to 2.13.90.0.10
+- add a bi-arch patch for sparc/s390/x86_64
+- add --enable-64-bit-bfd on sparc, s390 and ppc
+
+* Thu Oct 10 2002 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.4-3
+- fix combreloc testcase
+
+* Thu Oct 10 2002 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.4-2
+- fix orphan .rel and .rela section placement with -z combreloc (Alan Modra)
+- skip incompatible linker scripts when searching for libraries
+
 * Tue Oct  1 2002 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.4-1
 - update to 2.13.90.0.4
 - x86-64 TLS support
