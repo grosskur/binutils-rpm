@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.15.90.0.3
-Release: 6
+Release: 7
 Copyright: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -18,6 +18,7 @@ Patch9: binutils-2.15.90.0.3-sparc2.patch
 Patch10: binutils-2.15.90.0.3-x86_64-plt.patch
 Patch11: binutils-2.15.90.0.3-s390-align.patch
 Patch12: binutils-2.15.90.0.3-double+-.patch
+Patch13: binutils-2.15.90.0.3-ia64-lib64.patch
 
 Buildroot: /var/tmp/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext
@@ -54,6 +55,11 @@ addresses to file and line).
 %patch10 -p0 -b .x86_64-plt~
 %patch11 -p0 -b .s390-align~
 %patch12 -p0 -b .double+-~
+%ifarch ia64
+%if "%{_lib}" == "lib64"
+%patch13 -p0 -b .ia64-lib64~
+%endif
+%endif
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -162,6 +168,10 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Wed May 19 2004 Jakub Jelinek <jakub@redhat.com> 2.15.90.0.3-7
+- use lib64 instead of lib directories on ia64 if %%{_lib} is
+  set to lib64 by rpm
+
 * Sat May 15 2004 Jakub Jelinek <jakub@redhat.com> 2.15.90.0.3-6
 - fix a bug introduced in the ++/-- rejection patch
   from 2.15.90.0.3 (Alan Modra)
