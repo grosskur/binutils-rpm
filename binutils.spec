@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.14.90.0.8
-Release: 3
+Release: 4
 Copyright: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -13,6 +13,7 @@ Patch3: binutils-2.14.90.0.8-ppc64-pie.patch
 Patch4: binutils-2.14.90.0.8-place-orphan.patch
 Patch5: binutils-2.14.90.0.8-relro.patch
 Patch6: binutils-2.14.90.0.8-ppc32-common-pagesize.patch
+Patch7: binutils-2.14.90.0.8-ia64-pie.patch
 
 Buildroot: /var/tmp/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext
@@ -44,6 +45,7 @@ addresses to file and line).
 %patch4 -p0 -b .place-orphan~
 %patch5 -p0 -b .relro~
 %patch6 -p0 -b .ppc32-common-pagesize~
+%patch7 -p0 -b .ia64-pie~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -152,6 +154,9 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Thu Jan 22 2004 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.8-4
+- fix -pie on IA64
+
 * Mon Jan 19 2004 Jakub Jelinek <jakub@redhat.com> 2.14.90.0.8-3
 - fix testcases on s390 and s390x
 
