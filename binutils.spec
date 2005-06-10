@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.15.94.0.2.2
-Release: 3
+Release: 4
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -173,6 +173,9 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Sat Jun 11 2005 Jakub Jelinek <jakub@redhat.com> 2.15.94.0.2.2-4
+- further bfd robustification (CAN-2005-1704, #158680)
+
 * Fri Jun 10 2005 Jakub Jelinek <jakub@redhat.com> 2.15.94.0.2.2-3
 - further objdump and readelf robustification (CAN-2005-1704, #158680)
 
