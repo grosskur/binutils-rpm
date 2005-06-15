@@ -77,7 +77,7 @@ CFLAGS="${CFLAGS:-%optflags}" ../configure \
   --datadir=%{_datadir} --includedir=%{_includedir} --libdir=%{_libdir} \
   --libexecdir=%{_libexecdir} --localstatedir=%{_localstatedir} \
   --sharedstatedir=%{_sharedstatedir} --mandir=%{_mandir} \
-  --infodir=%{_infodir} --enable-shared $CARGS
+  --infodir=%{_infodir} --enable-shared $CARGS --disable-werror
 make %{_smp_mflags} tooldir=%{_prefix} all
 make %{_smp_mflags} tooldir=%{_prefix} info
 make -k check < /dev/null > check.log 2>&1 || :
