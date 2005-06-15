@@ -1,26 +1,21 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.15.94.0.2.2
-Release: 4
+Version: 2.16.90.0.3
+Release: 1
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-Patch1: binutils-2.15.94.0.2-ltconfig-multilib.patch
-Patch2: binutils-2.15.94.0.2-ppc64-pie.patch
-Patch3: binutils-2.15.94.0.2-place-orphan.patch
-Patch4: binutils-2.15.94.0.2-ia64-lib64.patch
-Patch5: binutils-2.15.94.0.2-elfvsb-test.patch
-Patch6: binutils-2.15.94.0.2-ppc64-noteGNUstack.patch
-Patch7: binutils-2.15.94.0.2-script-as-needed.patch
-Patch8: binutils-2.15.94.0.2-strip-dynamic.patch
-Patch9: binutils-2.15.93.0.2-readelf-overflows.patch
-Patch10: binutils-2.15.94.0.2-gcc4.patch
-Patch11: binutils-2.15.94.0.2-arhdr.patch
-Patch12: binutils-2.15.94.0.2-ld-speedup.patch
-Patch13: binutils-2.15.94.0.2-robustify.patch
-Patch14: binutils-2.15.94.0.2-robustify2.patch
-Patch15: binutils-2.15.94.0.2-robustify3.patch
+Patch0: binutils-2.16.90.0.3-20050615.patch.bz2
+Patch1: binutils-2.16.90.0.3-ltconfig-multilib.patch
+Patch2: binutils-2.16.90.0.3-ppc64-pie.patch
+Patch3: binutils-2.16.90.0.3-place-orphan.patch
+Patch4: binutils-2.16.90.0.3-ia64-lib64.patch
+Patch5: binutils-2.16.90.0.3-elfvsb-test.patch
+Patch6: binutils-2.16.90.0.3-robustify.patch
+Patch7: binutils-2.16.90.0.3-robustify2.patch
+Patch8: binutils-2.16.90.0.3-robustify3.patch
+Patch9: binutils-2.16.90.0.3-robustify4.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -46,6 +41,7 @@ addresses to file and line).
 
 %prep
 %setup -q
+%patch0 -p0 -E -b .20050615~
 %patch1 -p0 -b .ltconfig-multilib~
 %patch2 -p0 -b .ppc64-pie~
 %patch3 -p0 -b .place-orphan~
@@ -55,16 +51,10 @@ addresses to file and line).
 %endif
 %endif
 %patch5 -p0 -b .elfvsb-test~
-%patch6 -p0 -b .ppc64-noteGNUstack~
-%patch7 -p0 -b .script-as-needed~
-%patch8 -p0 -b .strip-dynamic~
-%patch9 -p0 -b .readelf-overflows~
-%patch10 -p0 -b .gcc4~
-%patch11 -p0 -b .arhdr~
-%patch12 -p0 -b .ld-speedup~
-%patch13 -p0 -b .robustify~
-%patch14 -p0 -b .robustify2~
-%patch15 -p0 -b .robustify3~
+%patch6 -p0 -b .robustify~
+%patch7 -p0 -b .robustify2~
+%patch8 -p0 -b .robustify3~
+%patch9 -p0 -b .robustify4~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -173,6 +163,12 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Wed Jun 15 2005 Jakub Jelinek <jakub@redhat.com> 2.16.90.0.3-1
+- update to 2.16.90.0.3-1
+- update to 20050615 CVS
+  - ppc32 secure PLT support (Alan Modra)
+- further bfd/readelf robustification
+
 * Sat Jun 11 2005 Jakub Jelinek <jakub@redhat.com> 2.15.94.0.2.2-4
 - further bfd robustification (CAN-2005-1704, #158680)
 
