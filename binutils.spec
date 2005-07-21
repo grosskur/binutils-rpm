@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.16.91.0.1
-Release: 2
+Release: 3
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -13,6 +13,9 @@ Patch3: binutils-2.16.91.0.1-place-orphan.patch
 Patch4: binutils-2.16.91.0.1-ia64-lib64.patch
 Patch5: binutils-2.16.91.0.1-elfvsb-test.patch
 Patch6: binutils-20050708-20050720.patch.bz2
+Patch7: binutils-2.16.91.0.1-cdtest-libsupcxx.patch
+Patch8: binutils-2.16.91.0.1-gas-msg.patch
+Patch9: binutils-2.16.91.0.1-readelf-ia64-unwind.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -49,6 +52,9 @@ addresses to file and line).
 %endif
 %patch5 -p0 -b .elfvsb-test~
 %patch6 -p0 -E -b .20050708-20050720~
+%patch7 -p0 -b .cdtest-libsupcxx~
+%patch8 -p0 -b .gas-msg~
+%patch9 -p0 -b .readelf-ia64-unwind~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -157,6 +163,11 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Thu Jul 21 2005 Jakub Jelinek <jakub@redhat.com> 2.16.91.0.1-3
+- fix buffer overflow in readelf ia64 unwind printing code
+- use vsnprintf rather than vsprintf in gas diagnostics (Tavis Ormandy)
+- fix ld-cdtest when CFLAGS contains -fexceptions
+
 * Wed Jul 20 2005 Jakub Jelinek <jakub@redhat.com> 2.16.91.0.1-2
 - update to 20050720 CVS
 
