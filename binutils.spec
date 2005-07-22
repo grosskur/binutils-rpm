@@ -1,21 +1,19 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.16.91.0.1
-Release: 3
+Version: 2.16.91.0.2
+Release: 1
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-Patch0: binutils-2.16.91.0.1-20050708.patch.bz2
-Patch1: binutils-2.16.91.0.1-ltconfig-multilib.patch
-Patch2: binutils-2.16.91.0.1-ppc64-pie.patch
-Patch3: binutils-2.16.91.0.1-place-orphan.patch
-Patch4: binutils-2.16.91.0.1-ia64-lib64.patch
-Patch5: binutils-2.16.91.0.1-elfvsb-test.patch
-Patch6: binutils-20050708-20050720.patch.bz2
-Patch7: binutils-2.16.91.0.1-cdtest-libsupcxx.patch
-Patch8: binutils-2.16.91.0.1-gas-msg.patch
-Patch9: binutils-2.16.91.0.1-readelf-ia64-unwind.patch
+Patch1: binutils-2.16.91.0.2-ltconfig-multilib.patch
+Patch2: binutils-2.16.91.0.2-ppc64-pie.patch
+Patch3: binutils-2.16.91.0.2-place-orphan.patch
+Patch4: binutils-2.16.91.0.2-ia64-lib64.patch
+Patch5: binutils-2.16.91.0.2-elfvsb-test.patch
+Patch6: binutils-2.16.91.0.2-cdtest-libsupcxx.patch
+Patch7: binutils-2.16.91.0.2-gas-msg.patch
+Patch8: binutils-2.16.91.0.2-readelf-ia64-unwind.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -41,7 +39,6 @@ addresses to file and line).
 
 %prep
 %setup -q
-%patch0 -p0 -E -b .20050708~
 %patch1 -p0 -b .ltconfig-multilib~
 %patch2 -p0 -b .ppc64-pie~
 %patch3 -p0 -b .place-orphan~
@@ -51,10 +48,9 @@ addresses to file and line).
 %endif
 %endif
 %patch5 -p0 -b .elfvsb-test~
-%patch6 -p0 -E -b .20050708-20050720~
-%patch7 -p0 -b .cdtest-libsupcxx~
-%patch8 -p0 -b .gas-msg~
-%patch9 -p0 -b .readelf-ia64-unwind~
+%patch6 -p0 -b .cdtest-libsupcxx~
+%patch7 -p0 -b .gas-msg~
+%patch8 -p0 -b .readelf-ia64-unwind~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -163,6 +159,9 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Fri Jul 22 2005 Jakub Jelinek <jakub@redhat.com> 2.16.91.0.2-1
+- update to 2.16.91.0.2
+
 * Thu Jul 21 2005 Jakub Jelinek <jakub@redhat.com> 2.16.91.0.1-3
 - fix buffer overflow in readelf ia64 unwind printing code
 - use vsnprintf rather than vsprintf in gas diagnostics (Tavis Ormandy)
@@ -172,10 +171,10 @@ fi
 - update to 20050720 CVS
 
 * Mon Jul 11 2005 Jakub Jelinek <jakub@redhat.com> 2.16.91.0.1-1
-- update to 2.16.91.0.1-1 plus 20050708 CVS
+- update to 2.16.91.0.1 plus 20050708 CVS
 
 * Wed Jun 15 2005 Jakub Jelinek <jakub@redhat.com> 2.16.90.0.3-1
-- update to 2.16.90.0.3-1
+- update to 2.16.90.0.3
 - update to 20050615 CVS
   - ppc32 secure PLT support (Alan Modra)
 - further bfd/readelf robustification
