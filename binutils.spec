@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.16.91.0.2
-Release: 1
+Release: 2
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -14,6 +14,7 @@ Patch5: binutils-2.16.91.0.2-elfvsb-test.patch
 Patch6: binutils-2.16.91.0.2-cdtest-libsupcxx.patch
 Patch7: binutils-2.16.91.0.2-gas-msg.patch
 Patch8: binutils-2.16.91.0.2-readelf-ia64-unwind.patch
+Patch9: binutils-2.16.91.0.2-ppc32-got2.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -51,6 +52,7 @@ addresses to file and line).
 %patch6 -p0 -b .cdtest-libsupcxx~
 %patch7 -p0 -b .gas-msg~
 %patch8 -p0 -b .readelf-ia64-unwind~
+%patch9 -p0 -b .ppc32-got2~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -159,6 +161,10 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Fri Jul 29 2005 Jakub Jelinek <jakub@redhat.com> 2.16.91.0.2-2
+- don't complain about relocs to discarded sections in ppc32
+  .got2 sections (Alan Modra, PR target/17828)
+
 * Fri Jul 22 2005 Jakub Jelinek <jakub@redhat.com> 2.16.91.0.2-1
 - update to 2.16.91.0.2
 
