@@ -1,20 +1,19 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.16.91.0.2
-Release: 2
+Release: 3
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
+Patch0: binutils-2.16.91.0.2-20050816.patch.bz2
 Patch1: binutils-2.16.91.0.2-ltconfig-multilib.patch
 Patch2: binutils-2.16.91.0.2-ppc64-pie.patch
 Patch3: binutils-2.16.91.0.2-place-orphan.patch
 Patch4: binutils-2.16.91.0.2-ia64-lib64.patch
 Patch5: binutils-2.16.91.0.2-elfvsb-test.patch
-Patch6: binutils-2.16.91.0.2-cdtest-libsupcxx.patch
-Patch7: binutils-2.16.91.0.2-gas-msg.patch
-Patch8: binutils-2.16.91.0.2-readelf-ia64-unwind.patch
-Patch9: binutils-2.16.91.0.2-ppc32-got2.patch
+Patch6: binutils-2.16.91.0.2-symver-grammar.patch
+Patch7: binutils-2.16.91.0.2-cdtest.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -40,6 +39,7 @@ addresses to file and line).
 
 %prep
 %setup -q
+%patch0 -p0 -b .20050816~
 %patch1 -p0 -b .ltconfig-multilib~
 %patch2 -p0 -b .ppc64-pie~
 %patch3 -p0 -b .place-orphan~
@@ -49,10 +49,8 @@ addresses to file and line).
 %endif
 %endif
 %patch5 -p0 -b .elfvsb-test~
-%patch6 -p0 -b .cdtest-libsupcxx~
-%patch7 -p0 -b .gas-msg~
-%patch8 -p0 -b .readelf-ia64-unwind~
-%patch9 -p0 -b .ppc32-got2~
+%patch6 -p0 -b .symver-grammar~
+%patch7 -p0 -b .cdtest~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -161,6 +159,11 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Tue Aug 16 2005 Jakub Jelinek <jakub@redhat.com> 2.16.91.0.2-3
+- update to 20050816 CVS
+- better fix for ld-cdtest
+- fix symbol version script parsing
+
 * Fri Jul 29 2005 Jakub Jelinek <jakub@redhat.com> 2.16.91.0.2-2
 - don't complain about relocs to discarded sections in ppc32
   .got2 sections (Alan Modra, PR target/17828)
