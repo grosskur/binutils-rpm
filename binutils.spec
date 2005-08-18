@@ -88,7 +88,6 @@ mkdir -p %{buildroot}%{_prefix}
 cd build-%{_target_platform}
 %makeinstall
 make prefix=%{buildroot}%{_prefix} infodir=%{buildroot}%{_infodir} install-info
-rm -f %{buildroot}%{_infodir}/configure.info*
 gzip -q9f %{buildroot}%{_infodir}/*.info*
 
 # Rebuild libiberty.a with -fPIC
@@ -137,6 +136,7 @@ rm -rf %{buildroot}
 /sbin/install-info --info-dir=%{_infodir} %{_infodir}/gprof.info.gz
 /sbin/install-info --info-dir=%{_infodir} %{_infodir}/ld.info.gz
 /sbin/install-info --info-dir=%{_infodir} %{_infodir}/standards.info.gz
+/sbin/install-info --info-dir=%{_infodir} %{_infodir}/configure.info.gz
 
 %preun
 if [ $1 = 0 ] ;then
@@ -146,6 +146,7 @@ if [ $1 = 0 ] ;then
   /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/gprof.info.gz
   /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/ld.info.gz
   /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/standards.info.gz
+  /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/configure.info.gz
 fi
 
 %postun -p /sbin/ldconfig
@@ -161,7 +162,7 @@ fi
 
 %changelog
 * Thu Aug 18 2005 Jakub Jelinek <jakub@redhat.com> 2.16.91.0.2-4
-- remove configure.info* (#165530)
+- install-info also configure.info
 
 * Tue Aug 16 2005 Jakub Jelinek <jakub@redhat.com> 2.16.91.0.2-3
 - update to 20050816 CVS
