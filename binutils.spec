@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.16.91.0.2
-Release: 3
+Release: 4
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -88,6 +88,7 @@ mkdir -p %{buildroot}%{_prefix}
 cd build-%{_target_platform}
 %makeinstall
 make prefix=%{buildroot}%{_prefix} infodir=%{buildroot}%{_infodir} install-info
+rm -f %{buildroot}%{_infodir}/configure.info*
 gzip -q9f %{buildroot}%{_infodir}/*.info*
 
 # Rebuild libiberty.a with -fPIC
@@ -159,6 +160,9 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Thu Aug 18 2005 Jakub Jelinek <jakub@redhat.com> 2.16.91.0.2-4
+- remove configure.info* (#165530)
+
 * Tue Aug 16 2005 Jakub Jelinek <jakub@redhat.com> 2.16.91.0.2-3
 - update to 20050816 CVS
 - better fix for ld-cdtest
