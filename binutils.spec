@@ -14,6 +14,7 @@ Patch4: binutils-2.16.91.0.2-ia64-lib64.patch
 Patch5: binutils-2.16.91.0.2-elfvsb-test.patch
 Patch6: binutils-2.16.91.0.2-symver-grammar.patch
 Patch7: binutils-2.16.91.0.2-cdtest.patch
+Patch8: binutils-2.16.91.0.2-standards.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -51,6 +52,7 @@ addresses to file and line).
 %patch5 -p0 -b .elfvsb-test~
 %patch6 -p0 -b .symver-grammar~
 %patch7 -p0 -b .cdtest~
+%patch8 -p0 -b .standards~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -163,6 +165,7 @@ fi
 %changelog
 * Thu Aug 18 2005 Jakub Jelinek <jakub@redhat.com> 2.16.91.0.2-4
 - install-info also configure.info
+- update standards.texi from gnulib (#165530)
 
 * Tue Aug 16 2005 Jakub Jelinek <jakub@redhat.com> 2.16.91.0.2-3
 - update to 20050816 CVS
