@@ -1,20 +1,18 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.16.91.0.2
-Release: 4
+Version: 2.16.91.0.3
+Release: 1
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-Patch0: binutils-2.16.91.0.2-20050816.patch.bz2
-Patch1: binutils-2.16.91.0.2-ltconfig-multilib.patch
-Patch2: binutils-2.16.91.0.2-ppc64-pie.patch
-Patch3: binutils-2.16.91.0.2-place-orphan.patch
-Patch4: binutils-2.16.91.0.2-ia64-lib64.patch
-Patch5: binutils-2.16.91.0.2-elfvsb-test.patch
-Patch6: binutils-2.16.91.0.2-symver-grammar.patch
-Patch7: binutils-2.16.91.0.2-cdtest.patch
-Patch8: binutils-2.16.91.0.2-standards.patch
+Patch1: binutils-2.16.91.0.3-ltconfig-multilib.patch
+Patch2: binutils-2.16.91.0.3-ppc64-pie.patch
+Patch3: binutils-2.16.91.0.3-place-orphan.patch
+Patch4: binutils-2.16.91.0.3-ia64-lib64.patch
+Patch5: binutils-2.16.91.0.3-elfvsb-test.patch
+Patch6: binutils-2.16.91.0.3-standards.patch
+Patch7: binutils-2.16.91.0.3-weakref.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -40,7 +38,6 @@ addresses to file and line).
 
 %prep
 %setup -q
-%patch0 -p0 -b .20050816~
 %patch1 -p0 -b .ltconfig-multilib~
 %patch2 -p0 -b .ppc64-pie~
 %patch3 -p0 -b .place-orphan~
@@ -50,9 +47,8 @@ addresses to file and line).
 %endif
 %endif
 %patch5 -p0 -b .elfvsb-test~
-%patch6 -p0 -b .symver-grammar~
-%patch7 -p0 -b .cdtest~
-%patch8 -p0 -b .standards~
+%patch6 -p0 -b .standards~
+%patch7 -p0 -b .weakref~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -163,6 +159,10 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Fri Nov 11 2005 Jakub Jelinek <jakub@redhat.com> 2.16.91.0.3-1
+- update to 2.16.91.0.3
+- add .weakref support (Alexandre Oliva, #115157, #165728)
+
 * Thu Aug 18 2005 Jakub Jelinek <jakub@redhat.com> 2.16.91.0.2-4
 - install-info also configure.info
 - update standards.texi from gnulib (#165530)
