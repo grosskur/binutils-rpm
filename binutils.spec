@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.16.91.0.3
-Release: 1
+Release: 1.1
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -159,6 +159,9 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Fri Dec 09 2005 Jesse Keating <jkeating@redhat.com>
+- rebuilt
+
 * Fri Nov 11 2005 Jakub Jelinek <jakub@redhat.com> 2.16.91.0.3-1
 - update to 2.16.91.0.3
 - add .weakref support (Alexandre Oliva, #115157, #165728)
