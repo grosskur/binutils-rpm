@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.16.91.0.3
-Release: 1.1
+Release: 2
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -13,6 +13,7 @@ Patch4: binutils-2.16.91.0.3-ia64-lib64.patch
 Patch5: binutils-2.16.91.0.3-elfvsb-test.patch
 Patch6: binutils-2.16.91.0.3-standards.patch
 Patch7: binutils-2.16.91.0.3-weakref.patch
+Patch8: binutils-2.16.91.0.3-cxx-relro.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -49,6 +50,7 @@ addresses to file and line).
 %patch5 -p0 -b .elfvsb-test~
 %patch6 -p0 -b .standards~
 %patch7 -p0 -b .weakref~
+%patch8 -p0 -b .cxx-relro~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -159,6 +161,9 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Wed Dec 14 2005 Jakub Jelinek <jakub@redhat.com> 2.16.91.0.3-2
+- put .gnu.linkonce.d.rel.ro.* sections into relro region
+
 * Fri Dec 09 2005 Jesse Keating <jkeating@redhat.com>
 - rebuilt
 
