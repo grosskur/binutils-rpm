@@ -1,19 +1,18 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.16.91.0.3
-Release: 2
+Version: 2.16.91.0.5
+Release: 1
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-Patch1: binutils-2.16.91.0.3-ltconfig-multilib.patch
-Patch2: binutils-2.16.91.0.3-ppc64-pie.patch
-Patch3: binutils-2.16.91.0.3-place-orphan.patch
-Patch4: binutils-2.16.91.0.3-ia64-lib64.patch
-Patch5: binutils-2.16.91.0.3-elfvsb-test.patch
-Patch6: binutils-2.16.91.0.3-standards.patch
-Patch7: binutils-2.16.91.0.3-weakref.patch
-Patch8: binutils-2.16.91.0.3-cxx-relro.patch
+Patch1: binutils-2.16.91.0.5-ltconfig-multilib.patch
+Patch2: binutils-2.16.91.0.5-ppc64-pie.patch
+Patch3: binutils-2.16.91.0.5-place-orphan.patch
+Patch4: binutils-2.16.91.0.5-ia64-lib64.patch
+Patch5: binutils-2.16.91.0.5-elfvsb-test.patch
+Patch6: binutils-2.16.91.0.5-standards.patch
+Patch7: binutils-2.16.91.0.5-ppc64-toc1-discard.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -49,8 +48,7 @@ addresses to file and line).
 %endif
 %patch5 -p0 -b .elfvsb-test~
 %patch6 -p0 -b .standards~
-%patch7 -p0 -b .weakref~
-%patch8 -p0 -b .cxx-relro~
+%patch7 -p0 -b .ppc64-toc1-discard~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -161,6 +159,11 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Mon Jan 02 2006 Jakub Jelinek <jakub@redhat.com> 2.16.91.0.5-1
+- update to 2.16.91.0.5
+- don't error about .toc1 references to discarded sectiosn on ppc64
+  (#175944)
+
 * Wed Dec 14 2005 Jakub Jelinek <jakub@redhat.com> 2.16.91.0.3-2
 - put .gnu.linkonce.d.rel.ro.* sections into relro region
 
