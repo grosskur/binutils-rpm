@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.16.91.0.5
-Release: 1.1
+Release: 1.2
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -159,6 +159,9 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Fri Feb 10 2006 Jesse Keating <jkeating@redhat.com> - 2.16.91.0.5-1.2
+- bump again for double-long bug on ppc(64)
+
 * Tue Feb 07 2006 Jesse Keating <jkeating@redhat.com> - 2.16.91.0.5-1.1
 - rebuilt for new gcc4.1 snapshot and glibc changes
 
