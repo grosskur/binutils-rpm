@@ -1,18 +1,17 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.16.91.0.5
-Release: 1.2
+Version: 2.16.91.0.6
+Release: 1
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-Patch1: binutils-2.16.91.0.5-ltconfig-multilib.patch
-Patch2: binutils-2.16.91.0.5-ppc64-pie.patch
-Patch3: binutils-2.16.91.0.5-place-orphan.patch
-Patch4: binutils-2.16.91.0.5-ia64-lib64.patch
-Patch5: binutils-2.16.91.0.5-elfvsb-test.patch
-Patch6: binutils-2.16.91.0.5-standards.patch
-Patch7: binutils-2.16.91.0.5-ppc64-toc1-discard.patch
+Patch1: binutils-2.16.91.0.6-ltconfig-multilib.patch
+Patch2: binutils-2.16.91.0.6-ppc64-pie.patch
+Patch3: binutils-2.16.91.0.6-place-orphan.patch
+Patch4: binutils-2.16.91.0.6-ia64-lib64.patch
+Patch5: binutils-2.16.91.0.6-elfvsb-test.patch
+Patch6: binutils-2.16.91.0.6-standards.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -48,7 +47,6 @@ addresses to file and line).
 %endif
 %patch5 -p0 -b .elfvsb-test~
 %patch6 -p0 -b .standards~
-%patch7 -p0 -b .ppc64-toc1-discard~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -159,11 +157,11 @@ fi
 %{_infodir}/*info*
 
 %changelog
-* Fri Feb 10 2006 Jesse Keating <jkeating@redhat.com> - 2.16.91.0.5-1.2
-- bump again for double-long bug on ppc(64)
-
-* Tue Feb 07 2006 Jesse Keating <jkeating@redhat.com> - 2.16.91.0.5-1.1
-- rebuilt for new gcc4.1 snapshot and glibc changes
+* Tue Feb 14 2006 Jakub Jelinek <jakub@redhat.com> 2.16.91.0.6-1
+- update to 2.16.91.0.6
+  - fix ppc64 --gc-sections
+  - disassembler fixes for x86_64 cr/debug regs
+  - fix linker search order for DT_NEEDED libs
 
 * Mon Jan 02 2006 Jakub Jelinek <jakub@redhat.com> 2.16.91.0.5-1
 - update to 2.16.91.0.5
