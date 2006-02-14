@@ -12,6 +12,7 @@ Patch3: binutils-2.16.91.0.6-place-orphan.patch
 Patch4: binutils-2.16.91.0.6-ia64-lib64.patch
 Patch5: binutils-2.16.91.0.6-elfvsb-test.patch
 Patch6: binutils-2.16.91.0.6-standards.patch
+Patch7: binutils-2.16.91.0.6-build-fixes.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -47,6 +48,7 @@ addresses to file and line).
 %endif
 %patch5 -p0 -b .elfvsb-test~
 %patch6 -p0 -b .standards~
+%patch7 -p0 -b .build-fixes~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
