@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.16.91.0.6
-Release: 2
+Release: 3
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -15,6 +15,7 @@ Patch6: binutils-2.16.91.0.6-standards.patch
 Patch7: binutils-2.16.91.0.6-build-fixes.patch
 Patch8: binutils-2.16.91.0.6-pr26208.patch
 Patch9: binutils-2.16.91.0.6-mni.patch
+Patch10: binutils-2.16.91.0.6-cfaval.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -53,6 +54,7 @@ addresses to file and line).
 %patch7 -p0 -b .build-fixes~
 %patch8 -p0 -b .pr26208~
 %patch9 -p0 -b .mni~
+%patch10 -p0 -b .cfaval~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -163,6 +165,9 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Fri Mar  3 2006 Jakub Jelinek <jakub@redhat.com> 2.16.91.0.6-3
+- support DW_CFA_val_{offset,offset_sf,expression} in readelf/objdump
+
 * Tue Feb 28 2006 Jakub Jelinek <jakub@redhat.com> 2.16.91.0.6-2
 - add MNI support on i?86/x86_64 (#183080)
 - support S signal frame augmentation flag in .eh_frame,
