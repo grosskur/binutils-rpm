@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.16.91.0.6
-Release: 3
+Release: 4
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -16,6 +16,7 @@ Patch7: binutils-2.16.91.0.6-build-fixes.patch
 Patch8: binutils-2.16.91.0.6-pr26208.patch
 Patch9: binutils-2.16.91.0.6-mni.patch
 Patch10: binutils-2.16.91.0.6-cfaval.patch
+Patch11: binutils-2.16.91.0.6-rh184590.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -55,6 +56,7 @@ addresses to file and line).
 %patch8 -p0 -b .pr26208~
 %patch9 -p0 -b .mni~
 %patch10 -p0 -b .cfaval~
+%patch11 -p0 -b .rh184590~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -165,6 +167,9 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Thu Mar  9 2006 Alexandre Oliva <aoliva@redhat.com> 2.16.91.0.6-4
+- fix relaxation of TLS GD to LE on PPC (#184590)
+
 * Fri Mar  3 2006 Jakub Jelinek <jakub@redhat.com> 2.16.91.0.6-3
 - support DW_CFA_val_{offset,offset_sf,expression} in readelf/objdump
 
