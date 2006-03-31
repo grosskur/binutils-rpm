@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.16.91.0.6
-Release: 4
+Release: 6
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -17,6 +17,7 @@ Patch8: binutils-2.16.91.0.6-pr26208.patch
 Patch9: binutils-2.16.91.0.6-mni.patch
 Patch10: binutils-2.16.91.0.6-cfaval.patch
 Patch11: binutils-2.16.91.0.6-rh184590.patch
+Patch12: binutils-2.16.91.0.6-frepo.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -57,6 +58,7 @@ addresses to file and line).
 %patch9 -p0 -b .mni~
 %patch10 -p0 -b .cfaval~
 %patch11 -p0 -b .rh184590~
+%patch12 -p0 -b .frepo~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -167,6 +169,10 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Fri Mar 31 2006 Jakub Jelinek <jakub@redhat.com> 2.16.91.0.6-6
+- fix ld error message formatting, so that collect2 parser can
+  parse it again for g++ -frepo (#187142)
+
 * Thu Mar  9 2006 Alexandre Oliva <aoliva@redhat.com> 2.16.91.0.6-4
 - fix relaxation of TLS GD to LE on PPC (#184590)
 
