@@ -1,23 +1,18 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.16.91.0.6
-Release: 6
+Version: 2.17.50.0.1
+Release: 1
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-Patch1: binutils-2.16.91.0.6-ltconfig-multilib.patch
-Patch2: binutils-2.16.91.0.6-ppc64-pie.patch
-Patch3: binutils-2.16.91.0.6-place-orphan.patch
-Patch4: binutils-2.16.91.0.6-ia64-lib64.patch
-Patch5: binutils-2.16.91.0.6-elfvsb-test.patch
-Patch6: binutils-2.16.91.0.6-standards.patch
-Patch7: binutils-2.16.91.0.6-build-fixes.patch
-Patch8: binutils-2.16.91.0.6-pr26208.patch
-Patch9: binutils-2.16.91.0.6-mni.patch
-Patch10: binutils-2.16.91.0.6-cfaval.patch
-Patch11: binutils-2.16.91.0.6-rh184590.patch
-Patch12: binutils-2.16.91.0.6-frepo.patch
+Patch1: binutils-2.17.50.0.1-ltconfig-multilib.patch
+Patch2: binutils-2.17.50.0.1-ppc64-pie.patch
+Patch3: binutils-2.17.50.0.1-place-orphan.patch
+Patch4: binutils-2.17.50.0.1-ia64-lib64.patch
+Patch5: binutils-2.17.50.0.1-elfvsb-test.patch
+Patch6: binutils-2.17.50.0.1-standards.patch
+Patch7: binutils-2.17.50.0.1-build-fixes.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -54,11 +49,6 @@ addresses to file and line).
 %patch5 -p0 -b .elfvsb-test~
 %patch6 -p0 -b .standards~
 %patch7 -p0 -b .build-fixes~
-%patch8 -p0 -b .pr26208~
-%patch9 -p0 -b .mni~
-%patch10 -p0 -b .cfaval~
-%patch11 -p0 -b .rh184590~
-%patch12 -p0 -b .frepo~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -169,6 +159,9 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Tue May  9 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.1-1
+- update to 2.17.50.0.1
+
 * Fri Mar 31 2006 Jakub Jelinek <jakub@redhat.com> 2.16.91.0.6-6
 - fix ld error message formatting, so that collect2 parser can
   parse it again for g++ -frepo (#187142)
