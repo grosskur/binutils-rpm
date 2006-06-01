@@ -1,18 +1,21 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.17.50.0.1
+Version: 2.17.50.0.2
 Release: 1
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-Patch1: binutils-2.17.50.0.1-ltconfig-multilib.patch
-Patch2: binutils-2.17.50.0.1-ppc64-pie.patch
-Patch3: binutils-2.17.50.0.1-place-orphan.patch
-Patch4: binutils-2.17.50.0.1-ia64-lib64.patch
-Patch5: binutils-2.17.50.0.1-elfvsb-test.patch
-Patch6: binutils-2.17.50.0.1-standards.patch
-Patch7: binutils-2.17.50.0.1-build-fixes.patch
+Patch0: binutils-2.17.50.0.2-20060601.patch
+Patch1: binutils-2.17.50.0.2-ltconfig-multilib.patch
+Patch2: binutils-2.17.50.0.2-ppc64-pie.patch
+Patch3: binutils-2.17.50.0.2-place-orphan.patch
+Patch4: binutils-2.17.50.0.2-ia64-lib64.patch
+Patch5: binutils-2.17.50.0.2-elfvsb-test.patch
+Patch6: binutils-2.17.50.0.2-standards.patch
+Patch7: binutils-2.17.50.0.2-build-fixes.patch
+Patch8: binutils-2.17.50.0.2-install-info.patch
+Patch9: binutils-2.17.50.0.2-kept-section.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -38,6 +41,7 @@ addresses to file and line).
 
 %prep
 %setup -q
+%patch0 -p0 -b .20060601~
 %patch1 -p0 -b .ltconfig-multilib~
 %patch2 -p0 -b .ppc64-pie~
 %patch3 -p0 -b .place-orphan~
@@ -49,6 +53,8 @@ addresses to file and line).
 %patch5 -p0 -b .elfvsb-test~
 %patch6 -p0 -b .standards~
 %patch7 -p0 -b .build-fixes~
+%patch8 -p0 -b .install-info~
+%patch9 -p0 -b .kept-section~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -159,6 +165,11 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Thu Jun  1 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.2-1
+- update to 2.17.50.0.2
+- update from CVS to 20060601
+- speed up the ELF linker by caching the result of kept section check
+
 * Tue May  9 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.1-1
 - update to 2.17.50.0.1
 
