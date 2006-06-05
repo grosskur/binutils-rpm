@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.17.50.0.2
-Release: 1
+Release: 2
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -16,6 +16,7 @@ Patch6: binutils-2.17.50.0.2-standards.patch
 Patch7: binutils-2.17.50.0.2-build-fixes.patch
 Patch8: binutils-2.17.50.0.2-install-info.patch
 Patch9: binutils-2.17.50.0.2-kept-section.patch
+Patch10: binutils-2.17.50.0.2-bz2721.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -55,6 +56,7 @@ addresses to file and line).
 %patch7 -p0 -b .build-fixes~
 %patch8 -p0 -b .install-info~
 %patch9 -p0 -b .kept-section~
+%patch10 -p0 -b .bz2721~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -165,10 +167,14 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Mon Jun  5 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.2-2
+- fix --as-needed (Alan Modra, #193689, BZ#2721)
+
 * Thu Jun  1 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.2-1
 - update to 2.17.50.0.2
 - update from CVS to 20060601
 - speed up the ELF linker by caching the result of kept section check
+  (H.J. Lu)
 
 * Tue May  9 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.1-1
 - update to 2.17.50.0.1
