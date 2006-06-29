@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.17.50.0.2
-Release: 3
+Release: 4
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -19,6 +19,7 @@ Patch9: binutils-2.17.50.0.2-kept-section.patch
 Patch10: binutils-2.17.50.0.2-bz2721.patch
 Patch11: binutils-2.17.50.0.2-perturb.patch
 Patch12: binutils-2.17.50.0.2-tls_common.patch
+Patch13: binutils-2.17.50.0.2-bz2513.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -61,6 +62,7 @@ addresses to file and line).
 %patch10 -p0 -b .bz2721~
 %patch11 -p0 -b .perturb~
 %patch12 -p0 -b .tls_common~
+%patch13 -p0 -b .bz2513~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -171,6 +173,9 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Thu Jun 29 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.2-4
+- fix i?86 TLS GD->IE transition in executables (#196157, BZ#2513)
+
 * Mon Jun 19 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.2-3
 - fix two places in ld that misbehaved with MALLOC_PERTURB_=N
 - fix .tls_common handling in relocatable linking
