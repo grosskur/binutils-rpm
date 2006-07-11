@@ -67,6 +67,7 @@ addresses to file and line).
 %patch14 -p0 -b .hash-style~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
+sed -ie 's/\$(CC_FOR_BUILD)/& $(CFLAGS)/' opcodes/Makefile.{am,in}
 # LTP sucks
 perl -pi -e 's/i\[3-7\]86/i[34567]86/g' */conf*
 touch */configure
