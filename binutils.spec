@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.17.50.0.2
-Release: 5
+Release: 6
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -176,7 +176,7 @@ fi
 %{_infodir}/*info*
 
 %changelog
-* Tue Jul 11 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.2-5
+* Tue Jul 11 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.2-6
 - add DT_GNU_HASH support (--hash-style=gnu and --hash-style=both
   ld options)
 
