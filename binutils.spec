@@ -6,6 +6,7 @@ License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
+Source2: s390-opc.tab
 Patch0: binutils-2.17.50.0.2-20060601.patch
 Patch1: binutils-2.17.50.0.2-ltconfig-multilib.patch
 Patch2: binutils-2.17.50.0.2-ppc64-pie.patch
@@ -65,10 +66,10 @@ addresses to file and line).
 %patch12 -p0 -b .tls_common~
 %patch13 -p0 -b .bz2513~
 %patch14 -p0 -b .hash-style~
+touch opcodes/s390-mkopc
+cp %{SOURCE2} opcodes/s390-opc.tab; touch opcodes/s390-opc.tab
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
-sed -ie 's/\$(CC_FOR_BUILD)/& $(CFLAGS)/' opcodes/Makefile.{am,in}
-sed -ie 's,\./s390-mkopc ,LD_PRELOAD=libSegFault.so SEGFAULT_SIGNALS=all &,' opcodes/Makefile.{am,in}
 # LTP sucks
 perl -pi -e 's/i\[3-7\]86/i[34567]86/g' */conf*
 touch */configure
