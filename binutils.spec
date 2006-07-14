@@ -81,7 +81,7 @@ addresses to file and line).
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
 perl -pi -e 's/i\[3-7\]86/i[34567]86/g' */conf*
-sed -i -e 's/%{version}/%{version}gnu_hash/g' bfd/configure{.in,}
+sed -i -e 's/%{version}/%{version}-%{release}/g' bfd/configure{.in,}
 touch */configure
 
 %build
