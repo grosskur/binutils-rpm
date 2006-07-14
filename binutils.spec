@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.17.50.0.2
-Release: 7
+Release: 8
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -21,6 +21,12 @@ Patch11: binutils-2.17.50.0.2-perturb.patch
 Patch12: binutils-2.17.50.0.2-tls_common.patch
 Patch13: binutils-2.17.50.0.2-bz2513.patch
 Patch14: binutils-2.17.50.0.2-hash-style.patch
+Patch15: binutils-2.17.50.0.2-power6.patch
+Patch16: binutils-2.17.50.0.2-power6-insns.patch
+Patch17: binutils-2.17.50.0.2-x86-nops.patch
+Patch18: binutils-2.17.50.0.2-x86-march.patch
+Patch19: binutils-2.17.50.0.2-x86-nops2.patch
+Patch20: binutils-2.17.50.0.2-amdfam10.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -65,6 +71,12 @@ addresses to file and line).
 %patch12 -p0 -b .tls_common~
 %patch13 -p0 -b .bz2513~
 %patch14 -p0 -b .hash-style~
+%patch15 -p0 -b .power6~
+%patch16 -p0 -b .power6-insns~
+%patch17 -p0 -b .x86-nops~
+%patch18 -p0 -b .x86-march~
+%patch19 -p0 -b .x86-nops2~
+%patch20 -p0 -b .amdfam10~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -176,6 +188,12 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Fri Jul 14 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.2-8
+- add support for new AMDFAM10 instructions (#198281, IT#97662)
+- add -march=/-mtune= gas support on x86/x86-64
+- x86/x86-64 nop insn improvements
+- fix DT_GNU_HASH shift count value computation
+
 * Tue Jul 11 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.2-7
 - add DT_GNU_HASH support (--hash-style=gnu and --hash-style=both
   ld options)
