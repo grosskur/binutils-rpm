@@ -117,12 +117,12 @@ rm -rf %{buildroot}%{_prefix}/%{_target_platform}
 
 cd ..
 %find_lang binutils
-#%#find_lang opcodes
+%find_lang opcodes
 %find_lang bfd
 %find_lang gas
 %find_lang ld
 %find_lang gprof
-#cat opcodes.lang >> binutils.lang
+cat opcodes.lang >> binutils.lang
 cat bfd.lang >> binutils.lang
 cat gas.lang >> binutils.lang
 cat ld.lang >> binutils.lang
