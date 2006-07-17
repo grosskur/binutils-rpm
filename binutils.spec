@@ -1,32 +1,20 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.17.50.0.2
-Release: 8
+Version: 2.17.50.0.3
+Release: 1
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-Patch0: binutils-2.17.50.0.2-20060601.patch
-Patch1: binutils-2.17.50.0.2-ltconfig-multilib.patch
-Patch2: binutils-2.17.50.0.2-ppc64-pie.patch
-Patch3: binutils-2.17.50.0.2-place-orphan.patch
-Patch4: binutils-2.17.50.0.2-ia64-lib64.patch
-Patch5: binutils-2.17.50.0.2-elfvsb-test.patch
-Patch6: binutils-2.17.50.0.2-standards.patch
-Patch7: binutils-2.17.50.0.2-build-fixes.patch
-Patch8: binutils-2.17.50.0.2-install-info.patch
-Patch9: binutils-2.17.50.0.2-kept-section.patch
-Patch10: binutils-2.17.50.0.2-bz2721.patch
-Patch11: binutils-2.17.50.0.2-perturb.patch
-Patch12: binutils-2.17.50.0.2-tls_common.patch
-Patch13: binutils-2.17.50.0.2-bz2513.patch
-Patch14: binutils-2.17.50.0.2-hash-style.patch
-Patch15: binutils-2.17.50.0.2-power6.patch
-Patch16: binutils-2.17.50.0.2-power6-insns.patch
-Patch17: binutils-2.17.50.0.2-x86-nops.patch
-Patch18: binutils-2.17.50.0.2-x86-march.patch
-Patch19: binutils-2.17.50.0.2-x86-nops2.patch
-Patch20: binutils-2.17.50.0.2-amdfam10.patch
+Patch1: binutils-2.17.50.0.3-ltconfig-multilib.patch
+Patch2: binutils-2.17.50.0.3-ppc64-pie.patch
+Patch3: binutils-2.17.50.0.3-place-orphan.patch
+Patch4: binutils-2.17.50.0.3-ia64-lib64.patch
+Patch5: binutils-2.17.50.0.3-elfvsb-test.patch
+Patch6: binutils-2.17.50.0.3-standards.patch
+Patch7: binutils-2.17.50.0.3-build-fixes.patch
+Patch8: binutils-2.17.50.0.3-kept-section.patch
+Patch9: binutils-2.17.50.0.3-power6-insns.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -52,7 +40,6 @@ addresses to file and line).
 
 %prep
 %setup -q
-%patch0 -p0 -b .20060601~
 %patch1 -p0 -b .ltconfig-multilib~
 %patch2 -p0 -b .ppc64-pie~
 %patch3 -p0 -b .place-orphan~
@@ -64,19 +51,8 @@ addresses to file and line).
 %patch5 -p0 -b .elfvsb-test~
 %patch6 -p0 -b .standards~
 %patch7 -p0 -b .build-fixes~
-%patch8 -p0 -b .install-info~
-%patch9 -p0 -b .kept-section~
-%patch10 -p0 -b .bz2721~
-%patch11 -p0 -b .perturb~
-%patch12 -p0 -b .tls_common~
-%patch13 -p0 -b .bz2513~
-%patch14 -p0 -b .hash-style~
-%patch15 -p0 -b .power6~
-%patch16 -p0 -b .power6-insns~
-%patch17 -p0 -b .x86-nops~
-%patch18 -p0 -b .x86-march~
-%patch19 -p0 -b .x86-nops2~
-%patch20 -p0 -b .amdfam10~
+%patch8 -p0 -b .kept-section~
+%patch9 -p0 -b .power6-insns~
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -188,6 +164,9 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Mon Jul 17 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.3-1
+- update to 2.17.50.0.3
+
 * Fri Jul 14 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.2-8
 - add support for new AMDFAM10 instructions (#198281, IT#97662)
 - add -march=/-mtune= gas support on x86/x86-64
