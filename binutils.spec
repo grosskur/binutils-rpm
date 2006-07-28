@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.17.50.0.3
-Release: 1
+Release: 2
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -16,6 +16,7 @@ Patch7: binutils-2.17.50.0.3-build-fixes.patch
 Patch8: binutils-2.17.50.0.3-kept-section.patch
 Patch9: binutils-2.17.50.0.3-power6-insns.patch
 Patch10: binutils-2.17.50.0.3-opcodes-intl.patch
+Patch11: binutils-2.17.50.0.3-x86-noautoarch-rh200330.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -55,6 +56,8 @@ addresses to file and line).
 %patch8 -p0 -b .kept-section~
 %patch9 -p0 -b .power6-insns~
 %patch10 -p0 -b .opcodes-intl~
+%patch11 -p0 -b .x86-noautoarch~
+
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -166,6 +169,10 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Fri Jul 28 2006 Alexandre Oliva <aoliva@redhat.com> 2.17.50.0.3-2
+- do not infer x86 arch implicitly based on instruction in the input
+(#200330)
+
 * Mon Jul 17 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.3-1
 - update to 2.17.50.0.3
 
