@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.17.50.0.3
-Release: 2
+Release: 3
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -58,6 +58,8 @@ addresses to file and line).
 %patch10 -p0 -b .opcodes-intl~
 %patch11 -p0 -b .x86-noautoarch~
 
+# On ppc64 we might use 64K pages
+sed -i -e '/#define.*ELF_COMMONPAGESIZE/s/0x1000$/0x10000/' bfd/elf*ppc.c
 # libtool sucks
 perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
@@ -169,9 +171,12 @@ fi
 %{_infodir}/*info*
 
 %changelog
+* Fri Aug 18 2006 Alexandre Oliva <aoliva@redhat.com> 2.17.50.0.3-3
+- on ppc and ppc64 increase default -z commonpagesize to 64K (#203001)
+
 * Fri Jul 28 2006 Alexandre Oliva <aoliva@redhat.com> 2.17.50.0.3-2
 - do not infer x86 arch implicitly based on instruction in the input
-(#200330)
+  (#200330)
 
 * Mon Jul 17 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.3-1
 - update to 2.17.50.0.3
