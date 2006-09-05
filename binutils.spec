@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.17.50.0.3
-Release: 3
+Release: 4
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -40,6 +40,18 @@ object or archive file), strings (for listing printable strings from
 files), strip (for discarding symbols), and addr2line (for converting
 addresses to file and line).
 
+%package devel
+Summary: BFD and opcodes static libraries and header files
+Group: System Environment/Libraries
+Conflicts: binutils < 2.17.50.0.3-4
+Prereq: /sbin/install-info
+
+%description devel
+This package contains BFD and opcodes static libraries and associated
+header files.  Only *.a libraries are included, because BFD doesn't
+have a stable ABI.  Developers starting new projects are strongly encouraged
+to consider using libelf instead of BFD.
+
 %prep
 %setup -q
 %patch1 -p0 -b .ltconfig-multilib~
@@ -60,11 +72,10 @@ addresses to file and line).
 
 # On ppc64 we might use 64K pages
 sed -i -e '/#define.*ELF_COMMONPAGESIZE/s/0x1000$/0x10000/' bfd/elf*ppc.c
-# libtool sucks
-perl -pi -e 'm/LIBADD/ && s/(\.\.\/bfd\/libbfd.la)/-L\.\.\/bfd\/\.libs \1/' opcodes/Makefile.{am,in}
 # LTP sucks
 perl -pi -e 's/i\[3-7\]86/i[34567]86/g' */conf*
 sed -i -e 's/%{version}/%{version}-%{release}/g' bfd/configure{.in,}
+sed -i -e '/^libopcodes_la_\(DEPENDENCIES\|LIBADD\)/s,$, ../bfd/libbfd.la,' opcodes/Makefile.{am,in}
 touch */configure
 
 %build
@@ -141,7 +152,6 @@ rm -rf %{buildroot}
 %post
 /sbin/ldconfig
 /sbin/install-info --info-dir=%{_infodir} %{_infodir}/as.info.gz
-/sbin/install-info --info-dir=%{_infodir} %{_infodir}/bfd.info.gz
 /sbin/install-info --info-dir=%{_infodir} %{_infodir}/binutils.info.gz
 /sbin/install-info --info-dir=%{_infodir} %{_infodir}/gprof.info.gz
 /sbin/install-info --info-dir=%{_infodir} %{_infodir}/ld.info.gz
@@ -151,7 +161,6 @@ rm -rf %{buildroot}
 %preun
 if [ $1 = 0 ] ;then
   /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/as.info.gz
-  /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/bfd.info.gz
   /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/binutils.info.gz
   /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/gprof.info.gz
   /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/ld.info.gz
@@ -161,17 +170,35 @@ fi
 
 %postun -p /sbin/ldconfig
 
+%post devel
+/sbin/install-info --info-dir=%{_infodir} %{_infodir}/bfd.info.gz
+
+%preun devel
+if [ $1 = 0 ] ;then
+  /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/bfd.info.gz
+fi
+
 %files -f binutils.lang
 %defattr(-,root,root)
 %doc README
 %{_prefix}/bin/*
 %{_mandir}/man1/*
+%{_prefix}/%{_lib}/lib*.so
+%{_infodir}/[^b]*info*
+%{_infodir}/binutils*info*
+
+%files devel
+%defattr(-,root,root)
 %{_prefix}/include/*
-%{_prefix}/%{_lib}/lib*
-%{_infodir}/*info*
+%{_prefix}/%{_lib}/lib*.a
+%{_infodir}/bfd*info*
 
 %changelog
-* Fri Aug 18 2006 Alexandre Oliva <aoliva@redhat.com> 2.17.50.0.3-3
+* Tue Sep  5 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.3-4
+- link libopcodes*.so against libbfd*.so (#202327)
+- split *.a and header files into binutils-devel
+
+* Fri Aug 18 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.3-3
 - on ppc and ppc64 increase default -z commonpagesize to 64K (#203001)
 
 * Fri Jul 28 2006 Alexandre Oliva <aoliva@redhat.com> 2.17.50.0.3-2
