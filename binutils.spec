@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.17.50.0.3
-Release: 5
+Release: 6
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -135,6 +135,23 @@ rm -f %{buildroot}%{_prefix}/%{_lib}/lib{bfd,opcodes}.la
 rm -f %{buildroot}%{_infodir}/dir
 rm -rf %{buildroot}%{_prefix}/%{_target_platform}
 
+%ifarch %{ix86} x86_64 ppc ppc64 s390 s390x sparc sparc64
+sed -i -e '/^#include "ansidecl.h"/{p;s~^.*$~#include <bits/wordsize.h>~;}' \
+%ifarch %{ix86} x86_64
+    -e 's/^#define BFD_ARCH_SIZE \(32\|64\) *$/#define BFD_ARCH_SIZE __WORDSIZE/' \
+%endif
+    -e 's/^#define BFD_DEFAULT_TARGET_SIZE \(32\|64\) *$/#define BFD_DEFAULT_TARGET_SIZE __WORDSIZE/' \
+    -e 's/^#define BFD_HOST_64BIT_LONG [01] *$/#define BFD_HOST_64BIT_LONG (__WORDSIZE == 64)/' \
+    -e 's/^#define BFD_HOST_64_BIT \(long \)\?long *$/#if __WORDSIZE == 32\
+#define BFD_HOST_64_BIT long long\
+#else\
+#define BFD_HOST_64_BIT long\
+#endif/' \
+    -e 's/^#define BFD_HOST_U_64_BIT unsigned \(long \)\?long *$/#define BFD_HOST_U_64_BIT unsigned BFD_HOST_64_BIT/' \
+    %{buildroot}%{_prefix}/include/bfd.h
+%endif
+touch -r ../bfd/bfd-in2.h %{buildroot}%{_prefix}/include/bfd.h
+
 cd ..
 %find_lang binutils
 %find_lang opcodes
@@ -196,6 +213,9 @@ fi
 %{_infodir}/bfd*info*
 
 %changelog
+* Tue Sep 12 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.3-6
+- fix multilib conflict in %{_prefix}/include/bfd.h
+
 * Tue Sep 12 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.3-5
 - fix efi-app-ia64 magic number (#206002, BZ#3171)
 
