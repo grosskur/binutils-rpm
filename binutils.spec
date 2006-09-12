@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.17.50.0.3
-Release: 4
+Release: 5
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -17,6 +17,7 @@ Patch8: binutils-2.17.50.0.3-kept-section.patch
 Patch9: binutils-2.17.50.0.3-power6-insns.patch
 Patch10: binutils-2.17.50.0.3-opcodes-intl.patch
 Patch11: binutils-2.17.50.0.3-x86-noautoarch-rh200330.patch
+Patch12: binutils-2.17.50.0.3-bz3171.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -69,6 +70,7 @@ to consider using libelf instead of BFD.
 %patch9 -p0 -b .power6-insns~
 %patch10 -p0 -b .opcodes-intl~
 %patch11 -p0 -b .x86-noautoarch~
+%patch12 -p0 -b .bz3171~
 
 # On ppc64 we might use 64K pages
 sed -i -e '/#define.*ELF_COMMONPAGESIZE/s/0x1000$/0x10000/' bfd/elf*ppc.c
@@ -88,7 +90,7 @@ CARGS=--enable-64-bit-bfd
 %ifarch ia64
 CARGS=--enable-targets=i386-linux
 %endif
-CFLAGS="${CFLAGS:-%optflags}" ../configure \
+CC="gcc -L`pwd`/bfd/.libs/" CFLAGS="${CFLAGS:-%optflags}" ../configure \
   %{_target_platform} --prefix=%{_prefix} --exec-prefix=%{_exec_prefix} \
   --bindir=%{_bindir} --sbindir=%{_sbindir} --sysconfdir=%{_sysconfdir} \
   --datadir=%{_datadir} --includedir=%{_includedir} --libdir=%{_libdir} \
@@ -194,6 +196,9 @@ fi
 %{_infodir}/bfd*info*
 
 %changelog
+* Tue Sep 12 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.3-5
+- fix efi-app-ia64 magic number (#206002, BZ#3171)
+
 * Tue Sep  5 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.3-4
 - link libopcodes*.so against libbfd*.so (#202327)
 - split *.a and header files into binutils-devel
