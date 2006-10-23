@@ -1,23 +1,21 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.17.50.0.3
-Release: 6
+Version: 2.17.50.0.6
+Release: 2
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-Patch1: binutils-2.17.50.0.3-ltconfig-multilib.patch
-Patch2: binutils-2.17.50.0.3-ppc64-pie.patch
-Patch3: binutils-2.17.50.0.3-place-orphan.patch
-Patch4: binutils-2.17.50.0.3-ia64-lib64.patch
-Patch5: binutils-2.17.50.0.3-elfvsb-test.patch
-Patch6: binutils-2.17.50.0.3-standards.patch
-Patch7: binutils-2.17.50.0.3-build-fixes.patch
-Patch8: binutils-2.17.50.0.3-kept-section.patch
-Patch9: binutils-2.17.50.0.3-power6-insns.patch
-Patch10: binutils-2.17.50.0.3-opcodes-intl.patch
-Patch11: binutils-2.17.50.0.3-x86-noautoarch-rh200330.patch
-Patch12: binutils-2.17.50.0.3-bz3171.patch
+Patch1: binutils-2.17.50.0.6-ltconfig-multilib.patch
+Patch2: binutils-2.17.50.0.6-ppc64-pie.patch
+Patch3: binutils-2.17.50.0.6-place-orphan.patch
+Patch4: binutils-2.17.50.0.6-ia64-lib64.patch
+Patch5: binutils-2.17.50.0.6-elfvsb-test.patch
+Patch6: binutils-2.17.50.0.6-standards.patch
+Patch7: binutils-2.17.50.0.6-build-fixes.patch
+Patch8: binutils-2.17.50.0.6-kept-section.patch
+Patch9: binutils-2.17.50.0.6-power6-insns.patch
+Patch10: binutils-2.17.50.0.6-fixsyms.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -68,9 +66,7 @@ to consider using libelf instead of BFD.
 %patch7 -p0 -b .build-fixes~
 %patch8 -p0 -b .kept-section~
 %patch9 -p0 -b .power6-insns~
-%patch10 -p0 -b .opcodes-intl~
-%patch11 -p0 -b .x86-noautoarch~
-%patch12 -p0 -b .bz3171~
+%patch10 -p0 -b .fixsyms~
 
 # On ppc64 we might use 64K pages
 sed -i -e '/#define.*ELF_COMMONPAGESIZE/s/0x1000$/0x10000/' bfd/elf*ppc.c
@@ -213,6 +209,14 @@ fi
 %{_infodir}/bfd*info*
 
 %changelog
+* Mon Oct 23 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.6-2
+- update to 2.17.50.0.6
+  - fix for section relative linker script defined symbols in
+    empty sections (#207598, BZ#3267)
+  - fix handling of DW_CFA_set_loc in .eh_frame optimizations
+  - fix R_PPC_{PLT,GOT{,_TLSGD,_TLSLD,_TPREL,_DTPREL}}16_HA relocation
+    handling with weak undefined symbols (Alan Modra, #211094)
+
 * Tue Sep 12 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.3-6
 - fix multilib conflict in %{_prefix}/include/bfd.h
 
