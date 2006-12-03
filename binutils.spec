@@ -1,18 +1,19 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.17.50.0.7
+Version: 2.17.50.0.8
 Release: 1
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-Patch1: binutils-2.17.50.0.7-ltconfig-multilib.patch
-Patch2: binutils-2.17.50.0.7-ppc64-pie.patch
-Patch3: binutils-2.17.50.0.7-place-orphan.patch
-Patch4: binutils-2.17.50.0.7-ia64-lib64.patch
-Patch5: binutils-2.17.50.0.7-elfvsb-test.patch
-Patch6: binutils-2.17.50.0.7-standards.patch
-Patch7: binutils-2.17.50.0.7-build-fixes.patch
+Patch1: binutils-2.17.50.0.8-ltconfig-multilib.patch
+Patch2: binutils-2.17.50.0.8-ppc64-pie.patch
+Patch3: binutils-2.17.50.0.8-place-orphan.patch
+Patch4: binutils-2.17.50.0.8-ia64-lib64.patch
+Patch5: binutils-2.17.50.0.8-elfvsb-test.patch
+Patch6: binutils-2.17.50.0.8-standards.patch
+Patch7: binutils-2.17.50.0.8-build-fixes.patch
+Patch8: binutils-2.17.50.0.8-bz3607.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -61,6 +62,7 @@ to consider using libelf instead of BFD.
 %patch5 -p0 -b .elfvsb-test~
 %patch6 -p0 -b .standards~
 %patch7 -p0 -b .build-fixes~
+%patch8 -p0 -b .bz3607~
 
 # On ppc64 we might use 64K pages
 sed -i -e '/#define.*ELF_COMMONPAGESIZE/s/0x1000$/0x10000/' bfd/elf*ppc.c
@@ -203,6 +205,10 @@ fi
 %{_infodir}/bfd*info*
 
 %changelog
+* Sun Dec  3 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.8-1
+- update to 2.17.50.0.8
+- initialize frch_cfi_data (BZ#3607)
+
 * Fri Dec  1 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.7-1
 - update to 2.17.50.0.7
   - .cfi_personality and .cfi_lsda directives, per subsection .cfi_*
