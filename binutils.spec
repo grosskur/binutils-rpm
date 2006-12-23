@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.17.50.0.8
-Release: 1
+Release: 2
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -14,6 +14,7 @@ Patch5: binutils-2.17.50.0.8-elfvsb-test.patch
 Patch6: binutils-2.17.50.0.8-standards.patch
 Patch7: binutils-2.17.50.0.8-build-fixes.patch
 Patch8: binutils-2.17.50.0.8-bz3607.patch
+Patch9: binutils-2.17.50.0.8-rh219629.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -63,6 +64,7 @@ to consider using libelf instead of BFD.
 %patch6 -p0 -b .standards~
 %patch7 -p0 -b .build-fixes~
 %patch8 -p0 -b .bz3607~
+%patch9 -p0 -b .rh219629~
 
 # On ppc64 we might use 64K pages
 sed -i -e '/#define.*ELF_COMMONPAGESIZE/s/0x1000$/0x10000/' bfd/elf*ppc.c
@@ -205,6 +207,9 @@ fi
 %{_infodir}/bfd*info*
 
 %changelog
+* Sat Dec 23 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.8-2
+- fix --as-needed on ppc64 (#219629)
+
 * Sun Dec  3 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.8-1
 - update to 2.17.50.0.8
 - initialize frch_cfi_data (BZ#3607)
