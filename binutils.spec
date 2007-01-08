@@ -6,12 +6,12 @@ License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-Patch1: binutils-2.17.50.0.8-ltconfig-multilib.patch
-Patch2: binutils-2.17.50.0.8-ppc64-pie.patch
-Patch3: binutils-2.17.50.0.8-place-orphan.patch
-Patch4: binutils-2.17.50.0.8-ia64-lib64.patch
-Patch5: binutils-2.17.50.0.8-standards.patch
-Patch6: binutils-2.17.50.0.8-build-fixes.patch
+Patch1: binutils-2.17.50.0.9-ltconfig-multilib.patch
+Patch2: binutils-2.17.50.0.9-ppc64-pie.patch
+Patch3: binutils-2.17.50.0.9-place-orphan.patch
+Patch4: binutils-2.17.50.0.9-ia64-lib64.patch
+Patch5: binutils-2.17.50.0.9-standards.patch
+Patch6: binutils-2.17.50.0.9-build-fixes.patch
 Patch7: binutils-2.17.50.0.9-tekhex.patch
 
 Buildroot: %{_tmppath}/binutils-root
