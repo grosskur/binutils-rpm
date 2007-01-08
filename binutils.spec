@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.17.50.0.8
-Release: 2
+Version: 2.17.50.0.9
+Release: 1
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -10,11 +10,9 @@ Patch1: binutils-2.17.50.0.8-ltconfig-multilib.patch
 Patch2: binutils-2.17.50.0.8-ppc64-pie.patch
 Patch3: binutils-2.17.50.0.8-place-orphan.patch
 Patch4: binutils-2.17.50.0.8-ia64-lib64.patch
-Patch5: binutils-2.17.50.0.8-elfvsb-test.patch
-Patch6: binutils-2.17.50.0.8-standards.patch
-Patch7: binutils-2.17.50.0.8-build-fixes.patch
-Patch8: binutils-2.17.50.0.8-bz3607.patch
-Patch9: binutils-2.17.50.0.8-rh219629.patch
+Patch5: binutils-2.17.50.0.8-standards.patch
+Patch6: binutils-2.17.50.0.8-build-fixes.patch
+Patch7: binutils-2.17.50.0.9-tekhex.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -60,11 +58,9 @@ to consider using libelf instead of BFD.
 %patch4 -p0 -b .ia64-lib64~
 %endif
 %endif
-%patch5 -p0 -b .elfvsb-test~
-%patch6 -p0 -b .standards~
-%patch7 -p0 -b .build-fixes~
-%patch8 -p0 -b .bz3607~
-%patch9 -p0 -b .rh219629~
+%patch5 -p0 -b .standards~
+%patch6 -p0 -b .build-fixes~
+%patch7 -p0 -b .tekhex~
 
 # On ppc64 we might use 64K pages
 sed -i -e '/#define.*ELF_COMMONPAGESIZE/s/0x1000$/0x10000/' bfd/elf*ppc.c
@@ -207,6 +203,10 @@ fi
 %{_infodir}/bfd*info*
 
 %changelog
+* Mon Jan  8 2007 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.9-1
+- update to 2.17.50.0.9
+- fix tekhex reader
+
 * Sat Dec 23 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.8-2
 - fix --as-needed on ppc64 (#219629)
 
