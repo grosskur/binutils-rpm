@@ -1,18 +1,18 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.17.50.0.9
+Version: 2.17.50.0.12
 Release: 1
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-Patch1: binutils-2.17.50.0.9-ltconfig-multilib.patch
-Patch2: binutils-2.17.50.0.9-ppc64-pie.patch
-Patch3: binutils-2.17.50.0.9-place-orphan.patch
-Patch4: binutils-2.17.50.0.9-ia64-lib64.patch
-Patch5: binutils-2.17.50.0.9-standards.patch
-Patch6: binutils-2.17.50.0.9-build-fixes.patch
-Patch7: binutils-2.17.50.0.9-tekhex.patch
+Patch1: binutils-2.17.50.0.12-ltconfig-multilib.patch
+Patch2: binutils-2.17.50.0.12-ppc64-pie.patch
+Patch3: binutils-2.17.50.0.12-place-orphan.patch
+Patch4: binutils-2.17.50.0.12-ia64-lib64.patch
+Patch5: binutils-2.17.50.0.12-standards.patch
+Patch6: binutils-2.17.50.0.12-build-fixes.patch
+Patch7: binutils-2.17.50.0.12-symbolic-envvar-revert.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -203,6 +203,11 @@ fi
 %{_infodir}/bfd*info*
 
 %changelog
+* Thu Mar  1 2007 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.12-1
+- update to 2.17.50.0.12
+- revert the misdesigned LD_SYMBOLIC{,_FUNCTIONS} env var support,
+  only support -Bsymbolic/-Bsymbolic-functions/--dynamic-list*
+
 * Mon Jan  8 2007 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.9-1
 - update to 2.17.50.0.9
 - fix tekhex reader

@@ -1,0 +1,52 @@
+--- ld/NEWS.jj	2007-01-28 11:49:31.000000000 -0500
++++ ld/NEWS	2007-03-01 04:21:37.000000000 -0500
+@@ -1,7 +1,4 @@
+ -*- text -*-
+-* ELF: Support environment variables, LD_SYMBOLIC for -Bsymbolic and
+-  LD_SYMBOLIC_FUNCTIONS for -Bsymbolic-functions.
+-
+ * Add a new command line option '--default-script=FILE' or '-dT FILE'
+   which specifies a replacement for the built in, default linker
+   script.
+--- ld/ld.texinfo.jj	2007-01-28 11:49:31.000000000 -0500
++++ ld/ld.texinfo	2007-03-01 04:25:24.000000000 -0500
+@@ -1144,21 +1144,14 @@ When creating a shared library, bind ref
+ definition within the shared library, if any.  Normally, it is possible
+ for a program linked against a shared library to override the definition
+ within the shared library.  This option is only meaningful on ELF
+-platforms which support shared libraries.  If @option{-Bsymbolic} is not
+-used when linking a shared library, the linker will also turn on this
+-option if the environment variable @code{LD_SYMBOLIC} is set.
++platforms which support shared libraries.
+ 
+ @kindex -Bsymbolic-functions
+ @item -Bsymbolic-functions
+ When creating a shared library, bind references to global function
+ symbols to the definition within the shared library, if any. 
+ This option is only meaningful on ELF platforms which support shared
+-libraries.  If @option{-Bsymbolic-functions} is not used when linking a
+-shared library, the linker will also turn on this option if the
+-environment variable @code{LD_SYMBOLIC_FUNCTIONS} is set.  When
+-both environment variables @code{LD_SYMBOLIC} and
+-@code{LD_SYMBOLIC_FUNCTIONS} are set, @code{LD_SYMBOLIC} will take
+-precedent.
++libraries.
+ 
+ @kindex --dynamic-list=@var{dynamic-list-file}
+ @item --dynamic-list=@var{dynamic-list-file}
+--- ld/ldmain.c.jj	2007-01-28 11:49:31.000000000 -0500
++++ ld/ldmain.c	2007-03-01 04:22:40.000000000 -0500
+@@ -256,12 +256,7 @@ main (int argc, char **argv)
+   command_line.warn_mismatch = TRUE;
+   command_line.check_section_addresses = TRUE;
+   command_line.accept_unknown_input_arch = FALSE;
+-  if (getenv ("LD_SYMBOLIC") != NULL)
+-    command_line.symbolic = symbolic;
+-  else if (getenv ("LD_SYMBOLIC_FUNCTIONS") != NULL)
+-    command_line.symbolic = symbolic_functions;
+-  else
+-    command_line.symbolic = symbolic_unset;
++  command_line.symbolic = symbolic_unset;
+   command_line.dynamic_list = dynamic_list_unset;
+ 
+   sort_section = none;
