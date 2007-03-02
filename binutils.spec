@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.17.50.0.12
-Release: 1
+Release: 2
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -166,6 +166,7 @@ rm -rf %{buildroot}
 /sbin/install-info --info-dir=%{_infodir} %{_infodir}/ld.info.gz
 /sbin/install-info --info-dir=%{_infodir} %{_infodir}/standards.info.gz
 /sbin/install-info --info-dir=%{_infodir} %{_infodir}/configure.info.gz
+exit 0
 
 %preun
 if [ $1 = 0 ] ;then
@@ -176,15 +177,16 @@ if [ $1 = 0 ] ;then
   /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/standards.info.gz
   /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/configure.info.gz
 fi
+exit 0
 
 %postun -p /sbin/ldconfig
 
 %post devel
-/sbin/install-info --info-dir=%{_infodir} %{_infodir}/bfd.info.gz
+/sbin/install-info --info-dir=%{_infodir} %{_infodir}/bfd.info.gz || :
 
 %preun devel
 if [ $1 = 0 ] ;then
-  /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/bfd.info.gz
+  /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/bfd.info.gz || :
 fi
 
 %files -f binutils.lang
@@ -203,6 +205,9 @@ fi
 %{_infodir}/bfd*info*
 
 %changelog
+* Fri Mar  2 2007 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.12-2
+- ignore install-info errors from scriptlets (#223678)
+
 * Thu Mar  1 2007 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.12-1
 - update to 2.17.50.0.12
 - revert the misdesigned LD_SYMBOLIC{,_FUNCTIONS} env var support,
