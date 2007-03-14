@@ -72,8 +72,8 @@ sed -i -e 's/%{version}/%{version}-%{release}/g' bfd/configure{.in,}
 sed -i -e '/^libopcodes_la_\(DEPENDENCIES\|LIBADD\)/s,$, ../bfd/libbfd.la,' opcodes/Makefile.{am,in}
 # Build libbfd.so and libopcodes.so with -Bsymbolic-functions if possible.
 if gcc %{optflags} -v --help 2>&1 | grep -q -- -Bsymbolic-functions; then
-sed -i -e '/^libbfd_la_LDFLAGS = /&-Wl,-Bsymbolic-functions /' bfd/Makefile.{am,in}
-sed -i -e '/^libopcodes_la_LDFLAGS = /&-Wl,-Bsymbolic-functions /' opcodes/Makefile.{am,in}
+sed -i -e 's/^libbfd_la_LDFLAGS = /&-Wl,-Bsymbolic-functions /' bfd/Makefile.{am,in}
+sed -i -e 's/^libopcodes_la_LDFLAGS = /&-Wl,-Bsymbolic-functions /' opcodes/Makefile.{am,in}
 fi
 touch */configure
 

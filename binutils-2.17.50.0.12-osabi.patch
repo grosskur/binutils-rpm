@@ -1,0 +1,141 @@
+2007-03-13  H.J. Lu  <hongjiu.lu@intel.com>
+
+	PR binutils/3826
+	* elf-bfd.h (_bfd_elf_check_osabi): Removed.
+
+	* elf.c (_bfd_elf_check_osabi): Removed.
+
+	* elfcode.h (elf_object_p): Match the ELFOSABI_NONE ELF target
+	with any ELF target of the same machine for which we do not
+	have a specific backend.
+
+	* elfxx-target.h (elf_backend_object_p): Default to 0.
+
+--- bfd/elf-bfd.h.jj	2007-01-28 11:49:30.000000000 -0500
++++ bfd/elf-bfd.h	2007-03-14 05:28:16.000000000 -0400
+@@ -1736,8 +1736,6 @@ extern bfd_boolean _bfd_elf_setup_sectio
+ 
+ extern void _bfd_elf_set_osabi (bfd * , struct bfd_link_info *);
+ 
+-extern bfd_boolean _bfd_elf_check_osabi (bfd *);
+-
+ extern const bfd_target *bfd_elf32_object_p
+   (bfd *);
+ extern const bfd_target *bfd_elf32_core_file_p
+--- bfd/elf.c.jj	2007-01-28 11:49:30.000000000 -0500
++++ bfd/elf.c	2007-03-14 05:28:31.000000000 -0400
+@@ -9135,14 +9135,3 @@ _bfd_elf_set_osabi (bfd * abfd,
+ 
+   i_ehdrp->e_ident[EI_OSABI] = get_elf_backend_data (abfd)->elf_osabi;
+ }
+-
+-bfd_boolean
+-_bfd_elf_check_osabi (bfd *abfd)
+-{
+-  Elf_Internal_Ehdr * i_ehdrp;	/* ELF file header, internal form.  */
+-
+-  i_ehdrp = elf_elfheader (abfd);
+-
+-  return (i_ehdrp->e_ident[EI_OSABI]
+-	  == get_elf_backend_data (abfd)->elf_osabi);
+-}
+--- bfd/elfxx-target.h.jj	2007-01-28 11:49:30.000000000 -0500
++++ bfd/elfxx-target.h	2007-03-14 05:29:27.000000000 -0400
+@@ -320,7 +320,7 @@
+ #define elf_backend_sym_is_global	0
+ #endif
+ #ifndef elf_backend_object_p
+-#define elf_backend_object_p		_bfd_elf_check_osabi
++#define elf_backend_object_p		0
+ #endif
+ #ifndef elf_backend_symbol_processing
+ #define elf_backend_symbol_processing	0
+--- bfd/elfcode.h.jj	2006-09-24 11:19:58.000000000 -0400
++++ bfd/elfcode.h	2007-03-14 05:30:17.000000000 -0400
+@@ -500,6 +500,8 @@ elf_object_p (bfd *abfd)
+   struct bfd_preserve preserve;
+   asection *s;
+   bfd_size_type amt;
++  const bfd_target *target;
++  const bfd_target * const *target_ptr;
+ 
+   preserve.marker = NULL;
+ 
+@@ -543,10 +545,12 @@ elf_object_p (bfd *abfd)
+   if (!bfd_preserve_save (abfd, &preserve))
+     goto got_no_match;
+ 
++  target = abfd->xvec;
++
+   /* Allocate an instance of the elf_obj_tdata structure and hook it up to
+      the tdata pointer in the bfd.  */
+ 
+-  if (! (*abfd->xvec->_bfd_set_format[bfd_object]) (abfd))
++  if (! (*target->_bfd_set_format[bfd_object]) (abfd))
+     goto got_no_match;
+   preserve.marker = elf_tdata (abfd);
+ 
+@@ -586,8 +590,6 @@ elf_object_p (bfd *abfd)
+       && (ebd->elf_machine_alt2 == 0
+ 	  || i_ehdrp->e_machine != ebd->elf_machine_alt2))
+     {
+-      const bfd_target * const *target_ptr;
+-
+       if (ebd->elf_machine_code != EM_NONE)
+ 	goto got_wrong_format_error;
+ 
+@@ -628,6 +630,45 @@ elf_object_p (bfd *abfd)
+ 	goto got_no_match;
+     }
+ 
++  if (ebd->elf_machine_code != EM_NONE
++      && i_ehdrp->e_ident[EI_OSABI] != ebd->elf_osabi)
++    {
++      if (ebd->elf_osabi != ELFOSABI_NONE)
++	goto got_wrong_format_error;
++
++      /* This is an ELFOSABI_NONE ELF target.  Let it match any ELF
++	 target of the compatible machine for which we do not have a
++	 backend with matching ELFOSABI.  */
++      for (target_ptr = bfd_target_vector;
++	   *target_ptr != NULL;
++	   target_ptr++)
++	{
++	  const struct elf_backend_data *back;
++
++	  /* Skip this target and targets with incompatible byte
++	     order.  */
++	  if (*target_ptr == target
++	      || (*target_ptr)->flavour != bfd_target_elf_flavour
++	      || (*target_ptr)->byteorder != target->byteorder
++	      || ((*target_ptr)->header_byteorder
++		  != target->header_byteorder))
++	    continue;
++
++	  back = (const struct elf_backend_data *) (*target_ptr)->backend_data;
++	  if (back->elf_osabi == i_ehdrp->e_ident[EI_OSABI]
++	      && (back->elf_machine_code == i_ehdrp->e_machine
++		  || (back->elf_machine_alt1 != 0
++		      && back->elf_machine_alt1 == i_ehdrp->e_machine)
++		  || (back->elf_machine_alt2 != 0
++		      && back->elf_machine_alt2 == i_ehdrp->e_machine)))
++	    {
++	      /* target_ptr is an ELF backend which matches this
++		 object file, so reject the ELFOSABI_NONE ELF target.  */
++	      goto got_wrong_format_error;
++	    }
++	}
++    }
++
+   if (i_ehdrp->e_shoff != 0)
+     {
+       bfd_signed_vma where = i_ehdrp->e_shoff;
+@@ -848,7 +889,7 @@ elf_object_p (bfd *abfd)
+     }
+ 
+   bfd_preserve_finish (abfd, &preserve);
+-  return abfd->xvec;
++  return target;
+ 
+  got_wrong_format_error:
+   /* There is way too much undoing of half-known state here.  The caller,
