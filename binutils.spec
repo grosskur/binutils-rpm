@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.17.50.0.12
-Release: 2
+Release: 3
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -13,6 +13,7 @@ Patch4: binutils-2.17.50.0.12-ia64-lib64.patch
 Patch5: binutils-2.17.50.0.12-standards.patch
 Patch6: binutils-2.17.50.0.12-build-fixes.patch
 Patch7: binutils-2.17.50.0.12-symbolic-envvar-revert.patch
+Patch8: binutils-2.17.50.0.12-osabi.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -61,6 +62,7 @@ to consider using libelf instead of BFD.
 %patch5 -p0 -b .standards~
 %patch6 -p0 -b .build-fixes~
 %patch7 -p0 -b .tekhex~
+%patch8 -p0 -b .osabi~
 
 # On ppc64 we might use 64K pages
 sed -i -e '/#define.*ELF_COMMONPAGESIZE/s/0x1000$/0x10000/' bfd/elf*ppc.c
@@ -68,6 +70,11 @@ sed -i -e '/#define.*ELF_COMMONPAGESIZE/s/0x1000$/0x10000/' bfd/elf*ppc.c
 perl -pi -e 's/i\[3-7\]86/i[34567]86/g' */conf*
 sed -i -e 's/%{version}/%{version}-%{release}/g' bfd/configure{.in,}
 sed -i -e '/^libopcodes_la_\(DEPENDENCIES\|LIBADD\)/s,$, ../bfd/libbfd.la,' opcodes/Makefile.{am,in}
+# Build libbfd.so and libopcodes.so with -Bsymbolic-functions if possible.
+if gcc %{optflags} -v --help 2>&1 | grep -q -- -Bsymbolic-functions; then
+sed -i -e '/^libbfd_la_LDFLAGS = /&-Wl,-Bsymbolic-functions /' bfd/Makefile.{am,in}
+sed -i -e '/^libopcodes_la_LDFLAGS = /&-Wl,-Bsymbolic-functions /' opcodes/Makefile.{am,in}
+fi
 touch */configure
 
 %build
@@ -205,6 +212,12 @@ fi
 %{_infodir}/bfd*info*
 
 %changelog
+* Wed Mar 14 2007 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.12-3
+- don't require matching ELF_OSABI for target vecs with ELFOSABI_NONE,
+  only prefer specific osabi target vecs over the generic ones
+  (H.J.Lu, #230964, BZ#3826)
+- build libbfd.so and libopcodes.so with -Bsymbolic-functions
+
 * Fri Mar  2 2007 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.12-2
 - ignore install-info errors from scriptlets (#223678)
 
