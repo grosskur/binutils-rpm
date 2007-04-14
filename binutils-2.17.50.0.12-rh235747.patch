@@ -1,0 +1,45 @@
+2007-04-14  Jakub Jelinek  <jakub@redhat.com>
+
+	* elflink.c (bfd_elf_final_link): Don't free symbuf for
+	non-elf input bfds.
+	(bfd_elf_size_dynamic_sections): Don't access elf_section_data
+	for non-elf input bfds.
+
+--- bfd/elflink.c.jj	2007-04-07 10:19:03.000000000 +0200
++++ bfd/elflink.c	2007-04-14 14:49:15.000000000 +0200
+@@ -5522,15 +5522,16 @@ bfd_elf_size_dynamic_sections (bfd *outp
+ 
+ 	      for (sub = info->input_bfds; sub != NULL;
+ 		   sub = sub->link_next)
+-		for (o = sub->sections; o != NULL; o = o->next)
+-		  if (elf_section_data (o)->this_hdr.sh_type
+-		      == SHT_PREINIT_ARRAY)
+-		    {
+-		      (*_bfd_error_handler)
+-			(_("%B: .preinit_array section is not allowed in DSO"),
+-			 sub);
+-		      break;
+-		    }
++		if (bfd_get_flavour (sub) == bfd_target_elf_flavour)
++		  for (o = sub->sections; o != NULL; o = o->next)
++		    if (elf_section_data (o)->this_hdr.sh_type
++			== SHT_PREINIT_ARRAY)
++		      {
++			(*_bfd_error_handler)
++			  (_("%B: .preinit_array section is not allowed in DSO"),
++			   sub);
++			break;
++		      }
+ 
+ 	      bfd_set_error (bfd_error_nonrepresentable_section);
+ 	      return FALSE;
+@@ -9533,7 +9534,8 @@ bfd_elf_final_link (bfd *abfd, struct bf
+   if (!info->reduce_memory_overheads)
+     {
+       for (sub = info->input_bfds; sub != NULL; sub = sub->link_next)
+-	if (elf_tdata (sub)->symbuf)
++	if (bfd_get_flavour (sub) == bfd_target_elf_flavour
++	    && elf_tdata (sub)->symbuf)
+ 	  {
+ 	    free (elf_tdata (sub)->symbuf);
+ 	    elf_tdata (sub)->symbuf = NULL;

@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.17.50.0.12
-Release: 3
+Release: 4
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -14,6 +14,7 @@ Patch5: binutils-2.17.50.0.12-standards.patch
 Patch6: binutils-2.17.50.0.12-build-fixes.patch
 Patch7: binutils-2.17.50.0.12-symbolic-envvar-revert.patch
 Patch8: binutils-2.17.50.0.12-osabi.patch
+Patch9: binutils-2.17.50.0.12-rh235747.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -63,6 +64,7 @@ to consider using libelf instead of BFD.
 %patch6 -p0 -b .build-fixes~
 %patch7 -p0 -b .tekhex~
 %patch8 -p0 -b .osabi~
+%patch9 -p0 -b .rh235747~
 
 # On ppc64 we might use 64K pages
 sed -i -e '/#define.*ELF_COMMONPAGESIZE/s/0x1000$/0x10000/' bfd/elf*ppc.c
@@ -212,6 +214,9 @@ fi
 %{_infodir}/bfd*info*
 
 %changelog
+* Sat Apr 14 2007 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.12-4
+- fix linking non-ELF input objects into ELF output (#235747)
+
 * Wed Mar 14 2007 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.12-3
 - don't require matching ELF_OSABI for target vecs with ELFOSABI_NONE,
   only prefer specific osabi target vecs over the generic ones
