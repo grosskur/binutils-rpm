@@ -1,20 +1,19 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.17.50.0.12
-Release: 4
+Version: 2.17.50.0.16
+Release: 1
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-Patch1: binutils-2.17.50.0.12-ltconfig-multilib.patch
-Patch2: binutils-2.17.50.0.12-ppc64-pie.patch
-Patch3: binutils-2.17.50.0.12-place-orphan.patch
-Patch4: binutils-2.17.50.0.12-ia64-lib64.patch
-Patch5: binutils-2.17.50.0.12-standards.patch
-Patch6: binutils-2.17.50.0.12-build-fixes.patch
-Patch7: binutils-2.17.50.0.12-symbolic-envvar-revert.patch
-Patch8: binutils-2.17.50.0.12-osabi.patch
-Patch9: binutils-2.17.50.0.12-rh235747.patch
+Patch1: binutils-2.17.50.0.16-ltconfig-multilib.patch
+Patch2: binutils-2.17.50.0.16-ppc64-pie.patch
+Patch3: binutils-2.17.50.0.16-place-orphan.patch
+Patch4: binutils-2.17.50.0.16-ia64-lib64.patch
+Patch5: binutils-2.17.50.0.16-standards.patch
+Patch6: binutils-2.17.50.0.16-build-fixes.patch
+Patch7: binutils-2.17.50.0.16-symbolic-envvar-revert.patch
+Patch8: binutils-2.17.50.0.16-version.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -62,15 +61,14 @@ to consider using libelf instead of BFD.
 %endif
 %patch5 -p0 -b .standards~
 %patch6 -p0 -b .build-fixes~
-%patch7 -p0 -b .tekhex~
-%patch8 -p0 -b .osabi~
-%patch9 -p0 -b .rh235747~
+%patch7 -p0 -b .symbolic-envvar-revert~
+%patch8 -p0 -b .version~
 
 # On ppc64 we might use 64K pages
 sed -i -e '/#define.*ELF_COMMONPAGESIZE/s/0x1000$/0x10000/' bfd/elf*ppc.c
 # LTP sucks
 perl -pi -e 's/i\[3-7\]86/i[34567]86/g' */conf*
-sed -i -e 's/%{version}/%{version}-%{release}/g' bfd/configure{.in,}
+sed -i -e 's/%''{release}/%{release}/g' bfd/Makefile{.am,.in}
 sed -i -e '/^libopcodes_la_\(DEPENDENCIES\|LIBADD\)/s,$, ../bfd/libbfd.la,' opcodes/Makefile.{am,in}
 # Build libbfd.so and libopcodes.so with -Bsymbolic-functions if possible.
 if gcc %{optflags} -v --help 2>&1 | grep -q -- -Bsymbolic-functions; then
@@ -95,7 +93,8 @@ CC="gcc -L`pwd`/bfd/.libs/" CFLAGS="${CFLAGS:-%optflags}" ../configure \
   --datadir=%{_datadir} --includedir=%{_includedir} --libdir=%{_libdir} \
   --libexecdir=%{_libexecdir} --localstatedir=%{_localstatedir} \
   --sharedstatedir=%{_sharedstatedir} --mandir=%{_mandir} \
-  --infodir=%{_infodir} --enable-shared $CARGS --disable-werror
+  --infodir=%{_infodir} --enable-shared $CARGS --disable-werror \
+  --with-bugurl=http://bugzilla.redhat.com/bugzilla/
 make %{_smp_mflags} tooldir=%{_prefix} all
 make %{_smp_mflags} tooldir=%{_prefix} info
 make -k check < /dev/null > check.log 2>&1 || :
@@ -214,6 +213,9 @@ fi
 %{_infodir}/bfd*info*
 
 %changelog
+* Tue Jun 12 2007 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.16-1
+- update to 2.17.50.0.16
+
 * Sat Apr 14 2007 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.12-4
 - fix linking non-ELF input objects into ELF output (#235747)
 
