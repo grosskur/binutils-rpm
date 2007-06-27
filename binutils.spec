@@ -1,19 +1,19 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.17.50.0.16
+Version: 2.17.50.0.17
 Release: 1
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-Patch1: binutils-2.17.50.0.16-ltconfig-multilib.patch
-Patch2: binutils-2.17.50.0.16-ppc64-pie.patch
-Patch3: binutils-2.17.50.0.16-place-orphan.patch
-Patch4: binutils-2.17.50.0.16-ia64-lib64.patch
-Patch5: binutils-2.17.50.0.16-standards.patch
-Patch6: binutils-2.17.50.0.16-build-fixes.patch
-Patch7: binutils-2.17.50.0.16-symbolic-envvar-revert.patch
-Patch8: binutils-2.17.50.0.16-version.patch
+Patch1: binutils-2.17.50.0.17-ltconfig-multilib.patch
+Patch2: binutils-2.17.50.0.17-ppc64-pie.patch
+Patch3: binutils-2.17.50.0.17-place-orphan.patch
+Patch4: binutils-2.17.50.0.17-ia64-lib64.patch
+Patch5: binutils-2.17.50.0.17-standards.patch
+Patch6: binutils-2.17.50.0.17-build-fixes.patch
+Patch7: binutils-2.17.50.0.17-symbolic-envvar-revert.patch
+Patch8: binutils-2.17.50.0.17-version.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -213,6 +213,9 @@ fi
 %{_infodir}/bfd*info*
 
 %changelog
+* Wed Jun 27 2007 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.17-1
+- update to 2.17.50.0.17
+
 * Tue Jun 12 2007 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.16-1
 - update to 2.17.50.0.16
 
