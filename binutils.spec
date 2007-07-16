@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.17.50.0.17
-Release: 1
+Release: 2
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -14,6 +14,7 @@ Patch5: binutils-2.17.50.0.17-standards.patch
 Patch6: binutils-2.17.50.0.17-build-fixes.patch
 Patch7: binutils-2.17.50.0.17-symbolic-envvar-revert.patch
 Patch8: binutils-2.17.50.0.17-version.patch
+Patch9: binutils-2.17.50.0.17-build-id.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -63,6 +64,7 @@ to consider using libelf instead of BFD.
 %patch6 -p0 -b .build-fixes~
 %patch7 -p0 -b .symbolic-envvar-revert~
 %patch8 -p0 -b .version~
+%patch9 -p0 -b .build-id~
 
 # On ppc64 we might use 64K pages
 sed -i -e '/#define.*ELF_COMMONPAGESIZE/s/0x1000$/0x10000/' bfd/elf*ppc.c
@@ -213,6 +215,9 @@ fi
 %{_infodir}/bfd*info*
 
 %changelog
+* Sun Jul 15 2007 Roland McGrath <roland@redhat.com> - 2.17.50.0.17-2
+- ld --build-id support
+
 * Wed Jun 27 2007 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.17-1
 - update to 2.17.50.0.17
 
