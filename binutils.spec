@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.17.50.0.17
-Release: 2
+Release: 3
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -215,6 +215,9 @@ fi
 %{_infodir}/bfd*info*
 
 %changelog
+* Wed Jul 18 2007 Roland McGrath <roland@redhat.com> - 2.17.50.0.17-3
+- fix for ld --build-id
+
 * Sun Jul 15 2007 Roland McGrath <roland@redhat.com> - 2.17.50.0.17-2
 - ld --build-id support
 

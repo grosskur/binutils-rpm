@@ -293,11 +293,11 @@ Index: ld/emultempl/elf32.em
 ===================================================================
 RCS file: /cvs/src/src/ld/emultempl/elf32.em,v
 retrieving revision 1.179
-retrieving revision 1.181
-diff -b -u -r1.179 -r1.181
+retrieving revision 1.182
+diff -B -p -u -r1.179 -r1.182
 --- ld/emultempl/elf32.em	6 Jul 2007 14:09:42 -0000	1.179
-+++ ld/emultempl/elf32.em	13 Jul 2007 10:44:26 -0000	1.181
-@@ -41,6 +41,9 @@
++++ ld/emultempl/elf32.em	18 Jul 2007 09:46:05 -0000	1.182
+@@ -41,6 +41,9 @@ cat >e${EMULATION_NAME}.c <<EOF
  #include "libiberty.h"
  #include "safe-ctype.h"
  #include "getopt.h"
@@ -307,7 +307,7 @@ diff -b -u -r1.179 -r1.181
  
  #include "bfdlink.h"
  
-@@ -859,6 +862,169 @@
+@@ -859,6 +862,170 @@ EOF
  if test x"$LDEMUL_AFTER_OPEN" != xgld"$EMULATION_NAME"_after_open; then
  cat >>e${EMULATION_NAME}.c <<EOF
  
@@ -394,12 +394,12 @@ diff -b -u -r1.179 -r1.181
 +
 +  if (i_shdr->contents == NULL)
 +    {
-+      ASSERT (asec->output_offset == 0);
-+      i_shdr->contents = xcalloc (i_shdr->sh_size, 1);
-+      if (i_shdr->contents == NULL)
-+	return FALSE;
++      if (asec->contents == NULL)
++	asec->contents = xmalloc (asec->size);
++      contents = asec->contents;
 +    }
-+  contents = i_shdr->contents + asec->output_offset;
++  else
++    contents = i_shdr->contents + asec->output_offset;
 +
 +  e_note = (void *) contents;
 +  size = offsetof (Elf_External_Note, name[sizeof "GNU"]);
@@ -468,16 +468,17 @@ diff -b -u -r1.179 -r1.181
 +  else
 +    abort ();			/* Should have been validated earlier.  */
 +
-+  size = i_shdr->sh_size;
-+  return (bfd_seek (abfd, i_shdr->sh_offset, SEEK_SET) == 0
-+	  && bfd_bwrite (i_shdr->contents, size, abfd) == size);
++  size = asec->size;
++  return (bfd_seek (abfd,
++		    i_shdr->sh_offset + asec->output_offset, SEEK_SET) == 0
++	  && bfd_bwrite (contents, size, abfd) == size);
 +}
 +
 +
  /* This is called after all the input files have been opened.  */
  
  static void
-@@ -866,6 +1032,49 @@
+@@ -866,6 +1033,49 @@ gld${EMULATION_NAME}_after_open (void)
  {
    struct bfd_link_needed_list *needed, *l;
  
@@ -527,7 +528,7 @@ diff -b -u -r1.179 -r1.181
    if (link_info.eh_frame_hdr
        && ! link_info.traditional_format
        && ! link_info.relocatable)
-@@ -1760,6 +1969,7 @@
+@@ -1760,6 +1970,7 @@ cat >>e${EMULATION_NAME}.c <<EOF
  #define OPTION_EH_FRAME_HDR		(OPTION_GROUP + 1)
  #define OPTION_EXCLUDE_LIBS		(OPTION_EH_FRAME_HDR + 1)
  #define OPTION_HASH_STYLE		(OPTION_EXCLUDE_LIBS + 1)
@@ -535,7 +536,7 @@ diff -b -u -r1.179 -r1.181
  
  static void
  gld${EMULATION_NAME}_add_options
-@@ -1768,6 +1978,7 @@
+@@ -1768,6 +1979,7 @@ gld${EMULATION_NAME}_add_options
  {
    static const char xtra_short[] = "${PARSE_AND_LIST_SHORTOPTS}z:";
    static const struct option xtra_long[] = {
@@ -543,7 +544,7 @@ diff -b -u -r1.179 -r1.181
  EOF
  
  if test x"$GENERATE_SHLIB_SCRIPT" = xyes; then
-@@ -1798,6 +2009,8 @@
+@@ -1798,6 +2010,8 @@ cat >>e${EMULATION_NAME}.c <<EOF
    memcpy (*longopts + nl, &xtra_long, sizeof (xtra_long));
  }
  
@@ -552,7 +553,7 @@ diff -b -u -r1.179 -r1.181
  static bfd_boolean
  gld${EMULATION_NAME}_handle_option (int optc)
  {
-@@ -1806,6 +2019,18 @@
+@@ -1806,6 +2020,18 @@ gld${EMULATION_NAME}_handle_option (int 
      default:
        return FALSE;
  
@@ -571,7 +572,7 @@ diff -b -u -r1.179 -r1.181
  EOF
  
  if test x"$GENERATE_SHLIB_SCRIPT" = xyes; then
-@@ -1959,6 +2184,7 @@
+@@ -1959,6 +2185,7 @@ cat >>e${EMULATION_NAME}.c <<EOF
  static void
  gld${EMULATION_NAME}_list_options (FILE * file)
  {
