@@ -1,9 +1,70 @@
-Index: include/elf/common.h
-===================================================================
-RCS file: /cvs/src/src/include/elf/common.h,v
-retrieving revision 1.85
-retrieving revision 1.86
-diff -b -u -r1.85 -r1.86
+bfd/
+2007-07-13  Roland McGrath  <roland@redhat.com>
+
+	* elf-bfd.h (struct elf_obj_tdata): Revert last change.
+	Add after_write_object_contents, after_write_object_contents_info.
+	* elf.c (_bfd_elf_write_object_contents): Revert last change.
+	Instead, call after_write_object_contents if set.
+
+2007-07-09  Roland McGrath  <roland@redhat.com>
+
+	* elf-bfd.h (struct elf_obj_tdata): Add members
+	emit_note_gnu_build_id and note_gnu_build_id_sec.
+	* elf.c (_bfd_id_note_section_size): New global function.
+	(read_hex, _bfd_elf_write_build_id_section): New static functions.
+	(_bfd_elf_write_object_contents): Call _bfd_elf_write_build_id_section
+	if emit_note_gnu_build_id is set.
+	* Makefile.am (elf.lo): Update dependencies.
+
+	* elf-bfd.h (struct elf_size_info): Add checksum_contents hook.
+	(bfd_elf32_checksum_contents, bfd_elf64_checksum_contents): Declare.
+	* elfcode.h (elf_checksum_contents): New macro and function.
+	(NAME(_bfd_elf,size_info)): Initialize checksum_contents hook.
+include/
+2007-07-09  Roland McGrath  <roland@redhat.com>
+
+	* bfdlink.h (struct bfd_link_info): Add member emit_note_gnu_build_id.
+include/elf/
+2007-07-09  Roland McGrath  <roland@redhat.com>
+
+	* common.h (NT_GNU_HWCAP, NT_GNU_BUILD_ID): New macros.
+binutils/
+2007-07-09  Roland McGrath  <roland@redhat.com>
+
+	* readelf.c (get_gnu_elf_note_type): New function.
+	(process_note): Use it for "GNU" name.
+ld/
+2007-07-18  Roland McGrath  <roland@redhat.com>
+
+	* emultempl/elf32.em (gld${EMULATION_NAME}_write_build_id_section):
+	Use ASEC->contents for CONTENTS when missing, and allocate
+	ASEC->size if needed.
+
+2007-07-13  Roland McGrath  <roland@redhat.com>
+
+	* emultempl/elf32.em (struct build_id_info): New type.
+	(gld${EMULATION_NAME}_id_note_section_size): New function.
+	(gld${EMULATION_NAME}_write_build_id_section): New function.
+	(gld${EMULATION_NAME}_after_open): Use them.
+	(DEFAULT_BUILD_ID_STYLE): Change to "sha1".
+	* ld.texinfo (Options): Mention --build-id=sha1.
+
+	* sha1.h: New file (from gnulib).
+	* sha1.c: New file (from gnulib).
+	* Makefile.am (CFILES, HFILES, OFILES, ld_new_SOURCES): Add them.
+	(sha1.o): New target.
+	* Makefile.in: Regenerated.
+
+2007-07-09  Roland McGrath  <roland@redhat.com>
+
+	* emultempl/elf32.em (gld${EMULATION_NAME}_add_option): Add --build-id.
+	(gld${EMULATION_NAME}_handle_option): Handle --build-id.
+	(gld${EMULATION_NAME}_list_options): List --build-id.
+	(gld${EMULATION_NAME}_after_open): If --build-id was given,
+	synthesize a ".note.gnu.build-id" section and cache it in elf_tdata.
+	* ld.texinfo (Options): Describe --build-id.
+	* NEWS: Mention --build-id.
+
 --- include/elf/common.h	29 Jun 2007 16:29:16 -0000	1.85
 +++ include/elf/common.h	9 Jul 2007 21:17:42 -0000	1.86
 @@ -413,9 +413,13 @@
@@ -21,12 +82,6 @@ diff -b -u -r1.85 -r1.86
  #define GNU_ABI_TAG_LINUX	0
  #define GNU_ABI_TAG_HURD	1
  #define GNU_ABI_TAG_SOLARIS	2
-Index: binutils/readelf.c
-===================================================================
-RCS file: /cvs/src/src/binutils/readelf.c,v
-retrieving revision 1.369
-retrieving revision 1.370
-diff -b -u -r1.369 -r1.370
 --- binutils/readelf.c	5 Jul 2007 16:54:45 -0000	1.369
 +++ binutils/readelf.c	9 Jul 2007 21:19:51 -0000	1.370
 @@ -9128,6 +9128,27 @@
@@ -68,12 +123,6 @@ diff -b -u -r1.369 -r1.370
    else if (const_strneq (pnote->namedata, "NetBSD-CORE"))
      /* NetBSD-specific core file notes.  */
      nt = get_netbsd_elfcore_note_type (pnote->type);
-Index: include/bfdlink.h
-===================================================================
-RCS file: /cvs/src/src/include/bfdlink.h,v
-retrieving revision 1.69
-retrieving revision 1.70
-diff -b -u -r1.69 -r1.70
 --- include/bfdlink.h	6 Jul 2007 11:13:56 -0000	1.69
 +++ include/bfdlink.h	9 Jul 2007 21:21:42 -0000	1.70
 @@ -348,6 +348,9 @@
@@ -86,12 +135,6 @@ diff -b -u -r1.69 -r1.70
    /* What to do with unresolved symbols in an object file.
       When producing executables the default is GENERATE_ERROR.
       When producing shared libraries the default is IGNORE.  The
-Index: bfd/elf-bfd.h
-===================================================================
-RCS file: /cvs/src/src/bfd/elf-bfd.h,v
-retrieving revision 1.235
-retrieving revision 1.237
-diff -b -u -r1.235 -r1.237
 --- bfd/elf-bfd.h	3 Jul 2007 14:26:40 -0000	1.235
 +++ bfd/elf-bfd.h	13 Jul 2007 10:44:12 -0000	1.237
 @@ -447,6 +447,8 @@ struct elf_size_info {
@@ -132,12 +175,6 @@ diff -b -u -r1.235 -r1.237
  extern void bfd_elf64_write_relocs
    (bfd *, asection *, void *);
  extern bfd_boolean bfd_elf64_slurp_reloc_table
-Index: bfd/elf.c
-===================================================================
-RCS file: /cvs/src/src/bfd/elf.c,v
-retrieving revision 1.396
-retrieving revision 1.398
-diff -b -u -r1.396 -r1.398
 --- bfd/elf.c	3 Jul 2007 14:26:40 -0000	1.396
 +++ bfd/elf.c	13 Jul 2007 10:44:12 -0000	1.398
 @@ -5124,7 +5125,14 @@
@@ -156,12 +193,6 @@ diff -b -u -r1.396 -r1.398
  }
  
  bfd_boolean
-Index: bfd/elfcode.h
-===================================================================
-RCS file: /cvs/src/src/bfd/elfcode.h,v
-retrieving revision 1.83
-retrieving revision 1.84
-diff -b -u -r1.83 -r1.84
 --- bfd/elfcode.h	3 Jul 2007 14:26:42 -0000	1.83
 +++ bfd/elfcode.h	9 Jul 2007 21:23:37 -0000	1.84
 @@ -122,6 +122,7 @@
@@ -234,12 +265,6 @@ diff -b -u -r1.83 -r1.84
    elf_write_relocs,
    elf_swap_symbol_in,
    elf_swap_symbol_out,
-Index: ld/Makefile.in
-===================================================================
-RCS file: /cvs/src/src/ld/Makefile.in,v
-retrieving revision 1.259
-retrieving revision 1.260
-diff -b -u -r1.259 -r1.260
 --- ld/Makefile.in	2 Jul 2007 07:12:52 -0000	1.259
 +++ ld/Makefile.in	13 Jul 2007 10:44:28 -0000	1.260
 @@ -75,7 +75,7 @@
@@ -289,12 +314,6 @@ diff -b -u -r1.259 -r1.260
  # IF YOU PUT ANYTHING HERE IT WILL GO AWAY
  # Tell versions [3.59,3.63) of GNU make to not export all variables.
  # Otherwise a system limit (for SysV at least) may be exceeded.
-Index: ld/emultempl/elf32.em
-===================================================================
-RCS file: /cvs/src/src/ld/emultempl/elf32.em,v
-retrieving revision 1.179
-retrieving revision 1.182
-diff -B -p -u -r1.179 -r1.182
 --- ld/emultempl/elf32.em	6 Jul 2007 14:09:42 -0000	1.179
 +++ ld/emultempl/elf32.em	18 Jul 2007 09:46:05 -0000	1.182
 @@ -41,6 +41,9 @@ cat >e${EMULATION_NAME}.c <<EOF
@@ -580,11 +599,7 @@ diff -B -p -u -r1.179 -r1.182
  EOF
  
  if test x"$GENERATE_SHLIB_SCRIPT" = xyes; then
-Index: ld/sha1.c
-===================================================================
-RCS file: ld/sha1.c
-diff -N ld/sha1.c
---- /dev/null	1 Jan 1970 00:00:00 -0000
+--- ld/sha1.c	1 Jan 1970 00:00:00 -0000
 +++ ld/sha1.c	13 Jul 2007 10:44:28 -0000	1.1
 @@ -0,0 +1,416 @@
 +/* sha1.c - Functions to compute SHA1 message digest of files or
@@ -1003,11 +1018,7 @@ diff -N ld/sha1.c
 +      e = ctx->E += e;
 +    }
 +}
-Index: ld/sha1.h
-===================================================================
-RCS file: ld/sha1.h
-diff -N ld/sha1.h
---- /dev/null	1 Jan 1970 00:00:00 -0000
+--- ld/sha1.h	1 Jan 1970 00:00:00 -0000
 +++ ld/sha1.h	13 Jul 2007 10:44:28 -0000	1.1
 @@ -0,0 +1,87 @@
 +/* Declarations of functions and data types used for SHA1 sum

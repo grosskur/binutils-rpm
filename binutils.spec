@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.17.50.0.17
-Release: 3
+Release: 4
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -15,6 +15,7 @@ Patch6: binutils-2.17.50.0.17-build-fixes.patch
 Patch7: binutils-2.17.50.0.17-symbolic-envvar-revert.patch
 Patch8: binutils-2.17.50.0.17-version.patch
 Patch9: binutils-2.17.50.0.17-build-id.patch
+Patch10: binutils-2.17.50.0.17-pt_note-coalescing.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -24,7 +25,11 @@ Prereq: /sbin/install-info
 Obsoletes: gnupro
 %endif
 
+# On ARM EABI systems, we do want -gnueabi to be part of the
+# target triple.
+%ifnarch %{arm}
 %define _gnu %{nil}
+%endif
 
 %description
 Binutils is a collection of binary utilities, including ar (for
@@ -65,6 +70,7 @@ to consider using libelf instead of BFD.
 %patch7 -p0 -b .symbolic-envvar-revert~
 %patch8 -p0 -b .version~
 %patch9 -p0 -b .build-id~
+%patch10 -p0 -b .pt_note-coalescing~ 
 
 # On ppc64 we might use 64K pages
 sed -i -e '/#define.*ELF_COMMONPAGESIZE/s/0x1000$/0x10000/' bfd/elf*ppc.c
@@ -215,10 +221,16 @@ fi
 %{_infodir}/bfd*info*
 
 %changelog
-* Wed Jul 18 2007 Roland McGrath <roland@redhat.com> - 2.17.50.0.17-3
+* Tue Jul 25 2007 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.17-4
+- don't kill the %%{_gnu} part of target name on arm
+  (Lennert Buytenhek, #243516)
+- create just one PT_NOTE segment header for all consecutive SHT_NOTE
+  sections
+
+* Wed Jul 18 2007 Roland McGrath <roland@redhat.com> 2.17.50.0.17-3
 - fix for ld --build-id
 
-* Sun Jul 15 2007 Roland McGrath <roland@redhat.com> - 2.17.50.0.17-2
+* Sun Jul 15 2007 Roland McGrath <roland@redhat.com> 2.17.50.0.17-2
 - ld --build-id support
 
 * Wed Jun 27 2007 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.17-1
