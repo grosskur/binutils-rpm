@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.17.50.0.17
-Release: 5
+Release: 6
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -223,10 +223,14 @@ fi
 %{_infodir}/bfd*info*
 
 %changelog
-* Tue Jul 25 2007 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.17-5
+* Wed Jul 25 2007 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.17-6
+- rebuilt to make sure even libbfd.so and libopcodes.so aren't
+  broken by #249435
+
+* Tue Jul 24 2007 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.17-5
 - add .note.gnu.build-id into default linker script (#249435)
 
-* Tue Jul 25 2007 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.17-4
+* Tue Jul 24 2007 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.17-4
 - don't kill the %%{_gnu} part of target name on arm
   (Lennert Buytenhek, #243516)
 - create just one PT_NOTE segment header for all consecutive SHT_NOTE
