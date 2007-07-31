@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.17.50.0.17
-Release: 6
+Release: 7
 License: GPL
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -17,6 +17,7 @@ Patch8: binutils-2.17.50.0.17-version.patch
 Patch9: binutils-2.17.50.0.17-build-id.patch
 Patch10: binutils-2.17.50.0.17-pt_note-coalescing.patch
 Patch11: binutils-2.17.50.0.17-build-id-script.patch
+Patch12: binutils-2.17.50.0.17-secure-plt.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -73,6 +74,7 @@ to consider using libelf instead of BFD.
 %patch9 -p0 -b .build-id~
 %patch10 -p0 -b .pt_note-coalescing~ 
 %patch11 -p0 -b .build-id-script~
+%patch12 -p0 -b .secure-plt~
 
 # On ppc64 we might use 64K pages
 sed -i -e '/#define.*ELF_COMMONPAGESIZE/s/0x1000$/0x10000/' bfd/elf*ppc.c
@@ -223,6 +225,9 @@ fi
 %{_infodir}/bfd*info*
 
 %changelog
+* Tue Jul 31 2007 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.17-7
+- fix ppc32 secure PLT detection (Alan Modra)
+
 * Wed Jul 25 2007 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.17-6
 - rebuilt to make sure even libbfd.so and libopcodes.so aren't
   broken by #249435

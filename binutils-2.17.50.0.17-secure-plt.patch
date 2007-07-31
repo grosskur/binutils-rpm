@@ -1,0 +1,16 @@
+2007-06-27  Alan Modra  <amodra@bigpond.net.au>
+
+	* elf32-ppc.c (ppc_elf_select_plt_layout): Properly iterate over
+	input bfds.
+
+--- bfd/elf32-ppc.c.jj	2007-06-18 13:31:40.000000000 -0400
++++ bfd/elf32-ppc.c	2007-07-31 03:48:37.000000000 -0400
+@@ -3703,7 +3703,7 @@ ppc_elf_select_plt_layout (bfd *output_b
+ 	     --secure-plt and we never see REL16 relocs.  */
+ 	  if (plt_type == PLT_UNSET)
+ 	    plt_type = PLT_OLD;
+-	  for (ibfd = info->input_bfds; ibfd; ibfd = ibfd->next)
++	  for (ibfd = info->input_bfds; ibfd; ibfd = ibfd->link_next)
+ 	    if (is_ppc_elf_target (ibfd->xvec))
+ 	      {
+ 		if (ppc_elf_tdata (ibfd)->has_rel16)
