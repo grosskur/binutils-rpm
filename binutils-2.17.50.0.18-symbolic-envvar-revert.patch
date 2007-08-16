@@ -5,12 +5,12 @@
 -* ELF: Support environment variables, LD_SYMBOLIC for -Bsymbolic and
 -  LD_SYMBOLIC_FUNCTIONS for -Bsymbolic-functions.
 -
- * -l:foo now searches the library path for a filename called foo,
-   without converting it to libfoo.a or libfoo.so.
+ * Linker sources now released under version 3 of the GNU General Public
+   License.
  
 --- ld/ld.texinfo.jj	2007-05-11 11:24:08.000000000 -0400
 +++ ld/ld.texinfo	2007-06-12 05:04:33.000000000 -0400
-@@ -1147,21 +1147,14 @@ When creating a shared library, bind ref
+@@ -1142,21 +1142,14 @@ When creating a shared library, bind ref
  definition within the shared library, if any.  Normally, it is possible
  for a program linked against a shared library to override the definition
  within the shared library.  This option is only meaningful on ELF
@@ -22,7 +22,7 @@
  @kindex -Bsymbolic-functions
  @item -Bsymbolic-functions
  When creating a shared library, bind references to global function
- symbols to the definition within the shared library, if any. 
+ symbols to the definition within the shared library, if any.
  This option is only meaningful on ELF platforms which support shared
 -libraries.  If @option{-Bsymbolic-functions} is not used when linking a
 -shared library, the linker will also turn on this option if the

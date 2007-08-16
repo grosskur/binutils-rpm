@@ -13,8 +13,8 @@ ld/testsuite/
 	PR binutils/4476
 	* ld-elf/hash.d: Check "-s -D" for readelf.
 
---- binutils/binutils/readelf.c.hash	2007-05-09 10:54:22.000000000 -0700
-+++ binutils/binutils/readelf.c	2007-05-09 17:24:46.000000000 -0700
+--- binutils/readelf.c.hash	2007-05-09 10:54:22.000000000 -0700
++++ binutils/readelf.c	2007-05-09 17:24:46.000000000 -0700
 @@ -7033,6 +7033,39 @@ get_dynamic_data (FILE *file, unsigned i
    return i_data;
  }
@@ -383,8 +383,8 @@ ld/testsuite/
  		 (gnuchains[off] & 1) == 0; ++off)
  	      ++length;
  	    lengths[hn] = length;
---- binutils/ld/testsuite/ld-elf/hash.d.hash	2006-09-15 07:55:42.000000000 -0700
-+++ binutils/ld/testsuite/ld-elf/hash.d	2007-05-09 15:46:56.000000000 -0700
+--- ld/testsuite/ld-elf/hash.d.hash	2006-09-15 07:55:42.000000000 -0700
++++ ld/testsuite/ld-elf/hash.d	2007-05-09 15:46:56.000000000 -0700
 @@ -1,5 +1,5 @@
  #source: start.s
 -#readelf: -d 

@@ -15,7 +15,6 @@ Patch6: binutils-2.17.50.0.18-build-fixes.patch
 Patch7: binutils-2.17.50.0.18-symbolic-envvar-revert.patch
 Patch8: binutils-2.17.50.0.18-version.patch
 Patch9: binutils-2.17.50.0.18-bz4923.patch
-Patch10: binutils-2.17.50.0.18-readelf-D-gnu-hash.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -70,7 +69,6 @@ to consider using libelf instead of BFD.
 %patch7 -p0 -b .symbolic-envvar-revert~
 %patch8 -p0 -b .version~
 %patch9 -p0 -b .bz4923~
-%patch10 -p0 -b .readelf-D-gnu-hash~
 
 # On ppc64 we might use 64K pages
 sed -i -e '/#define.*ELF_COMMONPAGESIZE/s/0x1000$/0x10000/' bfd/elf*ppc.c
@@ -228,7 +226,6 @@ fi
   - fix sparc64/alpha broken by --build-id patch (#252936)
 - update License tag
 - fix ld crash with --build-id and non-ELF output format (Alan Modra, BZ#4923)
-- support .gnu.hash section for readelf -D -s (H.J. Lu)
 
 * Tue Jul 31 2007 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.17-7
 - fix ppc32 secure PLT detection (Alan Modra)
