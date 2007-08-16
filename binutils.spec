@@ -1,23 +1,21 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.17.50.0.17
-Release: 7
-License: GPL
+Version: 2.17.50.0.18
+Release: 1
+License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-Patch1: binutils-2.17.50.0.17-ltconfig-multilib.patch
-Patch2: binutils-2.17.50.0.17-ppc64-pie.patch
-Patch3: binutils-2.17.50.0.17-place-orphan.patch
-Patch4: binutils-2.17.50.0.17-ia64-lib64.patch
-Patch5: binutils-2.17.50.0.17-standards.patch
-Patch6: binutils-2.17.50.0.17-build-fixes.patch
-Patch7: binutils-2.17.50.0.17-symbolic-envvar-revert.patch
-Patch8: binutils-2.17.50.0.17-version.patch
-Patch9: binutils-2.17.50.0.17-build-id.patch
-Patch10: binutils-2.17.50.0.17-pt_note-coalescing.patch
-Patch11: binutils-2.17.50.0.17-build-id-script.patch
-Patch12: binutils-2.17.50.0.17-secure-plt.patch
+Patch1: binutils-2.17.50.0.18-ltconfig-multilib.patch
+Patch2: binutils-2.17.50.0.18-ppc64-pie.patch
+Patch3: binutils-2.17.50.0.18-place-orphan.patch
+Patch4: binutils-2.17.50.0.18-ia64-lib64.patch
+Patch5: binutils-2.17.50.0.18-standards.patch
+Patch6: binutils-2.17.50.0.18-build-fixes.patch
+Patch7: binutils-2.17.50.0.18-symbolic-envvar-revert.patch
+Patch8: binutils-2.17.50.0.18-version.patch
+Patch9: binutils-2.17.50.0.18-bz4923.patch
+Patch10: binutils-2.17.50.0.18-readelf-D-gnu-hash.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -71,10 +69,8 @@ to consider using libelf instead of BFD.
 %patch6 -p0 -b .build-fixes~
 %patch7 -p0 -b .symbolic-envvar-revert~
 %patch8 -p0 -b .version~
-%patch9 -p0 -b .build-id~
-%patch10 -p0 -b .pt_note-coalescing~ 
-%patch11 -p0 -b .build-id-script~
-%patch12 -p0 -b .secure-plt~
+%patch9 -p0 -b .bz4923~
+%patch10 -p0 -b .readelf-D-gnu-hash~
 
 # On ppc64 we might use 64K pages
 sed -i -e '/#define.*ELF_COMMONPAGESIZE/s/0x1000$/0x10000/' bfd/elf*ppc.c
@@ -225,6 +221,15 @@ fi
 %{_infodir}/bfd*info*
 
 %changelog
+* Thu Aug 16 2007 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.18-1
+- update to 2.17.50.0.18
+  - GPLv3+
+  - preserve .note.gnu.build-id in objcopy --only-keep-debug (#251935)
+  - fix sparc64/alpha broken by --build-id patch (#252936)
+- update License tag
+- fix ld crash with --build-id and non-ELF output format (Alan Modra, BZ#4923)
+- support .gnu.hash section for readelf -D -s (H.J. Lu)
+
 * Tue Jul 31 2007 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.17-7
 - fix ppc32 secure PLT detection (Alan Modra)
 
