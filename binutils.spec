@@ -15,6 +15,7 @@ Patch6: binutils-2.17.50.0.18-build-fixes.patch
 Patch7: binutils-2.17.50.0.18-symbolic-envvar-revert.patch
 Patch8: binutils-2.17.50.0.18-version.patch
 Patch9: binutils-2.17.50.0.18-bz4923.patch
+Patch10: binutils-2.17.50.0.18-open.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -69,6 +70,7 @@ to consider using libelf instead of BFD.
 %patch7 -p0 -b .symbolic-envvar-revert~
 %patch8 -p0 -b .version~
 %patch9 -p0 -b .bz4923~
+%patch10 -p0 -b .open~
 
 # On ppc64 we might use 64K pages
 sed -i -e '/#define.*ELF_COMMONPAGESIZE/s/0x1000$/0x10000/' bfd/elf*ppc.c
