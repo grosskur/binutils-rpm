@@ -1,21 +1,18 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.17.50.0.18
+Version: 2.18.50.0.3
 Release: 1
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-Patch1: binutils-2.17.50.0.18-ltconfig-multilib.patch
-Patch2: binutils-2.17.50.0.18-ppc64-pie.patch
-Patch3: binutils-2.17.50.0.18-place-orphan.patch
-Patch4: binutils-2.17.50.0.18-ia64-lib64.patch
-Patch5: binutils-2.17.50.0.18-standards.patch
-Patch6: binutils-2.17.50.0.18-build-fixes.patch
-Patch7: binutils-2.17.50.0.18-symbolic-envvar-revert.patch
-Patch8: binutils-2.17.50.0.18-version.patch
-Patch9: binutils-2.17.50.0.18-bz4923.patch
-Patch10: binutils-2.17.50.0.18-open.patch
+Patch1: binutils-2.18.50.0.3-ltconfig-multilib.patch
+Patch2: binutils-2.18.50.0.3-ppc64-pie.patch
+Patch3: binutils-2.18.50.0.3-place-orphan.patch
+Patch4: binutils-2.18.50.0.3-ia64-lib64.patch
+Patch5: binutils-2.18.50.0.3-build-fixes.patch
+Patch6: binutils-2.18.50.0.3-symbolic-envvar-revert.patch
+Patch7: binutils-2.18.50.0.3-version.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -65,12 +62,9 @@ to consider using libelf instead of BFD.
 %patch4 -p0 -b .ia64-lib64~
 %endif
 %endif
-%patch5 -p0 -b .standards~
-%patch6 -p0 -b .build-fixes~
-%patch7 -p0 -b .symbolic-envvar-revert~
-%patch8 -p0 -b .version~
-%patch9 -p0 -b .bz4923~
-%patch10 -p0 -b .open~
+%patch5 -p0 -b .build-fixes~
+%patch6 -p0 -b .symbolic-envvar-revert~
+%patch7 -p0 -b .version~
 
 # On ppc64 we might use 64K pages
 sed -i -e '/#define.*ELF_COMMONPAGESIZE/s/0x1000$/0x10000/' bfd/elf*ppc.c
@@ -221,6 +215,10 @@ fi
 %{_infodir}/bfd*info*
 
 %changelog
+* Wed Dec 12 2007 Jakub Jelinek <jakub@redhat.com> 2.18.50.0.3-1
+- update to 2.18.50.0.3
+  - fix build with recent makeinfo (#415271)
+
 * Thu Aug 16 2007 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.18-1
 - update to 2.17.50.0.18
   - GPLv3+

@@ -5,9 +5,9 @@
 -* ELF: Support environment variables, LD_SYMBOLIC for -Bsymbolic and
 -  LD_SYMBOLIC_FUNCTIONS for -Bsymbolic-functions.
 -
- * Linker sources now released under version 3 of the GNU General Public
-   License.
+ Changes in 2.18:
  
+ * Linker sources now released under version 3 of the GNU General Public
 --- ld/ld.texinfo.jj	2007-05-11 11:24:08.000000000 -0400
 +++ ld/ld.texinfo	2007-06-12 05:04:33.000000000 -0400
 @@ -1142,21 +1142,14 @@ When creating a shared library, bind ref
