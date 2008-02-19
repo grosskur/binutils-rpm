@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.18.50.0.3
-Release: 1
+Release: 2
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -215,6 +215,9 @@ fi
 %{_infodir}/bfd*info*
 
 %changelog
+* Tue Feb 19 2008 Fedora Release Engineering <rel-eng@fedoraproject.org> - 2.18.50.0.3-2
+- Autorebuild for GCC 4.3
+
 * Wed Dec 12 2007 Jakub Jelinek <jakub@redhat.com> 2.18.50.0.3-1
 - update to 2.18.50.0.3
   - fix build with recent makeinfo (#415271)
