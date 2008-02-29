@@ -1,18 +1,19 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
-Version: 2.18.50.0.3
-Release: 2
+Version: 2.18.50.0.4
+Release: 1
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-Patch1: binutils-2.18.50.0.3-ltconfig-multilib.patch
-Patch2: binutils-2.18.50.0.3-ppc64-pie.patch
-Patch3: binutils-2.18.50.0.3-place-orphan.patch
-Patch4: binutils-2.18.50.0.3-ia64-lib64.patch
-Patch5: binutils-2.18.50.0.3-build-fixes.patch
-Patch6: binutils-2.18.50.0.3-symbolic-envvar-revert.patch
-Patch7: binutils-2.18.50.0.3-version.patch
+Patch1: binutils-2.18.50.0.4-ltconfig-multilib.patch
+Patch2: binutils-2.18.50.0.4-ppc64-pie.patch
+Patch3: binutils-2.18.50.0.4-place-orphan.patch
+Patch4: binutils-2.18.50.0.4-ia64-lib64.patch
+Patch5: binutils-2.18.50.0.4-build-fixes.patch
+Patch6: binutils-2.18.50.0.4-symbolic-envvar-revert.patch
+Patch7: binutils-2.18.50.0.4-version.patch
+Patch8: binutils-2.18.50.0.4-bz5788.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -65,6 +66,7 @@ to consider using libelf instead of BFD.
 %patch5 -p0 -b .build-fixes~
 %patch6 -p0 -b .symbolic-envvar-revert~
 %patch7 -p0 -b .version~
+%patch8 -p0 -b .bz5788~
 
 # On ppc64 we might use 64K pages
 sed -i -e '/#define.*ELF_COMMONPAGESIZE/s/0x1000$/0x10000/' bfd/elf*ppc.c
@@ -215,7 +217,10 @@ fi
 %{_infodir}/bfd*info*
 
 %changelog
-* Tue Feb 19 2008 Fedora Release Engineering <rel-eng@fedoraproject.org> - 2.18.50.0.3-2
+* Fri Feb 29 2008 Jakub Jelinek <jakub@redhat.com> 2.18.50.0.4-1
+- update to 2.18.50.0.4
+
+* Tue Feb 19 2008 Fedora Release Engineering <rel-eng@fedoraproject.org> 2.18.50.0.3-2
 - Autorebuild for GCC 4.3
 
 * Wed Dec 12 2007 Jakub Jelinek <jakub@redhat.com> 2.18.50.0.3-1
