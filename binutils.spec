@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.18.50.0.4
-Release: 1
+Release: 2
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -14,6 +14,8 @@ Patch5: binutils-2.18.50.0.4-build-fixes.patch
 Patch6: binutils-2.18.50.0.4-symbolic-envvar-revert.patch
 Patch7: binutils-2.18.50.0.4-version.patch
 Patch8: binutils-2.18.50.0.4-bz5788.patch
+Patch9: binutils-2.18.50.0.4-aranges-revert.patch
+Patch10: binutils-2.18.50.0.4-shared-test.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -67,6 +69,8 @@ to consider using libelf instead of BFD.
 %patch6 -p0 -b .symbolic-envvar-revert~
 %patch7 -p0 -b .version~
 %patch8 -p0 -b .bz5788~
+%patch9 -p0 -b .aranges-revert~
+%patch10 -p0 -b .shared-test~
 
 # On ppc64 we might use 64K pages
 sed -i -e '/#define.*ELF_COMMONPAGESIZE/s/0x1000$/0x10000/' bfd/elf*ppc.c
@@ -217,6 +221,10 @@ fi
 %{_infodir}/bfd*info*
 
 %changelog
+* Mon Mar  3 2008 Jakub Jelinek <jakub@redhat.com> 2.18.50.0.4-2
+- revert aranges optimization (Alan Modra, BZ#5303, BZ#5755)
+- fix ld-shared testcase for GCC 4.3 (H.J. Lu)
+
 * Fri Feb 29 2008 Jakub Jelinek <jakub@redhat.com> 2.18.50.0.4-1
 - update to 2.18.50.0.4
 
