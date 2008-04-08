@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.18.50.0.6
-Release: 1
+Release: 2
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -13,6 +13,7 @@ Patch4: binutils-2.18.50.0.6-ia64-lib64.patch
 Patch5: binutils-2.18.50.0.6-build-fixes.patch
 Patch6: binutils-2.18.50.0.6-symbolic-envvar-revert.patch
 Patch7: binutils-2.18.50.0.6-version.patch
+Patch8: binutils-2.18.50.0.6-pclmul.patch
 
 Buildroot: %{_tmppath}/binutils-root
 BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
@@ -65,6 +66,7 @@ to consider using libelf instead of BFD.
 %patch5 -p0 -b .build-fixes~
 %patch6 -p0 -b .symbolic-envvar-revert~
 %patch7 -p0 -b .version~
+%patch8 -p0 -b .pclmul~
 
 # On ppc64 we might use 64K pages
 sed -i -e '/#define.*ELF_COMMONPAGESIZE/s/0x1000$/0x10000/' bfd/elf*ppc.c
@@ -215,7 +217,10 @@ fi
 %{_infodir}/bfd*info*
 
 %changelog
-* Fri Mar  4 2008 Jakub Jelinek <jakub@redhat.com> 2.18.50.0.6-1
+* Tue Apr  8 2008 Jakub Jelinek <jakub@redhat.com> 2.18.50.0.6-2
+- backport .clmul -> .pclmul renaming
+
+* Fri Apr  4 2008 Jakub Jelinek <jakub@redhat.com> 2.18.50.0.6-1
 - update to 2.18.50.0.6
   - Intel AES, CLMUL, AVX/FMA support
 

@@ -1,0 +1,636 @@
+2008-04-07  H.J. Lu  <hongjiu.lu@intel.com>
+
+gas/
+	* config/tc-i386.c (parse_real_register): Return AVX register
+	only if AVX is enabled.
+gas/testsuite/
+	* gas/i386/att-regs.s: Add AVX register test.
+	* gas/i386/intel-regs.s: Likewise.
+
+	* gas/i386/att-regs.d: Updated.
+	* gas/i386/intel-regs.d: Likewise.
+opcodes/
+	* i386-dis.c (PREFIX_VEX_38XX): Add a tab.
+	(PREFIX_VEX_3AXX): Likewis.
+
+	* i386-opc.tbl: Remove 4 extra blank lines.
+
+2008-04-04  H.J. Lu  <hongjiu.lu@intel.com>
+
+gas/
+	* NEWS: Mention XSAVE.  Change CLMUL to PCLMUL.
+
+	* config/tc-i386.c (cpu_arch): Add .pclmul.
+	(md_show_usage): Replace clmul with pclmul.
+	* doc/c-i386.texi: Likewise.
+gas/testsuite/
+	* gas/i386/arch-10-1.l: Replace CLMUL with PCLMUL.
+	* gas/i386/arch-10-2.l: Likewise.
+	* gas/i386/arch-10-3.l: Likewise.
+	* gas/i386/arch-10-4.l: Likewise.
+	* gas/i386/arch-10.s: Likewise.
+	* gas/i386/clmul-intel.d: Likewise.
+	* gas/i386/clmul.d: Likewise.
+	* gas/i386/clmul.s: Likewise.
+	* gas/i386/x86-64-arch-2.s: Likewise.
+	* gas/i386/x86-64-clmul-intel.d: Likewise.
+	* gas/i386/x86-64-clmul.d: Likewise.
+	* gas/i386/x86-64-clmul.s: Likewise.
+
+	* gas/i386/arch-10.d: Replace clmul with pclmul.
+	* gas/i386/x86-64-arch-2.d: Likewise.
+opcodes/
+	* i386-gen.c (cpu_flag_init): Replace CPU_CLMUL_FLAGS/CpuCLMUL
+	with CPU_PCLMUL_FLAGS/CpuPCLMUL.
+	(cpu_flags): Replace CpuCLMUL with CpuPCLMUL.
+	* i386-opc.tbl: Likewise.
+
+	* i386-opc.h (CpuCLMUL): Renamed to ...
+	(CpuPCLMUL): This.
+	(CpuFMA): Updated.
+	(i386_cpu_flags): Replace cpuclmul with cpupclmul.
+
+	* i386-init.h: Regenerated.
+
+--- gas/NEWS	3 Apr 2008 14:03:17 -0000	1.92
++++ gas/NEWS	4 Apr 2008 16:34:23 -0000	1.93
+@@ -2,7 +2,7 @@
+ * New command line option -msse2avx for x86 target to encode SSE
+   instructions with VEX prefix.
+ 
+-* Add Intel AES, CLMUL, AVX/FMA support for x86 target.
++* Add Intel XSAVE, AES, PCLMUL, AVX/FMA support for x86 target.
+ 
+ * New command line options, -march=CPU[,+EXTENSION...], -mtune=CPU,
+   -mmnemonic=[att|intel], -msyntax=[att|intel], -mindex-reg,
+--- gas/config/tc-i386.c	3 Apr 2008 14:03:18 -0000	1.335
++++ gas/config/tc-i386.c	7 Apr 2008 13:07:15 -0000	1.337
+@@ -647,8 +647,10 @@ static const arch_entry cpu_arch[] =
+     CPU_XSAVE_FLAGS },
+   { ".aes", PROCESSOR_UNKNOWN,
+     CPU_AES_FLAGS },
++  { ".pclmul", PROCESSOR_UNKNOWN,
++    CPU_PCLMUL_FLAGS },
+   { ".clmul", PROCESSOR_UNKNOWN,
+-    CPU_CLMUL_FLAGS },
++    CPU_PCLMUL_FLAGS },
+   { ".fma", PROCESSOR_UNKNOWN,
+     CPU_FMA_FLAGS },
+   { ".3dnow", PROCESSOR_UNKNOWN,
+@@ -7683,6 +7685,9 @@ parse_real_register (char *reg_string, c
+   if (r->reg_type.bitfield.regxmm && !cpu_arch_flags.bitfield.cpusse)
+     return (const reg_entry *) NULL;
+ 
++  if (r->reg_type.bitfield.regymm && !cpu_arch_flags.bitfield.cpuavx)
++    return (const reg_entry *) NULL;
++
+   /* Don't allow fake index register unless allow_index_reg isn't 0. */
+   if (!allow_index_reg
+       && (r->reg_num == RegEiz || r->reg_num == RegRiz))
+@@ -8045,7 +8050,7 @@ md_show_usage (stream)
+                            generic32, generic64\n\
+                           EXTENSION is combination of:\n\
+                            mmx, sse, sse2, sse3, ssse3, sse4.1, sse4.2, sse4,\n\
+-                           avx, vmx, smx, xsave, aes, clmul, fma, 3dnow,\n\
++                           avx, vmx, smx, xsave, aes, pclmul, fma, 3dnow,\n\
+ 			   3dnowa, sse4a, sse5, svme, abm, padlock\n"));
+   fprintf (stream, _("\
+   -mtune=CPU              optimize for CPU, CPU is one of:\n\
+--- gas/doc/c-i386.texi	3 Apr 2008 14:03:18 -0000	1.25
++++ gas/doc/c-i386.texi	4 Apr 2008 16:34:23 -0000	1.26
+@@ -125,7 +125,7 @@ accept various extension mnemonics.  For
+ @code{smx},
+ @code{xsave},
+ @code{aes},
+-@code{clmul},
++@code{pclmul},
+ @code{fma},
+ @code{3dnow},
+ @code{3dnowa},
+@@ -832,7 +832,7 @@ supported on the CPU specified.  The cho
+ @item @samp{.mmx} @tab @samp{.sse} @tab @samp{.sse2} @tab @samp{.sse3}
+ @item @samp{.ssse3} @tab @samp{.sse4.1} @tab @samp{.sse4.2} @tab @samp{.sse4}
+ @item @samp{.avx} @tab @samp{.vmx} @tab @samp{.smx} @tab @samp{.xsave}
+-@item @samp{.aes} @tab @samp{.clmul} @tab @samp{.fma}
++@item @samp{.aes} @tab @samp{.pclmul} @tab @samp{.fma}
+ @item @samp{.3dnow} @tab @samp{.3dnowa} @tab @samp{.sse4a} @tab @samp{.sse5}
+ @item @samp{.svme} @tab @samp{.abm}
+ @item @samp{.padlock}
+--- gas/testsuite/gas/i386/arch-10-1.l	3 Apr 2008 14:03:18 -0000	1.3
++++ gas/testsuite/gas/i386/arch-10-1.l	4 Apr 2008 16:34:23 -0000	1.4
+@@ -53,7 +53,7 @@ GAS LISTING .*
+ [ 	]*26[ 	]+xgetbv
+ [ 	]*27[ 	]+\# AES
+ [ 	]*28[ 	]+aesenc  \(%ecx\),%xmm0
+-[ 	]*29[ 	]+\# CLMUL
++[ 	]*29[ 	]+\# PCLMUL
+ [ 	]*30[ 	]+pclmulqdq \$8,%xmm1,%xmm0
+ [ 	]*31[ 	]+\# FMA
+ [ 	]*32[ 	]+vfmaddpd %ymm4,%ymm6,%ymm2,%ymm7
+--- gas/testsuite/gas/i386/arch-10-2.l	3 Apr 2008 14:03:18 -0000	1.3
++++ gas/testsuite/gas/i386/arch-10-2.l	4 Apr 2008 16:34:23 -0000	1.4
+@@ -52,7 +52,7 @@ GAS LISTING .*
+ [ 	]*26[ 	]+xgetbv
+ [ 	]*27[ 	]+\# AES
+ [ 	]*28[ 	]+aesenc  \(%ecx\),%xmm0
+-[ 	]*29[ 	]+\# CLMUL
++[ 	]*29[ 	]+\# PCLMUL
+ [ 	]*30[ 	]+pclmulqdq \$8,%xmm1,%xmm0
+ [ 	]*31[ 	]+\# FMA
+ [ 	]*32[ 	]+vfmaddpd %ymm4,%ymm6,%ymm2,%ymm7
+--- gas/testsuite/gas/i386/arch-10-3.l	3 Apr 2008 14:03:18 -0000	1.3
++++ gas/testsuite/gas/i386/arch-10-3.l	4 Apr 2008 16:34:23 -0000	1.4
+@@ -48,7 +48,7 @@ GAS LISTING .*
+ [ 	]*26[ 	]+xgetbv
+ [ 	]*27[ 	]+\# AES
+ [ 	]*28[ 	]+aesenc  \(%ecx\),%xmm0
+-[ 	]*29[ 	]+\# CLMUL
++[ 	]*29[ 	]+\# PCLMUL
+ [ 	]*30[ 	]+pclmulqdq \$8,%xmm1,%xmm0
+ [ 	]*31[ 	]+\# FMA
+ [ 	]*32[ 	]+vfmaddpd %ymm4,%ymm6,%ymm2,%ymm7
+--- gas/testsuite/gas/i386/arch-10-4.l	3 Apr 2008 14:03:18 -0000	1.3
++++ gas/testsuite/gas/i386/arch-10-4.l	4 Apr 2008 16:34:23 -0000	1.4
+@@ -46,7 +46,7 @@ GAS LISTING .*
+ [ 	]*26[ 	]+xgetbv
+ [ 	]*27[ 	]+\# AES
+ [ 	]*28[ 	]+aesenc  \(%ecx\),%xmm0
+-[ 	]*29[ 	]+\# CLMUL
++[ 	]*29[ 	]+\# PCLMUL
+ [ 	]*30[ 	]+pclmulqdq \$8,%xmm1,%xmm0
+ [ 	]*31[ 	]+\# FMA
+ [ 	]*32[ 	]+vfmaddpd %ymm4,%ymm6,%ymm2,%ymm7
+--- gas/testsuite/gas/i386/arch-10.d	3 Apr 2008 14:03:18 -0000	1.3
++++ gas/testsuite/gas/i386/arch-10.d	4 Apr 2008 16:34:23 -0000	1.4
+@@ -1,4 +1,4 @@
+-#as: -march=i686+avx+vmx+smx+xsave+aes+clmul+fma+sse5+3dnowa+svme+padlock
++#as: -march=i686+avx+vmx+smx+xsave+aes+pclmul+fma+sse5+3dnowa+svme+padlock
+ #objdump: -dw
+ #name: i386 arch 10
+ 
+--- gas/testsuite/gas/i386/arch-10.s	3 Apr 2008 14:03:18 -0000	1.3
++++ gas/testsuite/gas/i386/arch-10.s	4 Apr 2008 16:34:23 -0000	1.4
+@@ -26,7 +26,7 @@ getsec
+ xgetbv
+ # AES
+ aesenc  (%ecx),%xmm0
+-# CLMUL
++# PCLMUL
+ pclmulqdq $8,%xmm1,%xmm0
+ # FMA
+ vfmaddpd %ymm4,%ymm6,%ymm2,%ymm7
+--- gas/testsuite/gas/i386/att-regs.d	18 Feb 2008 08:44:38 -0000	1.1
++++ gas/testsuite/gas/i386/att-regs.d	7 Apr 2008 14:38:25 -0000	1.3
+@@ -31,9 +31,11 @@ Disassembly of section \.text:
+ .*:[ 	]+0f 24 c0[ 	]+mov[ 	]+%tr0,%eax
+ .*[ 	]+R_386_32[ 	]+mm0
+ .*[ 	]+R_386_32[ 	]+xmm0
++.*[ 	]+R_386_32[ 	]+ymm0
+ .*:[ 	]+dd c0[ 	]+ffree[ 	]+%st(\(0\))?
+ .*:[ 	]+0f ef c0[ 	]+pxor[ 	]+%mm0,%mm0
+ .*:[ 	]+0f 57 c0[ 	]+xorps[ 	]+%xmm0,%xmm0
++.*:[ 	]+c5 fc 57 c0[ 	]+vxorps[ 	]+%ymm0,%ymm0,%ymm0
+ .*:[ 	]+44[ 	]+inc    %esp
+ .*:[ 	]+88 c0[ 	]+mov[ 	]+%al,%al
+ .*:[ 	]+66 44[ 	]+inc[ 	]+%sp
+--- gas/testsuite/gas/i386/att-regs.s	18 Feb 2008 08:44:38 -0000	1.1
++++ gas/testsuite/gas/i386/att-regs.s	7 Apr 2008 14:38:25 -0000	1.3
+@@ -32,6 +32,7 @@
+ 	mov	tr0, eax
+ 	mov	mm0, eax
+ 	mov	xmm0, eax
++	mov	ymm0, eax
+ 
+ #todo	.arch i387
+ 	ffree	st
+@@ -42,6 +43,9 @@
+ 	.arch .sse
+ 	xorps	xmm0, xmm0
+ 
++	.arch .avx
++	vxorps	ymm0, ymm0, ymm0
++
+ 	.arch generic64
+ 	.code64
+ 	mov	r8b, axl
+--- gas/testsuite/gas/i386/clmul-intel.d	3 Apr 2008 14:03:18 -0000	1.1
++++ gas/testsuite/gas/i386/clmul-intel.d	4 Apr 2008 16:34:23 -0000	1.2
+@@ -1,6 +1,6 @@
+ #source: clmul.s
+ #objdump: -dw -Mintel
+-#name: i386 CLMUL (Intel mode)
++#name: i386 PCLMUL (Intel mode)
+ 
+ .*: +file format .*
+ 
+--- gas/testsuite/gas/i386/clmul.d	3 Apr 2008 14:03:18 -0000	1.1
++++ gas/testsuite/gas/i386/clmul.d	4 Apr 2008 16:34:23 -0000	1.2
+@@ -1,5 +1,5 @@
+ #objdump: -dw
+-#name: i386 CLMUL
++#name: i386 PCLMUL
+ 
+ .*: +file format .*
+ 
+--- gas/testsuite/gas/i386/clmul.s	3 Apr 2008 14:03:18 -0000	1.1
++++ gas/testsuite/gas/i386/clmul.s	4 Apr 2008 16:34:23 -0000	1.2
+@@ -1,4 +1,4 @@
+-# Check CLMUL new instructions.
++# Check PCLMUL new instructions.
+ 
+ 	.text
+ foo:
+--- gas/testsuite/gas/i386/intel-regs.d	18 Feb 2008 08:44:38 -0000	1.1
++++ gas/testsuite/gas/i386/intel-regs.d	7 Apr 2008 14:38:25 -0000	1.3
+@@ -31,9 +31,11 @@ Disassembly of section \.text:
+ .*:[ 	]+0f 24 c0[ 	]+mov[ 	]+%tr0,%eax
+ .*[ 	]+R_386_32[ 	]+mm0
+ .*[ 	]+R_386_32[ 	]+xmm0
++.*[ 	]+R_386_32[ 	]+ymm0
+ .*:[ 	]+dd c0[ 	]+ffree[ 	]+%st(\(0\))?
+ .*:[ 	]+0f ef c0[ 	]+pxor[ 	]+%mm0,%mm0
+ .*:[ 	]+0f 57 c0[ 	]+xorps[ 	]+%xmm0,%xmm0
++.*:[ 	]+c5 fc 57 c0[ 	]+vxorps[ 	]+%ymm0,%ymm0,%ymm0
+ .*:[ 	]+44[ 	]+inc    %esp
+ .*:[ 	]+88 c0[ 	]+mov[ 	]+%al,%al
+ .*:[ 	]+66 44[ 	]+inc[ 	]+%sp
+--- gas/testsuite/gas/i386/intel-regs.s	18 Feb 2008 08:44:38 -0000	1.1
++++ gas/testsuite/gas/i386/intel-regs.s	7 Apr 2008 14:38:25 -0000	1.3
+@@ -32,6 +32,7 @@
+ 	mov	eax, tr0
+ 	mov	eax, mm0
+ 	mov	eax, xmm0
++	mov	eax, ymm0
+ 
+ #todo	.arch i387
+ 	ffree	st
+@@ -42,6 +43,9 @@
+ 	.arch .sse
+ 	xorps	xmm0, xmm0
+ 
++	.arch .avx
++	vxorps	ymm0, ymm0, ymm0
++
+ 	.arch generic64
+ 	.code64
+ 	mov	axl, r8b
+--- gas/testsuite/gas/i386/x86-64-arch-2.d	3 Apr 2008 14:03:18 -0000	1.2
++++ gas/testsuite/gas/i386/x86-64-arch-2.d	4 Apr 2008 16:34:23 -0000	1.3
+@@ -1,4 +1,4 @@
+-#as: -march=generic64+avx+vmx+smx+xsave+aes+clmul+fma+sse5+3dnowa+svme+padlock
++#as: -march=generic64+avx+vmx+smx+xsave+aes+pclmul+fma+sse5+3dnowa+svme+padlock
+ #objdump: -dw
+ #name: x86-64 arch 2
+ 
+--- gas/testsuite/gas/i386/x86-64-arch-2.s	3 Apr 2008 14:03:18 -0000	1.2
++++ gas/testsuite/gas/i386/x86-64-arch-2.s	4 Apr 2008 16:34:23 -0000	1.3
+@@ -26,7 +26,7 @@ getsec
+ xgetbv
+ # AES
+ aesenc  (%rcx),%xmm0
+-# CLMUL
++# PCLMUL
+ pclmulqdq $8,%xmm1,%xmm0
+ # FMA
+ vfmaddpd %ymm4,%ymm6,%ymm2,%ymm7
+--- gas/testsuite/gas/i386/x86-64-clmul-intel.d	3 Apr 2008 14:03:19 -0000	1.1
++++ gas/testsuite/gas/i386/x86-64-clmul-intel.d	4 Apr 2008 16:34:23 -0000	1.2
+@@ -1,7 +1,7 @@
+ #source: x86-64-clmul.s
+ #as: -J
+ #objdump: -dw -Mintel
+-#name: x86-64 CLMUL (Intel mode)
++#name: x86-64 PCLMUL (Intel mode)
+ 
+ .*: +file format .*
+ 
+--- gas/testsuite/gas/i386/x86-64-clmul.d	3 Apr 2008 14:03:19 -0000	1.1
++++ gas/testsuite/gas/i386/x86-64-clmul.d	4 Apr 2008 16:34:23 -0000	1.2
+@@ -1,6 +1,6 @@
+ #as: -J
+ #objdump: -dw
+-#name: x86-64 CLMUL
++#name: x86-64 PCLMUL
+ 
+ .*: +file format .*
+ 
+--- gas/testsuite/gas/i386/x86-64-clmul.s	3 Apr 2008 14:03:19 -0000	1.1
++++ gas/testsuite/gas/i386/x86-64-clmul.s	4 Apr 2008 16:34:23 -0000	1.2
+@@ -1,4 +1,4 @@
+-# Check 64bit CLMUL new instructions.
++# Check 64bit PCLMUL new instructions.
+ 
+ 	.text
+ foo:
+--- opcodes/i386-dis.c	3 Apr 2008 14:03:20 -0000	1.176
++++ opcodes/i386-dis.c	7 Apr 2008 21:29:50 -0000	1.177
+@@ -875,112 +875,112 @@ fetch_data (struct disassemble_info *inf
+ #define PREFIX_VEX_FC		(PREFIX_VEX_FB + 1)
+ #define PREFIX_VEX_FD		(PREFIX_VEX_FC + 1)
+ #define PREFIX_VEX_FE		(PREFIX_VEX_FD + 1)
+-#define PREFIX_VEX_3800	(PREFIX_VEX_FE + 1)
+-#define PREFIX_VEX_3801	(PREFIX_VEX_3800 + 1)
+-#define PREFIX_VEX_3802	(PREFIX_VEX_3801 + 1)
+-#define PREFIX_VEX_3803	(PREFIX_VEX_3802 + 1)
+-#define PREFIX_VEX_3804	(PREFIX_VEX_3803 + 1)
+-#define PREFIX_VEX_3805	(PREFIX_VEX_3804 + 1)
+-#define PREFIX_VEX_3806	(PREFIX_VEX_3805 + 1)
+-#define PREFIX_VEX_3807	(PREFIX_VEX_3806 + 1)
+-#define PREFIX_VEX_3808	(PREFIX_VEX_3807 + 1)
+-#define PREFIX_VEX_3809	(PREFIX_VEX_3808 + 1)
+-#define PREFIX_VEX_380A	(PREFIX_VEX_3809 + 1)
+-#define PREFIX_VEX_380B	(PREFIX_VEX_380A + 1)
+-#define PREFIX_VEX_380C	(PREFIX_VEX_380B + 1)
+-#define PREFIX_VEX_380D	(PREFIX_VEX_380C + 1)
+-#define PREFIX_VEX_380E	(PREFIX_VEX_380D + 1)
+-#define PREFIX_VEX_380F	(PREFIX_VEX_380E + 1)
+-#define PREFIX_VEX_3817	(PREFIX_VEX_380F + 1)
+-#define PREFIX_VEX_3818	(PREFIX_VEX_3817 + 1)
+-#define PREFIX_VEX_3819	(PREFIX_VEX_3818 + 1)
+-#define PREFIX_VEX_381A	(PREFIX_VEX_3819 + 1)
+-#define PREFIX_VEX_381C	(PREFIX_VEX_381A + 1)
+-#define PREFIX_VEX_381D	(PREFIX_VEX_381C + 1)
+-#define PREFIX_VEX_381E	(PREFIX_VEX_381D + 1)
+-#define PREFIX_VEX_3820	(PREFIX_VEX_381E + 1)
+-#define PREFIX_VEX_3821	(PREFIX_VEX_3820 + 1)
+-#define PREFIX_VEX_3822	(PREFIX_VEX_3821 + 1)
+-#define PREFIX_VEX_3823	(PREFIX_VEX_3822 + 1)
+-#define PREFIX_VEX_3824	(PREFIX_VEX_3823 + 1)
+-#define PREFIX_VEX_3825	(PREFIX_VEX_3824 + 1)
+-#define PREFIX_VEX_3828	(PREFIX_VEX_3825 + 1)
+-#define PREFIX_VEX_3829	(PREFIX_VEX_3828 + 1)
+-#define PREFIX_VEX_382A	(PREFIX_VEX_3829 + 1)
+-#define PREFIX_VEX_382B	(PREFIX_VEX_382A + 1)
+-#define PREFIX_VEX_382C	(PREFIX_VEX_382B + 1)
+-#define PREFIX_VEX_382D	(PREFIX_VEX_382C + 1)
+-#define PREFIX_VEX_382E	(PREFIX_VEX_382D + 1)
+-#define PREFIX_VEX_382F	(PREFIX_VEX_382E + 1)
+-#define PREFIX_VEX_3830	(PREFIX_VEX_382F + 1)
+-#define PREFIX_VEX_3831	(PREFIX_VEX_3830 + 1)
+-#define PREFIX_VEX_3832	(PREFIX_VEX_3831 + 1)
+-#define PREFIX_VEX_3833	(PREFIX_VEX_3832 + 1)
+-#define PREFIX_VEX_3834	(PREFIX_VEX_3833 + 1)
+-#define PREFIX_VEX_3835	(PREFIX_VEX_3834 + 1)
+-#define PREFIX_VEX_3837	(PREFIX_VEX_3835 + 1)
+-#define PREFIX_VEX_3838	(PREFIX_VEX_3837 + 1)
+-#define PREFIX_VEX_3839	(PREFIX_VEX_3838 + 1)
+-#define PREFIX_VEX_383A	(PREFIX_VEX_3839 + 1)
+-#define PREFIX_VEX_383B	(PREFIX_VEX_383A + 1)
+-#define PREFIX_VEX_383C	(PREFIX_VEX_383B + 1)
+-#define PREFIX_VEX_383D	(PREFIX_VEX_383C + 1)
+-#define PREFIX_VEX_383E	(PREFIX_VEX_383D + 1)
+-#define PREFIX_VEX_383F	(PREFIX_VEX_383E + 1)
+-#define PREFIX_VEX_3840	(PREFIX_VEX_383F + 1)
+-#define PREFIX_VEX_3841	(PREFIX_VEX_3840 + 1)
+-#define PREFIX_VEX_3A04	(PREFIX_VEX_3841 + 1)
+-#define PREFIX_VEX_3A05	(PREFIX_VEX_3A04 + 1)
+-#define PREFIX_VEX_3A06	(PREFIX_VEX_3A05 + 1)
+-#define PREFIX_VEX_3A08	(PREFIX_VEX_3A06 + 1)
+-#define PREFIX_VEX_3A09	(PREFIX_VEX_3A08 + 1)
+-#define PREFIX_VEX_3A0A	(PREFIX_VEX_3A09 + 1)
+-#define PREFIX_VEX_3A0B	(PREFIX_VEX_3A0A + 1)
+-#define PREFIX_VEX_3A0C	(PREFIX_VEX_3A0B + 1)
+-#define PREFIX_VEX_3A0D	(PREFIX_VEX_3A0C + 1)
+-#define PREFIX_VEX_3A0E	(PREFIX_VEX_3A0D + 1)
+-#define PREFIX_VEX_3A0F	(PREFIX_VEX_3A0E + 1)
+-#define PREFIX_VEX_3A14	(PREFIX_VEX_3A0F + 1)
+-#define PREFIX_VEX_3A15	(PREFIX_VEX_3A14 + 1)
+-#define PREFIX_VEX_3A16	(PREFIX_VEX_3A15 + 1)
+-#define PREFIX_VEX_3A17	(PREFIX_VEX_3A16 + 1)
+-#define PREFIX_VEX_3A18	(PREFIX_VEX_3A17 + 1)
+-#define PREFIX_VEX_3A19	(PREFIX_VEX_3A18 + 1)
+-#define PREFIX_VEX_3A20	(PREFIX_VEX_3A19 + 1)
+-#define PREFIX_VEX_3A21	(PREFIX_VEX_3A20 + 1)
+-#define PREFIX_VEX_3A22	(PREFIX_VEX_3A21 + 1)
+-#define PREFIX_VEX_3A40	(PREFIX_VEX_3A22 + 1)
+-#define PREFIX_VEX_3A41	(PREFIX_VEX_3A40 + 1)
+-#define PREFIX_VEX_3A42	(PREFIX_VEX_3A41 + 1)
+-#define PREFIX_VEX_3A48	(PREFIX_VEX_3A42 + 1)
+-#define PREFIX_VEX_3A49	(PREFIX_VEX_3A48 + 1)
+-#define PREFIX_VEX_3A4A	(PREFIX_VEX_3A49 + 1)
+-#define PREFIX_VEX_3A4B	(PREFIX_VEX_3A4A + 1)
+-#define PREFIX_VEX_3A4C	(PREFIX_VEX_3A4B + 1)
+-#define PREFIX_VEX_3A5C	(PREFIX_VEX_3A4C + 1)
+-#define PREFIX_VEX_3A5D	(PREFIX_VEX_3A5C + 1)
+-#define PREFIX_VEX_3A5E	(PREFIX_VEX_3A5D + 1)
+-#define PREFIX_VEX_3A5F	(PREFIX_VEX_3A5E + 1)
+-#define PREFIX_VEX_3A60	(PREFIX_VEX_3A5F + 1)
+-#define PREFIX_VEX_3A61	(PREFIX_VEX_3A60 + 1)
+-#define PREFIX_VEX_3A62	(PREFIX_VEX_3A61 + 1)
+-#define PREFIX_VEX_3A63	(PREFIX_VEX_3A62 + 1)
+-#define PREFIX_VEX_3A68	(PREFIX_VEX_3A63 + 1)
+-#define PREFIX_VEX_3A69	(PREFIX_VEX_3A68 + 1)
+-#define PREFIX_VEX_3A6A	(PREFIX_VEX_3A69 + 1)
+-#define PREFIX_VEX_3A6B	(PREFIX_VEX_3A6A + 1)
+-#define PREFIX_VEX_3A6C	(PREFIX_VEX_3A6B + 1)
+-#define PREFIX_VEX_3A6D	(PREFIX_VEX_3A6C + 1)
+-#define PREFIX_VEX_3A6E	(PREFIX_VEX_3A6D + 1)
+-#define PREFIX_VEX_3A6F	(PREFIX_VEX_3A6E + 1)
+-#define PREFIX_VEX_3A78	(PREFIX_VEX_3A6F + 1)
+-#define PREFIX_VEX_3A79	(PREFIX_VEX_3A78 + 1)
+-#define PREFIX_VEX_3A7A	(PREFIX_VEX_3A79 + 1)
+-#define PREFIX_VEX_3A7B	(PREFIX_VEX_3A7A + 1)
+-#define PREFIX_VEX_3A7C	(PREFIX_VEX_3A7B + 1)
+-#define PREFIX_VEX_3A7D	(PREFIX_VEX_3A7C + 1)
+-#define PREFIX_VEX_3A7E	(PREFIX_VEX_3A7D + 1)
+-#define PREFIX_VEX_3A7F	(PREFIX_VEX_3A7E + 1)
++#define PREFIX_VEX_3800		(PREFIX_VEX_FE + 1)
++#define PREFIX_VEX_3801		(PREFIX_VEX_3800 + 1)
++#define PREFIX_VEX_3802		(PREFIX_VEX_3801 + 1)
++#define PREFIX_VEX_3803		(PREFIX_VEX_3802 + 1)
++#define PREFIX_VEX_3804		(PREFIX_VEX_3803 + 1)
++#define PREFIX_VEX_3805		(PREFIX_VEX_3804 + 1)
++#define PREFIX_VEX_3806		(PREFIX_VEX_3805 + 1)
++#define PREFIX_VEX_3807		(PREFIX_VEX_3806 + 1)
++#define PREFIX_VEX_3808		(PREFIX_VEX_3807 + 1)
++#define PREFIX_VEX_3809		(PREFIX_VEX_3808 + 1)
++#define PREFIX_VEX_380A		(PREFIX_VEX_3809 + 1)
++#define PREFIX_VEX_380B		(PREFIX_VEX_380A + 1)
++#define PREFIX_VEX_380C		(PREFIX_VEX_380B + 1)
++#define PREFIX_VEX_380D		(PREFIX_VEX_380C + 1)
++#define PREFIX_VEX_380E		(PREFIX_VEX_380D + 1)
++#define PREFIX_VEX_380F		(PREFIX_VEX_380E + 1)
++#define PREFIX_VEX_3817		(PREFIX_VEX_380F + 1)
++#define PREFIX_VEX_3818		(PREFIX_VEX_3817 + 1)
++#define PREFIX_VEX_3819		(PREFIX_VEX_3818 + 1)
++#define PREFIX_VEX_381A		(PREFIX_VEX_3819 + 1)
++#define PREFIX_VEX_381C		(PREFIX_VEX_381A + 1)
++#define PREFIX_VEX_381D		(PREFIX_VEX_381C + 1)
++#define PREFIX_VEX_381E		(PREFIX_VEX_381D + 1)
++#define PREFIX_VEX_3820		(PREFIX_VEX_381E + 1)
++#define PREFIX_VEX_3821		(PREFIX_VEX_3820 + 1)
++#define PREFIX_VEX_3822		(PREFIX_VEX_3821 + 1)
++#define PREFIX_VEX_3823		(PREFIX_VEX_3822 + 1)
++#define PREFIX_VEX_3824		(PREFIX_VEX_3823 + 1)
++#define PREFIX_VEX_3825		(PREFIX_VEX_3824 + 1)
++#define PREFIX_VEX_3828		(PREFIX_VEX_3825 + 1)
++#define PREFIX_VEX_3829		(PREFIX_VEX_3828 + 1)
++#define PREFIX_VEX_382A		(PREFIX_VEX_3829 + 1)
++#define PREFIX_VEX_382B		(PREFIX_VEX_382A + 1)
++#define PREFIX_VEX_382C		(PREFIX_VEX_382B + 1)
++#define PREFIX_VEX_382D		(PREFIX_VEX_382C + 1)
++#define PREFIX_VEX_382E		(PREFIX_VEX_382D + 1)
++#define PREFIX_VEX_382F		(PREFIX_VEX_382E + 1)
++#define PREFIX_VEX_3830		(PREFIX_VEX_382F + 1)
++#define PREFIX_VEX_3831		(PREFIX_VEX_3830 + 1)
++#define PREFIX_VEX_3832		(PREFIX_VEX_3831 + 1)
++#define PREFIX_VEX_3833		(PREFIX_VEX_3832 + 1)
++#define PREFIX_VEX_3834		(PREFIX_VEX_3833 + 1)
++#define PREFIX_VEX_3835		(PREFIX_VEX_3834 + 1)
++#define PREFIX_VEX_3837		(PREFIX_VEX_3835 + 1)
++#define PREFIX_VEX_3838		(PREFIX_VEX_3837 + 1)
++#define PREFIX_VEX_3839		(PREFIX_VEX_3838 + 1)
++#define PREFIX_VEX_383A		(PREFIX_VEX_3839 + 1)
++#define PREFIX_VEX_383B		(PREFIX_VEX_383A + 1)
++#define PREFIX_VEX_383C		(PREFIX_VEX_383B + 1)
++#define PREFIX_VEX_383D		(PREFIX_VEX_383C + 1)
++#define PREFIX_VEX_383E		(PREFIX_VEX_383D + 1)
++#define PREFIX_VEX_383F		(PREFIX_VEX_383E + 1)
++#define PREFIX_VEX_3840		(PREFIX_VEX_383F + 1)
++#define PREFIX_VEX_3841		(PREFIX_VEX_3840 + 1)
++#define PREFIX_VEX_3A04		(PREFIX_VEX_3841 + 1)
++#define PREFIX_VEX_3A05		(PREFIX_VEX_3A04 + 1)
++#define PREFIX_VEX_3A06		(PREFIX_VEX_3A05 + 1)
++#define PREFIX_VEX_3A08		(PREFIX_VEX_3A06 + 1)
++#define PREFIX_VEX_3A09		(PREFIX_VEX_3A08 + 1)
++#define PREFIX_VEX_3A0A		(PREFIX_VEX_3A09 + 1)
++#define PREFIX_VEX_3A0B		(PREFIX_VEX_3A0A + 1)
++#define PREFIX_VEX_3A0C		(PREFIX_VEX_3A0B + 1)
++#define PREFIX_VEX_3A0D		(PREFIX_VEX_3A0C + 1)
++#define PREFIX_VEX_3A0E		(PREFIX_VEX_3A0D + 1)
++#define PREFIX_VEX_3A0F		(PREFIX_VEX_3A0E + 1)
++#define PREFIX_VEX_3A14		(PREFIX_VEX_3A0F + 1)
++#define PREFIX_VEX_3A15		(PREFIX_VEX_3A14 + 1)
++#define PREFIX_VEX_3A16		(PREFIX_VEX_3A15 + 1)
++#define PREFIX_VEX_3A17		(PREFIX_VEX_3A16 + 1)
++#define PREFIX_VEX_3A18		(PREFIX_VEX_3A17 + 1)
++#define PREFIX_VEX_3A19		(PREFIX_VEX_3A18 + 1)
++#define PREFIX_VEX_3A20		(PREFIX_VEX_3A19 + 1)
++#define PREFIX_VEX_3A21		(PREFIX_VEX_3A20 + 1)
++#define PREFIX_VEX_3A22		(PREFIX_VEX_3A21 + 1)
++#define PREFIX_VEX_3A40		(PREFIX_VEX_3A22 + 1)
++#define PREFIX_VEX_3A41		(PREFIX_VEX_3A40 + 1)
++#define PREFIX_VEX_3A42		(PREFIX_VEX_3A41 + 1)
++#define PREFIX_VEX_3A48		(PREFIX_VEX_3A42 + 1)
++#define PREFIX_VEX_3A49		(PREFIX_VEX_3A48 + 1)
++#define PREFIX_VEX_3A4A		(PREFIX_VEX_3A49 + 1)
++#define PREFIX_VEX_3A4B		(PREFIX_VEX_3A4A + 1)
++#define PREFIX_VEX_3A4C		(PREFIX_VEX_3A4B + 1)
++#define PREFIX_VEX_3A5C		(PREFIX_VEX_3A4C + 1)
++#define PREFIX_VEX_3A5D		(PREFIX_VEX_3A5C + 1)
++#define PREFIX_VEX_3A5E		(PREFIX_VEX_3A5D + 1)
++#define PREFIX_VEX_3A5F		(PREFIX_VEX_3A5E + 1)
++#define PREFIX_VEX_3A60		(PREFIX_VEX_3A5F + 1)
++#define PREFIX_VEX_3A61		(PREFIX_VEX_3A60 + 1)
++#define PREFIX_VEX_3A62		(PREFIX_VEX_3A61 + 1)
++#define PREFIX_VEX_3A63		(PREFIX_VEX_3A62 + 1)
++#define PREFIX_VEX_3A68		(PREFIX_VEX_3A63 + 1)
++#define PREFIX_VEX_3A69		(PREFIX_VEX_3A68 + 1)
++#define PREFIX_VEX_3A6A		(PREFIX_VEX_3A69 + 1)
++#define PREFIX_VEX_3A6B		(PREFIX_VEX_3A6A + 1)
++#define PREFIX_VEX_3A6C		(PREFIX_VEX_3A6B + 1)
++#define PREFIX_VEX_3A6D		(PREFIX_VEX_3A6C + 1)
++#define PREFIX_VEX_3A6E		(PREFIX_VEX_3A6D + 1)
++#define PREFIX_VEX_3A6F		(PREFIX_VEX_3A6E + 1)
++#define PREFIX_VEX_3A78		(PREFIX_VEX_3A6F + 1)
++#define PREFIX_VEX_3A79		(PREFIX_VEX_3A78 + 1)
++#define PREFIX_VEX_3A7A		(PREFIX_VEX_3A79 + 1)
++#define PREFIX_VEX_3A7B		(PREFIX_VEX_3A7A + 1)
++#define PREFIX_VEX_3A7C		(PREFIX_VEX_3A7B + 1)
++#define PREFIX_VEX_3A7D		(PREFIX_VEX_3A7C + 1)
++#define PREFIX_VEX_3A7E		(PREFIX_VEX_3A7D + 1)
++#define PREFIX_VEX_3A7F		(PREFIX_VEX_3A7E + 1)
+ 
+ #define X86_64_06		0
+ #define X86_64_07		(X86_64_06 + 1)
+--- opcodes/i386-gen.c	3 Apr 2008 14:03:21 -0000	1.36
++++ opcodes/i386-gen.c	4 Apr 2008 16:34:22 -0000	1.37
+@@ -104,8 +104,8 @@ static initializer cpu_flag_init [] =
+     "CpuXsave" },
+   { "CPU_AES_FLAGS",
+     "CpuMMX|CpuSSE|CpuSSE2|CpuSSE3|CpuSSSE3|CpuSSE4_1|CpuSSE4_2|CpuAES" },
+-  { "CPU_CLMUL_FLAGS",
+-    "CpuMMX|CpuSSE|CpuSSE2|CpuSSE3|CpuSSSE3|CpuSSE4_1|CpuSSE4_2|CpuCLMUL" },
++  { "CPU_PCLMUL_FLAGS",
++    "CpuMMX|CpuSSE|CpuSSE2|CpuSSE3|CpuSSSE3|CpuSSE4_1|CpuSSE4_2|CpuPCLMUL" },
+   { "CPU_FMA_FLAGS",
+     "CpuMMX|CpuSSE|CpuSSE2|CpuSSE3|CpuSSSE3|CpuSSE4_1|CpuSSE4_2|CpuAVX|CpuFMA" },
+   { "CPU_3DNOW_FLAGS",
+@@ -263,7 +263,7 @@ static bitfield cpu_flags[] =
+   BITFIELD (CpuABM),
+   BITFIELD (CpuXsave),
+   BITFIELD (CpuAES),
+-  BITFIELD (CpuCLMUL),
++  BITFIELD (CpuPCLMUL),
+   BITFIELD (CpuFMA),
+   BITFIELD (CpuLM),
+   BITFIELD (Cpu64),
+--- opcodes/i386-init.h	3 Apr 2008 14:03:21 -0000	1.16
++++ opcodes/i386-init.h	4 Apr 2008 16:34:22 -0000	1.17
+@@ -146,7 +146,7 @@
+   { { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1,  \
+       0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 } }
+ 
+-#define CPU_CLMUL_FLAGS \
++#define CPU_PCLMUL_FLAGS \
+   { { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 0, 1,  \
+       0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0 } }
+ 
+--- opcodes/i386-opc.h	3 Apr 2008 14:03:21 -0000	1.40
++++ opcodes/i386-opc.h	4 Apr 2008 16:34:22 -0000	1.41
+@@ -86,10 +86,10 @@
+ #define CpuXsave	(CpuAVX + 1)
+ /* AES support required */
+ #define CpuAES		(CpuXsave + 1)
+-/* CLMUL support required */
+-#define CpuCLMUL	(CpuAES + 1)
++/* PCLMUL support required */
++#define CpuPCLMUL	(CpuAES + 1)
+ /* FMA support required */
+-#define CpuFMA		(CpuCLMUL + 1)
++#define CpuFMA		(CpuPCLMUL + 1)
+ /* 64bit support available, used by -march= in assembler.  */
+ #define CpuLM		(CpuFMA + 1)
+ /* 64bit support required  */
+@@ -142,7 +142,7 @@ typedef union i386_cpu_flags
+       unsigned int cpuavx:1;
+       unsigned int cpuxsave:1;
+       unsigned int cpuaes:1;
+-      unsigned int cpuclmul:1;
++      unsigned int cpupclmul:1;
+       unsigned int cpufma:1;
+       unsigned int cpulm:1;
+       unsigned int cpu64:1;
+--- opcodes/i386-opc.tbl	3 Apr 2008 14:03:21 -0000	1.36
++++ opcodes/i386-opc.tbl	7 Apr 2008 17:35:12 -0000	1.38
+@@ -1722,13 +1722,13 @@ aesenclast, 2, 0x660f38dd, None, 3, CpuA
+ aesimc, 2, 0x660f38db, None, 3, CpuAES, Modrm|IgnoreSize|No_bSuf|No_wSuf|No_lSuf|No_sSuf|No_qSuf|No_ldSuf, { Xmmword|Unspecified|BaseIndex|Disp8|Disp16|Disp32|Disp32S|RegXMM, RegXMM }
+ aeskeygenassist, 3, 0x660f3adf, None, 3, CpuAES, Modrm|IgnoreSize|No_bSuf|No_wSuf|No_lSuf|No_sSuf|No_qSuf|No_ldSuf, { Imm8, Xmmword|Unspecified|BaseIndex|Disp8|Disp16|Disp32|Disp32S|RegXMM, RegXMM }
+ 
+-// CLMUL
++// PCLMUL
+ 
+-pclmulqdq, 3, 0x660f3a44, None, 3, CpuCLMUL, Modrm|IgnoreSize|No_bSuf|No_wSuf|No_lSuf|No_sSuf|No_qSuf|No_ldSuf, { Imm8, Xmmword|Unspecified|BaseIndex|Disp8|Disp16|Disp32|Disp32S|RegXMM, RegXMM }
+-pclmullqlqdq, 2, 0x660f3a44, 0x0, 3, CpuCLMUL, Modrm|IgnoreSize|No_bSuf|No_wSuf|No_lSuf|No_sSuf|No_qSuf|No_ldSuf|ImmExt, { Xmmword|Unspecified|BaseIndex|Disp8|Disp16|Disp32|Disp32S|RegXMM, RegXMM }
+-pclmulhqlqdq, 2, 0x660f3a44, 0x1, 3, CpuCLMUL, Modrm|IgnoreSize|No_bSuf|No_wSuf|No_lSuf|No_sSuf|No_qSuf|No_ldSuf|ImmExt, { Xmmword|Unspecified|BaseIndex|Disp8|Disp16|Disp32|Disp32S|RegXMM, RegXMM }
+-pclmullqhqdq, 2, 0x660f3a44, 0x10, 3, CpuCLMUL, Modrm|IgnoreSize|No_bSuf|No_wSuf|No_lSuf|No_sSuf|No_qSuf|No_ldSuf|ImmExt, { Xmmword|Unspecified|BaseIndex|Disp8|Disp16|Disp32|Disp32S|RegXMM, RegXMM }
+-pclmulhqhqdq, 2, 0x660f3a44, 0x11, 3, CpuCLMUL, Modrm|IgnoreSize|No_bSuf|No_wSuf|No_lSuf|No_sSuf|No_qSuf|No_ldSuf|ImmExt, { Xmmword|Unspecified|BaseIndex|Disp8|Disp16|Disp32|Disp32S|RegXMM, RegXMM }
++pclmulqdq, 3, 0x660f3a44, None, 3, CpuPCLMUL, Modrm|IgnoreSize|No_bSuf|No_wSuf|No_lSuf|No_sSuf|No_qSuf|No_ldSuf, { Imm8, Xmmword|Unspecified|BaseIndex|Disp8|Disp16|Disp32|Disp32S|RegXMM, RegXMM }
++pclmullqlqdq, 2, 0x660f3a44, 0x0, 3, CpuPCLMUL, Modrm|IgnoreSize|No_bSuf|No_wSuf|No_lSuf|No_sSuf|No_qSuf|No_ldSuf|ImmExt, { Xmmword|Unspecified|BaseIndex|Disp8|Disp16|Disp32|Disp32S|RegXMM, RegXMM }
++pclmulhqlqdq, 2, 0x660f3a44, 0x1, 3, CpuPCLMUL, Modrm|IgnoreSize|No_bSuf|No_wSuf|No_lSuf|No_sSuf|No_qSuf|No_ldSuf|ImmExt, { Xmmword|Unspecified|BaseIndex|Disp8|Disp16|Disp32|Disp32S|RegXMM, RegXMM }
++pclmullqhqdq, 2, 0x660f3a44, 0x10, 3, CpuPCLMUL, Modrm|IgnoreSize|No_bSuf|No_wSuf|No_lSuf|No_sSuf|No_qSuf|No_ldSuf|ImmExt, { Xmmword|Unspecified|BaseIndex|Disp8|Disp16|Disp32|Disp32S|RegXMM, RegXMM }
++pclmulhqhqdq, 2, 0x660f3a44, 0x11, 3, CpuPCLMUL, Modrm|IgnoreSize|No_bSuf|No_wSuf|No_lSuf|No_sSuf|No_qSuf|No_ldSuf|ImmExt, { Xmmword|Unspecified|BaseIndex|Disp8|Disp16|Disp32|Disp32S|RegXMM, RegXMM }
+ 
+ // AVX instructions.
+ 
+@@ -2338,10 +2338,6 @@ vxorps, 3, 0x57, None, 1, CpuAVX, Modrm|
+ vzeroall, 0, 0x77, None, 1, CpuAVX, Vex|Vex0F|Vex256|IgnoreSize|No_bSuf|No_wSuf|No_lSuf|No_sSuf|No_qSuf|No_ldSuf, { 0 }
+ vzeroupper, 0, 0x77, None, 1, CpuAVX, Vex|Vex0F|IgnoreSize|No_bSuf|No_wSuf|No_lSuf|No_sSuf|No_qSuf|No_ldSuf, { 0 }
+ 
+-
+-
+-
+-
+ // FMA instructions
+ 
+ vfmaddpd, 4, 0x6669, None, 1, CpuFMA, Modrm|Vex|Vex0F3A|VexNDS|VexW1|Vex3Sources|IgnoreSize|No_bSuf|No_wSuf|No_lSuf|No_sSuf|No_qSuf|No_ldSuf|VexImmExt, {Xmmword|Unspecified|BaseIndex|Disp8|Disp16|Disp32|Disp32S|RegXMM, RegXMM, RegXMM, RegXMM }
