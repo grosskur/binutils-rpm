@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.18.50.0.6
-Release: 3
+Release: 4%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -115,12 +115,16 @@ cd build-%{_target_platform}
 make prefix=%{buildroot}%{_prefix} infodir=%{buildroot}%{_infodir} install-info
 gzip -q9f %{buildroot}%{_infodir}/*.info*
 
-# Rebuild libiberty.a and libbfd.a with -fPIC
-for SUBDIR in libiberty bfd
-do
-  make -C $SUBDIR clean
-  make CFLAGS="-g -fPIC $RPM_OPT_FLAGS" -C $SUBDIR
-done
+# Rebuild libiberty.a with -fPIC.
+# Future: Remove it together with its header file, projects should bundle it.
+make -C libiberty clean
+make CFLAGS="-g -fPIC $RPM_OPT_FLAGS" -C libiberty
+
+# Rebuild libbfd.a with -fPIC.
+# Without the hidden visibility the 3rd party shared libraries would export
+# the bfd non-stable ABI.
+make -C bfd clean
+make CFLAGS="-g -fPIC $RPM_OPT_FLAGS -fvisibility=hidden" -C bfd
 
 install -m 644 bfd/libbfd.a %{buildroot}%{_prefix}/%{_lib}
 install -m 644 libiberty/libiberty.a %{buildroot}%{_prefix}/%{_lib}
@@ -221,6 +225,10 @@ fi
 %{_infodir}/bfd*info*
 
 %changelog
+* Wed Jul 16 2008 Jan Kratochvil <jan.kratochvil@redhat.com> 2.18.50.0.6-4
+- include the `dist' tag in the Release number
+- libbfd.a symbols visibility is now hidden (for #447426, suggested by Jakub)
+
 * Wed Jul 16 2008 Jan Kratochvil <jan.kratochvil@redhat.com> 2.18.50.0.6-3
 - rebuild libbfd.a with -fPIC for inclusion into shared libraries (#447426)
 
