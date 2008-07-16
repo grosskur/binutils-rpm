@@ -1,7 +1,7 @@
 Summary: A GNU collection of binary utilities.
 Name: binutils
 Version: 2.18.50.0.6
-Release: 2
+Release: 3
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -115,10 +115,14 @@ cd build-%{_target_platform}
 make prefix=%{buildroot}%{_prefix} infodir=%{buildroot}%{_infodir} install-info
 gzip -q9f %{buildroot}%{_infodir}/*.info*
 
-# Rebuild libiberty.a with -fPIC
-make -C libiberty clean
-make CFLAGS="-g -fPIC $RPM_OPT_FLAGS" -C libiberty
+# Rebuild libiberty.a and libbfd.a with -fPIC
+for SUBDIR in libiberty bfd
+do
+  make -C $SUBDIR clean
+  make CFLAGS="-g -fPIC $RPM_OPT_FLAGS" -C $SUBDIR
+done
 
+install -m 644 bfd/libbfd.a %{buildroot}%{_prefix}/%{_lib}
 install -m 644 libiberty/libiberty.a %{buildroot}%{_prefix}/%{_lib}
 install -m 644 ../include/libiberty.h %{buildroot}%{_prefix}/include
 # Remove Windows/Novell only man pages
@@ -217,6 +221,9 @@ fi
 %{_infodir}/bfd*info*
 
 %changelog
+* Wed Jul 16 2008 Jan Kratochvil <jan.kratochvil@redhat.com> 2.18.50.0.6-3
+- rebuild libbfd.a with -fPIC for inclusion into shared libraries (#447426)
+
 * Tue Apr  8 2008 Jakub Jelinek <jakub@redhat.com> 2.18.50.0.6-2
 - backport .clmul -> .pclmul renaming
 
