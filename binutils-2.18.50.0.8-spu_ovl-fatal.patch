@@ -1,0 +1,20 @@
+2008-07-30  Jan Kratochvil  <jan.kratochvil@redhat.com>
+
+	* emultempl/spuelf.em: Abort on the missing required `spu_ovl.o'.
+
+--- ld/emultempl/spuelf.em	19 Jun 2008 16:14:53 -0000	1.24
++++ ld/emultempl/spuelf.em	30 Jul 2008 18:28:25 -0000
+@@ -57,7 +57,12 @@ char **my_argv;
+ static const char ovl_mgr[] = {
+ EOF
+ 
+-../binutils/bin2c < ${srcdir}/emultempl/spu_ovl.o >> e${EMULATION_NAME}.c
++if ! ../binutils/bin2c < ${srcdir}/emultempl/spu_ovl.o >> e${EMULATION_NAME}.c
++then
++  echo >&2 "Missing ${srcdir}/emultempl/spu_ovl.o"
++  echo >&2 "You must build gas/as-new with --target=spu to build spu_ovl.o"
++  exit 1
++fi
+ 
+ fragment <<EOF
+ };

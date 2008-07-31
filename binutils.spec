@@ -1,22 +1,44 @@
+%define _default_patch_fuzz 2
+# rpmbuild parameters:
+# --define "binutils_target arm-linux-gnu" to create arm-linux-gnu-binutils.
+# --with debug: Build without optimizations and without splitting the debuginfo.
+# --without testsuite: Do not run the testsuite.  Default is to run it.
+
+%if 0%{!?binutils_target:1}
+%define binutils_target %{_target_platform}
+%define isnative 1
+%else
+%define cross %{binutils_target}-
+%define isnative 0
+%endif
+
 Summary: A GNU collection of binary utilities.
-Name: binutils
-Version: 2.18.50.0.6
-Release: 4%{?dist}
+Name: %{?cross}binutils%{?_with_debug:-debug}
+Version: 2.18.50.0.8
+Release: 1%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
 Patch1: binutils-2.18.50.0.6-ltconfig-multilib.patch
 Patch2: binutils-2.18.50.0.6-ppc64-pie.patch
-Patch3: binutils-2.18.50.0.6-place-orphan.patch
+Patch3: binutils-2.18.50.0.8-place-orphan.patch
 Patch4: binutils-2.18.50.0.6-ia64-lib64.patch
 Patch5: binutils-2.18.50.0.6-build-fixes.patch
-Patch6: binutils-2.18.50.0.6-symbolic-envvar-revert.patch
+Patch6: binutils-2.18.50.0.8-symbolic-envvar-revert.patch
 Patch7: binutils-2.18.50.0.6-version.patch
-Patch8: binutils-2.18.50.0.6-pclmul.patch
+Patch8: binutils-2.18.50.0.8-spu_ovl-fatal.patch
+Patch9: binutils-2.18.50.0.8-spu_ovl-dependency.patch
+
+%if 0%{?_with_debug:1}
+# Define this if you want to skip the strip step and preserve debug info.
+# Useful for testing.
+%define __debug_install_post : > %{_builddir}/%{?buildsubdir}/debugfiles.list
+%define debug_package %{nil}
+%endif
 
 Buildroot: %{_tmppath}/binutils-root
-BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison
+BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison, automake, autoconf
 Conflicts: gcc-c++ < 4.0.0
 Prereq: /sbin/install-info
 %ifarch ia64
@@ -54,7 +76,7 @@ have a stable ABI.  Developers starting new projects are strongly encouraged
 to consider using libelf instead of BFD.
 
 %prep
-%setup -q
+%setup -q -n binutils-%{version}
 %patch1 -p0 -b .ltconfig-multilib~
 %patch2 -p0 -b .ppc64-pie~
 %patch3 -p0 -b .place-orphan~
@@ -66,9 +88,12 @@ to consider using libelf instead of BFD.
 %patch5 -p0 -b .build-fixes~
 %patch6 -p0 -b .symbolic-envvar-revert~
 %patch7 -p0 -b .version~
-%patch8 -p0 -b .pclmul~
+%patch8 -p0 -b .spu_ovl-fatal~
+%patch9 -p0 -b .spu_ovl-dependency~
 
-# On ppc64 we might use 64K pages
+# We cannot run autotools as there is an exact requirement of autoconf-2.59.
+
+# On ppc64 we might use 64KiB pages
 sed -i -e '/#define.*ELF_COMMONPAGESIZE/s/0x1000$/0x10000/' bfd/elf*ppc.c
 # LTP sucks
 perl -pi -e 's/i\[3-7\]86/i[34567]86/g' */conf*
@@ -79,39 +104,99 @@ if gcc %{optflags} -v --help 2>&1 | grep -q -- -Bsymbolic-functions; then
 sed -i -e 's/^libbfd_la_LDFLAGS = /&-Wl,-Bsymbolic-functions /' bfd/Makefile.{am,in}
 sed -i -e 's/^libopcodes_la_LDFLAGS = /&-Wl,-Bsymbolic-functions /' opcodes/Makefile.{am,in}
 fi
+# $PACKAGE is used for the gettext catalog name.
+sed -i -e 's/^ PACKAGE=/ PACKAGE=%{?cross}/' */configure
+# Undo the name change to run the testsuite.
+for tool in binutils gas ld
+do
+  sed -i -e "2aDEJATOOL = $tool" $tool/Makefile.am
+  sed -i -e "s/^DEJATOOL = .*/DEJATOOL = $tool/" $tool/Makefile.in
+done
 touch */configure
 
 %build
-mkdir build-%{_target_platform}
-cd build-%{_target_platform}
+echo target is %{binutils_target}
+export CFLAGS="$RPM_OPT_FLAGS"
 CARGS=
-%ifarch sparc ppc s390
-CARGS=--enable-64-bit-bfd
+
+case %{binutils_target} in sparc*|ppc*|s390*)
+  CARGS="$CARGS --enable-64-bit-bfd"
+  ;;
+esac
+
+case %{binutils_target} in ia64*)
+  CARGS="--enable-targets=i386-linux"
+  ;;
+esac
+
+case %{binutils_target} in ppc*|ppc64*)
+  CARGS="--enable-targets=spu"
+  # This file is present in CVS but missing in H. J. Lu's snapshots.
+  # To include it for --enable-targets=spu we need to build gas by --target=spu.
+  ! test -f ld/emultempl/spu_ovl.o
+  mkdir build-spu
+  cd build-spu
+  CFLAGS="${CFLAGS:-%optflags} -O0 -s" ../configure \
+    --target=spu --disable-shared --enable-static --disable-werror \
+    --with-bugurl=http://bugzilla.redhat.com/bugzilla/
+  make %{_smp_mflags} all
+  cd ..
+  test -f ld/emultempl/spu_ovl.o
+  rm -rf build-spu
+  ;;
+esac
+
+mkdir build-%{binutils_target}
+cd build-%{binutils_target}
+
+%if 0%{?_with_debug:1}
+# --enable-werror could conflict with `-Wall -O0' but this is no longer true
+# for recent GCCs.
+CFLAGS="$CFLAGS -O0 -ggdb2"
 %endif
-%ifarch ia64
-CARGS=--enable-targets=i386-linux
+
+# We could optimize the cross builds size by --enable-shared but the produced
+# binaries may be less convenient in the embedded environment.
+CC="gcc -L`pwd`/bfd/.libs/" ../configure \
+%if %{isnative}
+  %{binutils_target} \
+  --enable-shared \
+%else
+  --target %{binutils_target} --enable-targets=%{_host} \
+  --disable-shared \
+  --with-sysroot=%{_prefix}/%{binutils_target}/sys-root \
 %endif
-CC="gcc -L`pwd`/bfd/.libs/" CFLAGS="${CFLAGS:-%optflags}" ../configure \
-  %{_target_platform} --prefix=%{_prefix} --exec-prefix=%{_exec_prefix} \
+  $CARGS \
+  --prefix=%{_prefix} --exec-prefix=%{_exec_prefix} \
   --bindir=%{_bindir} --sbindir=%{_sbindir} --sysconfdir=%{_sysconfdir} \
   --datadir=%{_datadir} --includedir=%{_includedir} --libdir=%{_libdir} \
   --libexecdir=%{_libexecdir} --localstatedir=%{_localstatedir} \
   --sharedstatedir=%{_sharedstatedir} --mandir=%{_mandir} \
-  --infodir=%{_infodir} --enable-shared $CARGS --disable-werror \
+  --infodir=%{_infodir} --disable-werror \
   --with-bugurl=http://bugzilla.redhat.com/bugzilla/
 make %{_smp_mflags} tooldir=%{_prefix} all
+# Fix: Found '%{buildroot}' in installed files; aborting
+if [ -f ld/eelf32_spu.c ]
+then
+  sed -i -e 's#%{buildroot}##g' ld/eelf32_spu.c
+fi
 make %{_smp_mflags} tooldir=%{_prefix} info
+%if 0%{?_without_testsuite:1}
+echo ====================TESTSUITE DISABLED=========================
+%else
 make -k check < /dev/null > check.log 2>&1 || :
 echo ====================TESTING=========================
 cat check.log
 echo ====================TESTING END=====================
 cd ..
+%endif
 
 %install
 rm -rf %{buildroot}
 mkdir -p %{buildroot}%{_prefix}
-cd build-%{_target_platform}
+cd build-%{binutils_target}
 %makeinstall
+%if %{isnative}
 make prefix=%{buildroot}%{_prefix} infodir=%{buildroot}%{_infodir} install-info
 gzip -q9f %{buildroot}%{_infodir}/*.info*
 
@@ -141,10 +226,6 @@ rm -f %{buildroot}%{_prefix}/%{_lib}/lib{bfd,opcodes}.so
 # Remove libtool files, which reference the .so libs
 rm -f %{buildroot}%{_prefix}/%{_lib}/lib{bfd,opcodes}.la
 
-# This one comes from gcc
-rm -f %{buildroot}%{_infodir}/dir
-rm -rf %{buildroot}%{_prefix}/%{_target_platform}
-
 %ifarch %{ix86} x86_64 ppc ppc64 s390 s390x sparc sparc64
 sed -i -e '/^#include "ansidecl.h"/{p;s~^.*$~#include <bits/wordsize.h>~;}' \
 %ifarch %{ix86} x86_64
@@ -162,22 +243,36 @@ sed -i -e '/^#include "ansidecl.h"/{p;s~^.*$~#include <bits/wordsize.h>~;}' \
 %endif
 touch -r ../bfd/bfd-in2.h %{buildroot}%{_prefix}/include/bfd.h
 
+%else # !%{isnative}
+# For cross-binutils we drop the documentation.
+rm -rf %{buildroot}%{_infodir}
+# We keep these as one can have native + cross binutils of different versions.
+#rm -rf %{buildroot}%{_prefix}/share/locale
+#rm -rf %{buildroot}%{_mandir}
+rm -rf %{buildroot}%{_prefix}/%{_lib}/libiberty.a
+%endif # !%{isnative}
+
+# This one comes from gcc
+rm -f %{buildroot}%{_infodir}/dir
+rm -rf %{buildroot}%{_prefix}/%{binutils_target}
+
 cd ..
-%find_lang binutils
-%find_lang opcodes
-%find_lang bfd
-%find_lang gas
-%find_lang ld
-%find_lang gprof
-cat opcodes.lang >> binutils.lang
-cat bfd.lang >> binutils.lang
-cat gas.lang >> binutils.lang
-cat ld.lang >> binutils.lang
-cat gprof.lang >> binutils.lang
+%find_lang %{?cross}binutils
+%find_lang %{?cross}opcodes
+%find_lang %{?cross}bfd
+%find_lang %{?cross}gas
+%find_lang %{?cross}ld
+%find_lang %{?cross}gprof
+cat %{?cross}opcodes.lang >> %{?cross}binutils.lang
+cat %{?cross}bfd.lang >> %{?cross}binutils.lang
+cat %{?cross}gas.lang >> %{?cross}binutils.lang
+cat %{?cross}ld.lang >> %{?cross}binutils.lang
+cat %{?cross}gprof.lang >> %{?cross}binutils.lang
 
 %clean
 rm -rf %{buildroot}
 
+%if %{isnative}
 %post
 /sbin/ldconfig
 /sbin/install-info --info-dir=%{_infodir} %{_infodir}/as.info.gz
@@ -208,12 +303,14 @@ exit 0
 if [ $1 = 0 ] ;then
   /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/bfd.info.gz || :
 fi
+%endif # %{isnative}
 
-%files -f binutils.lang
+%files -f %{?cross}binutils.lang
 %defattr(-,root,root)
 %doc README
 %{_prefix}/bin/*
 %{_mandir}/man1/*
+%if %{isnative}
 %{_prefix}/%{_lib}/lib*.so
 %{_infodir}/[^b]*info*
 %{_infodir}/binutils*info*
@@ -223,8 +320,19 @@ fi
 %{_prefix}/include/*
 %{_prefix}/%{_lib}/lib*.a
 %{_infodir}/bfd*info*
+%endif # %{isnative}
 
 %changelog
+* Thu Jul 31 2008 Jan Kratochvil <jan.kratochvil@redhat.com> 2.18.50.0.8-1
+- Update to 2.18.50.0.8.
+  - Drop the .clmul -> .pclmul renaming backport.
+- Add %%{binutils_target} macro to support building cross-binutils.
+  (David Woodhouse)
+- Support `--without testsuite' to suppress the testsuite run.
+- Support `--with debug' to build without optimizations.
+- Refresh the patchset with fuzz 0 (for new rpmbuild).
+- Enable the spu target on ppc/ppc64 (BZ 455242).
+
 * Wed Jul 16 2008 Jan Kratochvil <jan.kratochvil@redhat.com> 2.18.50.0.6-4
 - include the `dist' tag in the Release number
 - libbfd.a symbols visibility is now hidden (for #447426, suggested by Jakub)

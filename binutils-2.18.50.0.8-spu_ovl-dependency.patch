@@ -1,0 +1,46 @@
+2008-07-30  Jan Kratochvil  <jan.kratochvil@redhat.com>
+
+	* Makefile.def: ld's spu_ovl.o depends on gas and binutils.
+	* Makefile.in: Regenerate.
+
+--- Makefile.def	30 Jul 2008 15:03:54 -0000	1.92
++++ Makefile.def	30 Jul 2008 21:18:12 -0000
+@@ -378,6 +378,9 @@ dependencies = { module=all-ld; on=all-b
+ dependencies = { module=all-ld; on=all-build-byacc; };
+ dependencies = { module=all-ld; on=all-build-flex; };
+ dependencies = { module=all-ld; on=all-intl; };
++// spu_ovl.o depends on both gas and binutils/bin2c
++dependencies = { module=all-ld; on=all-gas; };
++dependencies = { module=all-ld; on=all-binutils; };
+ dependencies = { module=configure-gold; on=configure-intl; };
+ dependencies = { module=all-gold; on=all-libiberty; };
+ dependencies = { module=all-gold; on=all-intl; };
+--- Makefile.in	30 Jul 2008 15:03:54 -0000	1.285
++++ Makefile.in	30 Jul 2008 21:18:34 -0000
+@@ -53308,6 +53308,26 @@ all-stageb3g2-ld: maybe-all-stageb3g2-in
+ all-stage4-ld: maybe-all-stage4-intl
+ all-stageprofile-ld: maybe-all-stageprofile-intl
+ all-stagefeedback-ld: maybe-all-stagefeedback-intl
++all-ld: maybe-all-gas
++
++all-stage1-ld: maybe-all-stage1-gas
++all-stage2-ld: maybe-all-stage2-gas
++all-stageb2g0-ld: maybe-all-stageb2g0-gas
++all-stage3-ld: maybe-all-stage3-gas
++all-stageb3g2-ld: maybe-all-stageb3g2-gas
++all-stage4-ld: maybe-all-stage4-gas
++all-stageprofile-ld: maybe-all-stageprofile-gas
++all-stagefeedback-ld: maybe-all-stagefeedback-gas
++all-ld: maybe-all-binutils
++
++all-stage1-ld: maybe-all-stage1-binutils
++all-stage2-ld: maybe-all-stage2-binutils
++all-stageb2g0-ld: maybe-all-stageb2g0-binutils
++all-stage3-ld: maybe-all-stage3-binutils
++all-stageb3g2-ld: maybe-all-stageb3g2-binutils
++all-stage4-ld: maybe-all-stage4-binutils
++all-stageprofile-ld: maybe-all-stageprofile-binutils
++all-stagefeedback-ld: maybe-all-stagefeedback-binutils
+ configure-gold: maybe-configure-intl
+ 
+ configure-stage1-gold: maybe-configure-stage1-intl

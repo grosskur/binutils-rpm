@@ -1,16 +1,18 @@
---- ld/NEWS.jj	2007-05-11 11:24:08.000000000 -0400
-+++ ld/NEWS	2007-06-12 05:04:49.000000000 -0400
+It reverts the H.J. Lu's binutils custom patch.
+
+--- ld/NEWS	2008-07-10 17:33:23.000000000 +0200
++++ ld/NEWS	2008-07-30 21:24:25.000000000 +0200
 @@ -1,7 +1,4 @@
  -*- text -*-
 -* ELF: Support environment variables, LD_SYMBOLIC for -Bsymbolic and
 -  LD_SYMBOLIC_FUNCTIONS for -Bsymbolic-functions.
 -
- Changes in 2.18:
+ * Linker script input section filespecs may now specify a file within an
+  archive by writing "archive:file".
  
- * Linker sources now released under version 3 of the GNU General Public
---- ld/ld.texinfo.jj	2007-05-11 11:24:08.000000000 -0400
-+++ ld/ld.texinfo	2007-06-12 05:04:33.000000000 -0400
-@@ -1142,21 +1142,14 @@ When creating a shared library, bind ref
+--- ld/ld.texinfo	2008-07-10 17:33:23.000000000 +0200
++++ ld/ld.texinfo	2008-07-30 21:24:05.000000000 +0200
+@@ -1147,21 +1147,14 @@ When creating a shared library, bind ref
  definition within the shared library, if any.  Normally, it is possible
  for a program linked against a shared library to override the definition
  within the shared library.  This option is only meaningful on ELF
@@ -34,9 +36,9 @@
  
  @kindex --dynamic-list=@var{dynamic-list-file}
  @item --dynamic-list=@var{dynamic-list-file}
---- ld/ldmain.c.jj	2007-05-11 11:24:08.000000000 -0400
-+++ ld/ldmain.c	2007-06-12 05:05:48.000000000 -0400
-@@ -254,11 +254,6 @@ main (int argc, char **argv)
+--- ld/ldmain.c	2008-07-10 17:33:23.000000000 +0200
++++ ld/ldmain.c	2008-07-30 21:24:05.000000000 +0200
+@@ -258,11 +258,6 @@ main (int argc, char **argv)
    command_line.warn_search_mismatch = TRUE;
    command_line.check_section_addresses = TRUE;
  
