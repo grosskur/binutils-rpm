@@ -3,19 +3,22 @@
 # --define "binutils_target arm-linux-gnu" to create arm-linux-gnu-binutils.
 # --with debug: Build without optimizations and without splitting the debuginfo.
 # --without testsuite: Do not run the testsuite.  Default is to run it.
+# --with testsuite: Run the testsuite.  Default --with debug is not to run it.
 
 %if 0%{!?binutils_target:1}
 %define binutils_target %{_target_platform}
 %define isnative 1
+%define enable_shared 1
 %else
 %define cross %{binutils_target}-
 %define isnative 0
+%define enable_shared 0
 %endif
 
 Summary: A GNU collection of binary utilities.
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.18.50.0.8
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -29,6 +32,8 @@ Patch6: binutils-2.18.50.0.8-symbolic-envvar-revert.patch
 Patch7: binutils-2.18.50.0.6-version.patch
 Patch8: binutils-2.18.50.0.8-spu_ovl-fatal.patch
 Patch9: binutils-2.18.50.0.8-spu_ovl-dependency.patch
+Patch10: binutils-2.18.50.0.8-generic-elf-size.patch
+Patch11: binutils-2.18.50.0.8-largefile.patch
 
 %if 0%{?_with_debug:1}
 # Define this if you want to skip the strip step and preserve debug info.
@@ -90,6 +95,8 @@ to consider using libelf instead of BFD.
 %patch7 -p0 -b .version~
 %patch8 -p0 -b .spu_ovl-fatal~
 %patch9 -p0 -b .spu_ovl-dependency~
+%patch10 -p0 -b .generic-elf-size~
+%patch11 -p0 -b .largefile~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -119,18 +126,18 @@ echo target is %{binutils_target}
 export CFLAGS="$RPM_OPT_FLAGS"
 CARGS=
 
-case %{binutils_target} in sparc*|ppc*|s390*)
+case %{binutils_target} in i?86*|sparc*|ppc*|s390*)
   CARGS="$CARGS --enable-64-bit-bfd"
   ;;
 esac
 
 case %{binutils_target} in ia64*)
-  CARGS="--enable-targets=i386-linux"
+  CARGS="$CARGS --enable-targets=i386-linux"
   ;;
 esac
 
 case %{binutils_target} in ppc*|ppc64*)
-  CARGS="--enable-targets=spu"
+  CARGS="$CARGS --enable-targets=spu"
   # This file is present in CVS but missing in H. J. Lu's snapshots.
   # To include it for --enable-targets=spu we need to build gas by --target=spu.
   ! test -f ld/emultempl/spu_ovl.o
@@ -150,9 +157,8 @@ mkdir build-%{binutils_target}
 cd build-%{binutils_target}
 
 %if 0%{?_with_debug:1}
-# --enable-werror could conflict with `-Wall -O0' but this is no longer true
-# for recent GCCs.
 CFLAGS="$CFLAGS -O0 -ggdb2"
+%define enable_shared 0
 %endif
 
 # We could optimize the cross builds size by --enable-shared but the produced
@@ -160,11 +166,14 @@ CFLAGS="$CFLAGS -O0 -ggdb2"
 CC="gcc -L`pwd`/bfd/.libs/" ../configure \
 %if %{isnative}
   %{binutils_target} \
-  --enable-shared \
 %else
   --target %{binutils_target} --enable-targets=%{_host} \
-  --disable-shared \
   --with-sysroot=%{_prefix}/%{binutils_target}/sys-root \
+%endif
+%if %{enable_shared}
+  --enable-shared \
+%else
+  --disable-shared \
 %endif
   $CARGS \
   --prefix=%{_prefix} --exec-prefix=%{_exec_prefix} \
@@ -175,13 +184,11 @@ CC="gcc -L`pwd`/bfd/.libs/" ../configure \
   --infodir=%{_infodir} --disable-werror \
   --with-bugurl=http://bugzilla.redhat.com/bugzilla/
 make %{_smp_mflags} tooldir=%{_prefix} all
-# Fix: Found '%{buildroot}' in installed files; aborting
-if [ -f ld/eelf32_spu.c ]
-then
-  sed -i -e 's#%{buildroot}##g' ld/eelf32_spu.c
-fi
 make %{_smp_mflags} tooldir=%{_prefix} info
-%if 0%{?_without_testsuite:1}
+
+# Do not use %%check as it is run after %%install where libbfd.so is rebuild
+# with -fvisibility=hidden no longer being usable in its shared form.
+%if 0%{?_without_testsuite:1} || (0%{!?_with_testsuite:1} && 0%{?_with_debug:1})
 echo ====================TESTSUITE DISABLED=========================
 %else
 make -k check < /dev/null > check.log 2>&1 || :
@@ -217,7 +224,9 @@ install -m 644 ../include/libiberty.h %{buildroot}%{_prefix}/include
 # Remove Windows/Novell only man pages
 rm -f %{buildroot}%{_mandir}/man1/{dlltool,nlmconv,windres}*
 
+%if %{enable_shared}
 chmod +x %{buildroot}%{_prefix}/%{_lib}/lib*.so*
+%endif
 
 # Prevent programs to link against libbfd and libopcodes dynamically,
 # they are changing far too often
@@ -310,8 +319,10 @@ fi
 %doc README
 %{_prefix}/bin/*
 %{_mandir}/man1/*
-%if %{isnative}
+%if %{enable_shared}
 %{_prefix}/%{_lib}/lib*.so
+%endif
+%if %{isnative}
 %{_infodir}/[^b]*info*
 %{_infodir}/binutils*info*
 
@@ -323,6 +334,12 @@ fi
 %endif # %{isnative}
 
 %changelog
+* Fri Aug  1 2008 Jan Kratochvil <jan.kratochvil@redhat.com> 2.18.50.0.8-2
+- Fix parsing elf64-i386 files for kdump PAE vmcore dumps (BZ 457189).
+- Turn on 64-bit BFD support for i386, globally enable AC_SYS_LARGEFILE.
+- `--with debug' builds now with --disable-shared.
+- Removed a forgotten unused ld/eelf32_spu.c workaround from 2.18.50.0.8-1.
+
 * Thu Jul 31 2008 Jan Kratochvil <jan.kratochvil@redhat.com> 2.18.50.0.8-1
 - Update to 2.18.50.0.8.
   - Drop the .clmul -> .pclmul renaming backport.
