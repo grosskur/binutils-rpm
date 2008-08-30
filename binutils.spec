@@ -1,4 +1,3 @@
-%define _default_patch_fuzz 2
 # rpmbuild parameters:
 # --define "binutils_target arm-linux-gnu" to create arm-linux-gnu-binutils.
 # --with debug: Build without optimizations and without splitting the debuginfo.
@@ -17,8 +16,8 @@
 
 Summary: A GNU collection of binary utilities.
 Name: %{?cross}binutils%{?_with_debug:-debug}
-Version: 2.18.50.0.8
-Release: 2%{?dist}
+Version: 2.18.50.0.9
+Release: 1%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -30,20 +29,25 @@ Patch4: binutils-2.18.50.0.6-ia64-lib64.patch
 Patch5: binutils-2.18.50.0.6-build-fixes.patch
 Patch6: binutils-2.18.50.0.8-symbolic-envvar-revert.patch
 Patch7: binutils-2.18.50.0.6-version.patch
-Patch8: binutils-2.18.50.0.8-spu_ovl-fatal.patch
-Patch9: binutils-2.18.50.0.8-spu_ovl-dependency.patch
-Patch10: binutils-2.18.50.0.8-generic-elf-size.patch
-Patch11: binutils-2.18.50.0.8-largefile.patch
+Patch11: binutils-2.18.50.0.9-largefile.patch
 
 %if 0%{?_with_debug:1}
 # Define this if you want to skip the strip step and preserve debug info.
 # Useful for testing.
 %define __debug_install_post : > %{_builddir}/%{?buildsubdir}/debugfiles.list
 %define debug_package %{nil}
+%define run_testsuite 0%{?_with_testsuite:1}
+%else
+%define run_testsuite 0%{!?_without_testsuite:1}
 %endif
 
-Buildroot: %{_tmppath}/binutils-root
-BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison, automake, autoconf
+Buildroot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison, zlib-devel
+# Required for: ld-bootstrap/bootstrap.exp bootstrap with --static
+# It should not be required for: ld-elf/elf.exp static {preinit,init,fini} array
+%if %{run_testsuite}
+BuildRequires: zlib-static
+%endif
 Conflicts: gcc-c++ < 4.0.0
 Prereq: /sbin/install-info
 %ifarch ia64
@@ -93,9 +97,6 @@ to consider using libelf instead of BFD.
 %patch5 -p0 -b .build-fixes~
 %patch6 -p0 -b .symbolic-envvar-revert~
 %patch7 -p0 -b .version~
-%patch8 -p0 -b .spu_ovl-fatal~
-%patch9 -p0 -b .spu_ovl-dependency~
-%patch10 -p0 -b .generic-elf-size~
 %patch11 -p0 -b .largefile~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
@@ -138,18 +139,6 @@ esac
 
 case %{binutils_target} in ppc*|ppc64*)
   CARGS="$CARGS --enable-targets=spu"
-  # This file is present in CVS but missing in H. J. Lu's snapshots.
-  # To include it for --enable-targets=spu we need to build gas by --target=spu.
-  ! test -f ld/emultempl/spu_ovl.o
-  mkdir build-spu
-  cd build-spu
-  CFLAGS="${CFLAGS:-%optflags} -O0 -s" ../configure \
-    --target=spu --disable-shared --enable-static --disable-werror \
-    --with-bugurl=http://bugzilla.redhat.com/bugzilla/
-  make %{_smp_mflags} all
-  cd ..
-  test -f ld/emultempl/spu_ovl.o
-  rm -rf build-spu
   ;;
 esac
 
@@ -188,7 +177,7 @@ make %{_smp_mflags} tooldir=%{_prefix} info
 
 # Do not use %%check as it is run after %%install where libbfd.so is rebuild
 # with -fvisibility=hidden no longer being usable in its shared form.
-%if 0%{?_without_testsuite:1} || (0%{!?_with_testsuite:1} && 0%{?_with_debug:1})
+%if !%{run_testsuite}
 echo ====================TESTSUITE DISABLED=========================
 %else
 make -k check < /dev/null > check.log 2>&1 || :
@@ -334,6 +323,13 @@ fi
 %endif # %{isnative}
 
 %changelog
+* Sat Aug 30 2008 Jan Kratochvil <jan.kratochvil@redhat.com> 2.18.50.0.9-1
+- Update to 2.18.50.0.9.
+  - Drop the ppc-only spu target pre-build stage (BZ 455242).
+  - Drop parsing elf64-i386 files for kdump PAE vmcore dumps (BZ 457189).
+- New .spec BuildRequires zlib-devel (/-static) for compressed sections.
+- Update .spec Buildroot to be more unique.
+
 * Fri Aug  1 2008 Jan Kratochvil <jan.kratochvil@redhat.com> 2.18.50.0.8-2
 - Fix parsing elf64-i386 files for kdump PAE vmcore dumps (BZ 457189).
 - Turn on 64-bit BFD support for i386, globally enable AC_SYS_LARGEFILE.
