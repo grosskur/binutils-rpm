@@ -14,10 +14,10 @@
 %define enable_shared 0
 %endif
 
-Summary: A GNU collection of binary utilities.
+Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.18.50.0.9
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -49,9 +49,10 @@ BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison, zlib-devel
 BuildRequires: zlib-static
 %endif
 Conflicts: gcc-c++ < 4.0.0
-Prereq: /sbin/install-info
+Requires(post): /sbin/install-info
+Requires(preun): /sbin/install-info
 %ifarch ia64
-Obsoletes: gnupro
+Obsoletes: gnupro <= 1117-1
 %endif
 
 # On ARM EABI systems, we do want -gnueabi to be part of the
@@ -76,7 +77,8 @@ addresses to file and line).
 Summary: BFD and opcodes static libraries and header files
 Group: System Environment/Libraries
 Conflicts: binutils < 2.17.50.0.3-4
-Prereq: /sbin/install-info
+Requires(post): /sbin/install-info
+Requires(preun): /sbin/install-info
 
 %description devel
 This package contains BFD and opcodes static libraries and associated
@@ -142,9 +144,6 @@ case %{binutils_target} in ppc*|ppc64*)
   ;;
 esac
 
-mkdir build-%{binutils_target}
-cd build-%{binutils_target}
-
 %if 0%{?_with_debug:1}
 CFLAGS="$CFLAGS -O0 -ggdb2"
 %define enable_shared 0
@@ -152,10 +151,8 @@ CFLAGS="$CFLAGS -O0 -ggdb2"
 
 # We could optimize the cross builds size by --enable-shared but the produced
 # binaries may be less convenient in the embedded environment.
-CC="gcc -L`pwd`/bfd/.libs/" ../configure \
-%if %{isnative}
-  %{binutils_target} \
-%else
+%configure \
+%if !%{isnative}
   --target %{binutils_target} --enable-targets=%{_host} \
   --with-sysroot=%{_prefix}/%{binutils_target}/sys-root \
 %endif
@@ -165,12 +162,7 @@ CC="gcc -L`pwd`/bfd/.libs/" ../configure \
   --disable-shared \
 %endif
   $CARGS \
-  --prefix=%{_prefix} --exec-prefix=%{_exec_prefix} \
-  --bindir=%{_bindir} --sbindir=%{_sbindir} --sysconfdir=%{_sysconfdir} \
-  --datadir=%{_datadir} --includedir=%{_includedir} --libdir=%{_libdir} \
-  --libexecdir=%{_libexecdir} --localstatedir=%{_localstatedir} \
-  --sharedstatedir=%{_sharedstatedir} --mandir=%{_mandir} \
-  --infodir=%{_infodir} --disable-werror \
+  --disable-werror \
   --with-bugurl=http://bugzilla.redhat.com/bugzilla/
 make %{_smp_mflags} tooldir=%{_prefix} all
 make %{_smp_mflags} tooldir=%{_prefix} info
@@ -184,17 +176,13 @@ make -k check < /dev/null > check.log 2>&1 || :
 echo ====================TESTING=========================
 cat check.log
 echo ====================TESTING END=====================
-cd ..
 %endif
 
 %install
 rm -rf %{buildroot}
-mkdir -p %{buildroot}%{_prefix}
-cd build-%{binutils_target}
 %makeinstall
 %if %{isnative}
 make prefix=%{buildroot}%{_prefix} infodir=%{buildroot}%{_infodir} install-info
-gzip -q9f %{buildroot}%{_infodir}/*.info*
 
 # Rebuild libiberty.a with -fPIC.
 # Future: Remove it together with its header file, projects should bundle it.
@@ -209,7 +197,7 @@ make CFLAGS="-g -fPIC $RPM_OPT_FLAGS -fvisibility=hidden" -C bfd
 
 install -m 644 bfd/libbfd.a %{buildroot}%{_prefix}/%{_lib}
 install -m 644 libiberty/libiberty.a %{buildroot}%{_prefix}/%{_lib}
-install -m 644 ../include/libiberty.h %{buildroot}%{_prefix}/include
+install -m 644 include/libiberty.h %{buildroot}%{_prefix}/include
 # Remove Windows/Novell only man pages
 rm -f %{buildroot}%{_mandir}/man1/{dlltool,nlmconv,windres}*
 
@@ -239,7 +227,7 @@ sed -i -e '/^#include "ansidecl.h"/{p;s~^.*$~#include <bits/wordsize.h>~;}' \
     -e 's/^#define BFD_HOST_U_64_BIT unsigned \(long \)\?long *$/#define BFD_HOST_U_64_BIT unsigned BFD_HOST_64_BIT/' \
     %{buildroot}%{_prefix}/include/bfd.h
 %endif
-touch -r ../bfd/bfd-in2.h %{buildroot}%{_prefix}/include/bfd.h
+touch -r bfd/bfd-in2.h %{buildroot}%{_prefix}/include/bfd.h
 
 %else # !%{isnative}
 # For cross-binutils we drop the documentation.
@@ -254,7 +242,6 @@ rm -rf %{buildroot}%{_prefix}/%{_lib}/libiberty.a
 rm -f %{buildroot}%{_infodir}/dir
 rm -rf %{buildroot}%{_prefix}/%{binutils_target}
 
-cd ..
 %find_lang %{?cross}binutils
 %find_lang %{?cross}opcodes
 %find_lang %{?cross}bfd
@@ -273,38 +260,38 @@ rm -rf %{buildroot}
 %if %{isnative}
 %post
 /sbin/ldconfig
-/sbin/install-info --info-dir=%{_infodir} %{_infodir}/as.info.gz
-/sbin/install-info --info-dir=%{_infodir} %{_infodir}/binutils.info.gz
-/sbin/install-info --info-dir=%{_infodir} %{_infodir}/gprof.info.gz
-/sbin/install-info --info-dir=%{_infodir} %{_infodir}/ld.info.gz
-/sbin/install-info --info-dir=%{_infodir} %{_infodir}/standards.info.gz
-/sbin/install-info --info-dir=%{_infodir} %{_infodir}/configure.info.gz
+/sbin/install-info --info-dir=%{_infodir} %{_infodir}/as.info
+/sbin/install-info --info-dir=%{_infodir} %{_infodir}/binutils.info
+/sbin/install-info --info-dir=%{_infodir} %{_infodir}/gprof.info
+/sbin/install-info --info-dir=%{_infodir} %{_infodir}/ld.info
+/sbin/install-info --info-dir=%{_infodir} %{_infodir}/standards.info
+/sbin/install-info --info-dir=%{_infodir} %{_infodir}/configure.info
 exit 0
 
 %preun
 if [ $1 = 0 ] ;then
-  /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/as.info.gz
-  /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/binutils.info.gz
-  /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/gprof.info.gz
-  /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/ld.info.gz
-  /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/standards.info.gz
-  /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/configure.info.gz
+  /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/as.info
+  /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/binutils.info
+  /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/gprof.info
+  /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/ld.info
+  /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/standards.info
+  /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/configure.info
 fi
 exit 0
 
 %postun -p /sbin/ldconfig
 
 %post devel
-/sbin/install-info --info-dir=%{_infodir} %{_infodir}/bfd.info.gz || :
+/sbin/install-info --info-dir=%{_infodir} %{_infodir}/bfd.info
 
 %preun devel
 if [ $1 = 0 ] ;then
-  /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/bfd.info.gz || :
+  /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/bfd.info
 fi
 %endif # %{isnative}
 
 %files -f %{?cross}binutils.lang
-%defattr(-,root,root)
+%defattr(-,root,root,-)
 %doc README
 %{_prefix}/bin/*
 %{_mandir}/man1/*
@@ -316,13 +303,21 @@ fi
 %{_infodir}/binutils*info*
 
 %files devel
-%defattr(-,root,root)
+%defattr(-,root,root,-)
 %{_prefix}/include/*
 %{_prefix}/%{_lib}/lib*.a
 %{_infodir}/bfd*info*
 %endif # %{isnative}
 
 %changelog
+* Mon Sep 15 2008 Jan Kratochvil <jan.kratochvil@redhat.com> 2.18.50.0.9-2
+- Package review, analysed by Jon Ciesla and Patrice Dumas (BZ 225615).
+ - build back in the sourcedir without problems as gasp is no longer included.
+ - Fix the install-info requirement.
+ - Drop the needless gzipping of the info files.
+ - Provide Obsoletes versions.
+ - Use the %%configure macro.
+
 * Sat Aug 30 2008 Jan Kratochvil <jan.kratochvil@redhat.com> 2.18.50.0.9-1
 - Update to 2.18.50.0.9.
   - Drop the ppc-only spu target pre-build stage (BZ 455242).
