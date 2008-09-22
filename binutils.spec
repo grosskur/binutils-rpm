@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.18.50.0.9
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -186,7 +186,7 @@ echo ====================TESTING END=====================
 
 %install
 rm -rf %{buildroot}
-%makeinstall
+make install DESTDIR=%{buildroot}
 %if %{isnative}
 make prefix=%{buildroot}%{_prefix} infodir=%{buildroot}%{_infodir} install-info
 
@@ -347,6 +347,9 @@ fi
 %endif # %{isnative}
 
 %changelog
+* Mon Sep 22 2008 Jan Kratochvil <jan.kratochvil@redhat.com> 2.18.50.0.9-5
+- Remove %%makeinstall to comply with the spu-binutils review (BZ 452211).
+
 * Mon Sep 22 2008 Jan Kratochvil <jan.kratochvil@redhat.com> 2.18.50.0.9-4
 - Fix *.so scripts for multilib linking (BZ 463101, suggested by Jakub Jelinek).
 
