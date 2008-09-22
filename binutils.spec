@@ -17,11 +17,12 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.18.50.0.9
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
+Source2: binutils-2.18.50.0.9-output-format.sed
 Patch1: binutils-2.18.50.0.6-ltconfig-multilib.patch
 Patch2: binutils-2.18.50.0.6-ppc64-pie.patch
 Patch3: binutils-2.18.50.0.8-place-orphan.patch
@@ -235,14 +236,28 @@ sed -i -e '/^#include "ansidecl.h"/{p;s~^.*$~#include <bits/wordsize.h>~;}' \
 %endif
 touch -r bfd/bfd-in2.h %{buildroot}%{_prefix}/include/bfd.h
 
-cat >%{buildroot}%{_prefix}/%{_lib}/libbfd.so <<EOH
-/* GNU ld script
-   The libz dependency is unexpected by legacy build scripts.  */
+# Generate .so linker scripts for dependencies; imported from glibc/Makerules:
 
+# This fragment of linker script gives the OUTPUT_FORMAT statement
+# for the configuration we are building.
+OUTPUT_FORMAT="\
+/* Ensure this .so library will not be used by a link for a different format
+   on a multi-architecture system.  */
+$(gcc $CFLAGS $LDFLAGS -shared -x c /dev/null -o /dev/null -Wl,--verbose -v 2>&1 | sed -n -f "%{SOURCE2}")"
+
+tee %{buildroot}%{_prefix}/%{_lib}/libbfd.so <<EOH
+/* GNU ld script */
+
+$OUTPUT_FORMAT
+
+/* The libz dependency is unexpected by legacy build scripts.  */
 INPUT ( %{_libdir}/libbfd.a -liberty -lz )
 EOH
-cat >%{buildroot}%{_prefix}/%{_lib}/libopcodes.so <<EOH
+
+tee %{buildroot}%{_prefix}/%{_lib}/libopcodes.so <<EOH
 /* GNU ld script */
+
+$OUTPUT_FORMAT
 
 INPUT ( %{_libdir}/libopcodes.a -lbfd )
 EOH
@@ -332,6 +347,9 @@ fi
 %endif # %{isnative}
 
 %changelog
+* Mon Sep 22 2008 Jan Kratochvil <jan.kratochvil@redhat.com> 2.18.50.0.9-4
+- Fix *.so scripts for multilib linking (BZ 463101, suggested by Jakub Jelinek).
+
 * Sun Sep 21 2008 Jan Kratochvil <jan.kratochvil@redhat.com> 2.18.50.0.9-3
 - Provide libbfd.so and libopcodes.so for automatic dependencies (BZ 463101).
 - Fix .eh_frame_hdr build on C++ files with discarded common groups (BZ 458950).
