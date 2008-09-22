@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.18.50.0.9
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -26,10 +26,11 @@ Patch1: binutils-2.18.50.0.6-ltconfig-multilib.patch
 Patch2: binutils-2.18.50.0.6-ppc64-pie.patch
 Patch3: binutils-2.18.50.0.8-place-orphan.patch
 Patch4: binutils-2.18.50.0.6-ia64-lib64.patch
-Patch5: binutils-2.18.50.0.6-build-fixes.patch
 Patch6: binutils-2.18.50.0.8-symbolic-envvar-revert.patch
 Patch7: binutils-2.18.50.0.6-version.patch
 Patch11: binutils-2.18.50.0.9-largefile.patch
+Patch12: binutils-2.18.50.0.9-set-long-long.patch
+Patch13: binutils-2.18.50.0.9-upstream.patch
 
 %if 0%{?_with_debug:1}
 # Define this if you want to skip the strip step and preserve debug info.
@@ -96,10 +97,11 @@ to consider using libelf instead of BFD.
 %patch4 -p0 -b .ia64-lib64~
 %endif
 %endif
-%patch5 -p0 -b .build-fixes~
 %patch6 -p0 -b .symbolic-envvar-revert~
 %patch7 -p0 -b .version~
 %patch11 -p0 -b .largefile~
+%patch12 -p0 -b .set-long-long~
+%patch13 -p0 -b .upstream~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -152,9 +154,12 @@ CFLAGS="$CFLAGS -O0 -ggdb2"
 # We could optimize the cross builds size by --enable-shared but the produced
 # binaries may be less convenient in the embedded environment.
 %configure \
+  --build=%{_target_platform} --host=%{_target_platform} \
+  --target=%{binutils_target} \
 %if !%{isnative}
-  --target %{binutils_target} --enable-targets=%{_host} \
+  --enable-targets=%{_host} \
   --with-sysroot=%{_prefix}/%{binutils_target}/sys-root \
+  --program-prefix=%{cross} \
 %endif
 %if %{enable_shared}
   --enable-shared \
@@ -212,6 +217,7 @@ rm -f %{buildroot}%{_prefix}/%{_lib}/lib{bfd,opcodes}.so
 # Remove libtool files, which reference the .so libs
 rm -f %{buildroot}%{_prefix}/%{_lib}/lib{bfd,opcodes}.la
 
+# Fix multilib conflicts of generated values by __WORDSIZE-based expressions.
 %ifarch %{ix86} x86_64 ppc ppc64 s390 s390x sparc sparc64
 sed -i -e '/^#include "ansidecl.h"/{p;s~^.*$~#include <bits/wordsize.h>~;}' \
 %ifarch %{ix86} x86_64
@@ -228,6 +234,18 @@ sed -i -e '/^#include "ansidecl.h"/{p;s~^.*$~#include <bits/wordsize.h>~;}' \
     %{buildroot}%{_prefix}/include/bfd.h
 %endif
 touch -r bfd/bfd-in2.h %{buildroot}%{_prefix}/include/bfd.h
+
+cat >%{buildroot}%{_prefix}/%{_lib}/libbfd.so <<EOH
+/* GNU ld script
+   The libz dependency is unexpected by legacy build scripts.  */
+
+INPUT ( %{_libdir}/libbfd.a -liberty -lz )
+EOH
+cat >%{buildroot}%{_prefix}/%{_lib}/libopcodes.so <<EOH
+/* GNU ld script */
+
+INPUT ( %{_libdir}/libopcodes.a -lbfd )
+EOH
 
 %else # !%{isnative}
 # For cross-binutils we drop the documentation.
@@ -297,6 +315,8 @@ fi
 %{_mandir}/man1/*
 %if %{enable_shared}
 %{_prefix}/%{_lib}/lib*.so
+%exclude %{_prefix}/%{_lib}/libbfd.so
+%exclude %{_prefix}/%{_lib}/libopcodes.so
 %endif
 %if %{isnative}
 %{_infodir}/[^b]*info*
@@ -305,11 +325,20 @@ fi
 %files devel
 %defattr(-,root,root,-)
 %{_prefix}/include/*
+%{_prefix}/%{_lib}/libbfd.so
+%{_prefix}/%{_lib}/libopcodes.so
 %{_prefix}/%{_lib}/lib*.a
 %{_infodir}/bfd*info*
 %endif # %{isnative}
 
 %changelog
+* Sun Sep 21 2008 Jan Kratochvil <jan.kratochvil@redhat.com> 2.18.50.0.9-3
+- Provide libbfd.so and libopcodes.so for automatic dependencies (BZ 463101).
+- Fix .eh_frame_hdr build on C++ files with discarded common groups (BZ 458950).
+- Provide --build and --host to fix `rpmbuild --target' biarch builds.
+- Include %%{binutils_target}- filename prefix for binaries for cross builds.
+- Fix multilib conflict on %{_prefix}/include/bfd.h's BFD_HOST_64BIT_LONG_LONG.
+
 * Mon Sep 15 2008 Jan Kratochvil <jan.kratochvil@redhat.com> 2.18.50.0.9-2
 - Package review, analysed by Jon Ciesla and Patrice Dumas (BZ 225615).
  - build back in the sourcedir without problems as gasp is no longer included.
