@@ -358,7 +358,7 @@ fi
 - Fix .eh_frame_hdr build on C++ files with discarded common groups (BZ 458950).
 - Provide --build and --host to fix `rpmbuild --target' biarch builds.
 - Include %%{binutils_target}- filename prefix for binaries for cross builds.
-- Fix multilib conflict on %{_prefix}/include/bfd.h's BFD_HOST_64BIT_LONG_LONG.
+- Fix multilib conflict on %%{_prefix}/include/bfd.h's BFD_HOST_64BIT_LONG_LONG.
 
 * Mon Sep 15 2008 Jan Kratochvil <jan.kratochvil@redhat.com> 2.18.50.0.9-2
 - Package review, analysed by Jon Ciesla and Patrice Dumas (BZ 225615).
@@ -500,7 +500,7 @@ fi
     handling with weak undefined symbols (Alan Modra, #211094)
 
 * Tue Sep 12 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.3-6
-- fix multilib conflict in %{_prefix}/include/bfd.h
+- fix multilib conflict in %%{_prefix}/include/bfd.h
 
 * Tue Sep 12 2006 Jakub Jelinek <jakub@redhat.com> 2.17.50.0.3-5
 - fix efi-app-ia64 magic number (#206002, BZ#3171)
@@ -942,7 +942,7 @@ fi
 
 * Thu Apr  3 2003 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.20-4
 - fix ppc32 plt reference counting
-- don't include %{_prefix}/%{_lib}/debug in the non-debuginfo package
+- don't include %%{_prefix}/%%{_lib}/debug in the non-debuginfo package
   (#87729)
 
 * Mon Mar 31 2003 Jakub Jelinek <jakub@redhat.com> 2.13.90.0.20-3
