@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.18.50.0.9
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -32,6 +32,7 @@ Patch7: binutils-2.18.50.0.6-version.patch
 Patch11: binutils-2.18.50.0.9-largefile.patch
 Patch12: binutils-2.18.50.0.9-set-long-long.patch
 Patch13: binutils-2.18.50.0.9-upstream.patch
+Patch14: binutils-2.18.50.0.9-linkonce-r-discard.patch
 
 %if 0%{?_with_debug:1}
 # Define this if you want to skip the strip step and preserve debug info.
@@ -81,6 +82,7 @@ Group: System Environment/Libraries
 Conflicts: binutils < 2.17.50.0.3-4
 Requires(post): /sbin/install-info
 Requires(preun): /sbin/install-info
+Requires: zlib-devel
 
 %description devel
 This package contains BFD and opcodes static libraries and associated
@@ -103,6 +105,7 @@ to consider using libelf instead of BFD.
 %patch11 -p0 -b .largefile~
 %patch12 -p0 -b .set-long-long~
 %patch13 -p0 -b .upstream~
+%patch14 -p0 -b .linkonce-r-discard~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -347,6 +350,11 @@ fi
 %endif # %{isnative}
 
 %changelog
+* Thu Oct 30 2008 Jan Kratochvil <jan.kratochvil@redhat.com> 2.18.50.0.9-6
+- binutils-devel now requires zlib-devel (BZ 463101 comment 5).
+- Fix complains on .gnu.linkonce.r relocations to their discarded
+  .gnu.linkonce.t counterparts.
+
 * Mon Sep 22 2008 Jan Kratochvil <jan.kratochvil@redhat.com> 2.18.50.0.9-5
 - Remove %%makeinstall to comply with the spu-binutils review (BZ 452211).
 
