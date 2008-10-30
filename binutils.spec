@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.18.50.0.9
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -221,12 +221,11 @@ rm -f %{buildroot}%{_prefix}/%{_lib}/lib{bfd,opcodes}.so
 # Remove libtool files, which reference the .so libs
 rm -f %{buildroot}%{_prefix}/%{_lib}/lib{bfd,opcodes}.la
 
+# Sanity check --enable-64-bit-bfd really works.
+grep '^#define BFD_ARCH_SIZE 64$' %{buildroot}%{_prefix}/include/bfd.h
 # Fix multilib conflicts of generated values by __WORDSIZE-based expressions.
 %ifarch %{ix86} x86_64 ppc ppc64 s390 s390x sparc sparc64
 sed -i -e '/^#include "ansidecl.h"/{p;s~^.*$~#include <bits/wordsize.h>~;}' \
-%ifarch %{ix86} x86_64
-    -e 's/^#define BFD_ARCH_SIZE \(32\|64\) *$/#define BFD_ARCH_SIZE __WORDSIZE/' \
-%endif
     -e 's/^#define BFD_DEFAULT_TARGET_SIZE \(32\|64\) *$/#define BFD_DEFAULT_TARGET_SIZE __WORDSIZE/' \
     -e 's/^#define BFD_HOST_64BIT_LONG [01] *$/#define BFD_HOST_64BIT_LONG (__WORDSIZE == 64)/' \
     -e 's/^#define BFD_HOST_64_BIT \(long \)\?long *$/#if __WORDSIZE == 32\
@@ -350,6 +349,10 @@ fi
 %endif # %{isnative}
 
 %changelog
+* Thu Oct 30 2008 Jan Kratochvil <jan.kratochvil@redhat.com> 2.18.50.0.9-7
+- Fix %%{_prefix}/include/bfd.h on 32-bit hosts due the 64-bit BFD target
+  support from 2.18.50.0.8-2 (BZ 468495).
+
 * Thu Oct 30 2008 Jan Kratochvil <jan.kratochvil@redhat.com> 2.18.50.0.9-6
 - binutils-devel now requires zlib-devel (BZ 463101 comment 5).
 - Fix complains on .gnu.linkonce.r relocations to their discarded
