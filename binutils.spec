@@ -16,23 +16,21 @@
 
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
-Version: 2.18.50.0.9
+Version: 2.19.50.0.1
 Release: 7%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-Source2: binutils-2.18.50.0.9-output-format.sed
-Patch1: binutils-2.18.50.0.6-ltconfig-multilib.patch
-Patch2: binutils-2.18.50.0.6-ppc64-pie.patch
-Patch3: binutils-2.18.50.0.8-place-orphan.patch
-Patch4: binutils-2.18.50.0.6-ia64-lib64.patch
-Patch6: binutils-2.18.50.0.8-symbolic-envvar-revert.patch
-Patch7: binutils-2.18.50.0.6-version.patch
-Patch11: binutils-2.18.50.0.9-largefile.patch
-Patch12: binutils-2.18.50.0.9-set-long-long.patch
-Patch13: binutils-2.18.50.0.9-upstream.patch
-Patch14: binutils-2.18.50.0.9-linkonce-r-discard.patch
+Source2: binutils-2.19.50.0.1-output-format.sed
+Patch01: binutils-2.19.50.0.1-libtool-lib64.patch
+Patch02: binutils-2.19.50.0.1-ppc64-pie.patch
+Patch03: binutils-2.19.50.0.1-ia64-lib64.patch
+Patch04: binutils-2.19.50.0.1-symbolic-envvar-revert.patch
+Patch05: binutils-2.19.50.0.1-version.patch
+Patch06: binutils-2.19.50.0.1-set-long-long.patch
+Patch07: binutils-2.19.50.0.1-upstream-ld-tests.patch
+Patch08: binutils-2.19.50.0.1-linkonce-r-discard.patch
 
 %if 0%{?_with_debug:1}
 # Define this if you want to skip the strip step and preserve debug info.
@@ -92,20 +90,18 @@ to consider using libelf instead of BFD.
 
 %prep
 %setup -q -n binutils-%{version}
-%patch1 -p0 -b .ltconfig-multilib~
-%patch2 -p0 -b .ppc64-pie~
-%patch3 -p0 -b .place-orphan~
+%patch01 -p0 -b .libtool-lib64~
+%patch02 -p0 -b .ppc64-pie~
 %ifarch ia64
 %if "%{_lib}" == "lib64"
-%patch4 -p0 -b .ia64-lib64~
+%patch03 -p0 -b .ia64-lib64~
 %endif
 %endif
-%patch6 -p0 -b .symbolic-envvar-revert~
-%patch7 -p0 -b .version~
-%patch11 -p0 -b .largefile~
-%patch12 -p0 -b .set-long-long~
-%patch13 -p0 -b .upstream~
-%patch14 -p0 -b .linkonce-r-discard~
+%patch04 -p0 -b .symbolic-envvar-revert~
+%patch05 -p0 -b .version~
+%patch06 -p0 -b .set-long-long~
+%patch07 -p0 -b .upstream-ld-tests~
+%patch08 -p0 -b .linkonce-r-discard~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -349,6 +345,10 @@ fi
 %endif # %{isnative}
 
 %changelog
+* Fri Nov 21 2008 Nick Clifton <nickc@redhat.com> 2.19.50.0.1
+- Rebase sources on 2.19.50.0.1 tarball.  Update all patches, trimming
+  those that are no longer needed.
+
 * Thu Oct 30 2008 Jan Kratochvil <jan.kratochvil@redhat.com> 2.18.50.0.9-7
 - Fix %%{_prefix}/include/bfd.h on 32-bit hosts due the 64-bit BFD target
   support from 2.18.50.0.8-2 (BZ 468495).

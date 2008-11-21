@@ -10,9 +10,9 @@ http://sourceware.org/ml/binutils/2008-10/msg00235.html
 	* ld-elf/linkoncerdiff.d, ld-elf/linkoncerdiff1.s,
 	ld-elf/linkoncerdiff2.s: New.
 
---- bfd/elflink.c	2008-10-22 21:08:20.000000000 +0200
-+++ bfd/elflink.c	2008-10-29 18:18:43.000000000 +0100
-@@ -7649,7 +7649,23 @@ elf_link_input_bfd (struct elf_final_lin
+--- ../binutils-2.19.50.0.1.orig/bfd/elflink.c	2008-11-21 16:45:02.000000000 +0000
++++ bfd/elflink.c	2008-11-21 17:08:32.000000000 +0000
+@@ -9361,7 +9361,23 @@ elf_link_input_bfd (struct elf_final_lin
  		  if ((sec = *ps) != NULL && elf_discarded_section (sec))
  		    {
  		      BFD_ASSERT (r_symndx != 0);
@@ -37,16 +37,16 @@ http://sourceware.org/ml/binutils/2008-10/msg00235.html
  			(*finfo->info->callbacks->einfo)
  			  (_("%X`%s' referenced in section `%A' of %B: "
  			     "defined in discarded section `%A' of %B\n"),
---- ld/testsuite/ld-elf/linkoncerdiff.d	2008-10-22 21:16:04.000000000 +0200
-+++ ld/testsuite/ld-elf/linkoncerdiff.d	2008-10-29 18:17:07.000000000 +0100
+--- /dev/null	2008-11-21 14:50:50.404125628 +0000
++++ ld/testsuite/ld-elf/linkoncerdiff.d	2008-11-21 16:12:11.000000000 +0000
 @@ -0,0 +1,5 @@
 +#source: linkoncerdiff1.s
 +#source: linkoncerdiff2.s
 +#notarget: arc* d30v* dlx* openrisc* or32* pj*
 +#ld: -r
 +#error: `.gnu.linkonce.t.bar' referenced in section `.gnu.linkonce.r.foo' of tmpdir/dump1.o: defined in discarded section `.gnu.linkonce.t.bar' of tmpdir/dump1.o
---- ld/testsuite/ld-elf/linkoncerdiff1.s	2008-10-22 21:16:04.000000000 +0200
-+++ ld/testsuite/ld-elf/linkoncerdiff1.s	2008-10-29 18:17:07.000000000 +0100
+--- /dev/null	2008-11-21 14:50:50.404125628 +0000
++++ ld/testsuite/ld-elf/linkoncerdiff1.s	2008-11-21 16:12:11.000000000 +0000
 @@ -0,0 +1,7 @@
 +	.section	.gnu.linkonce.t.foo, "a", %progbits
 +	.globl	symfoo
@@ -55,8 +55,8 @@ http://sourceware.org/ml/binutils/2008-10/msg00235.html
 +	.section	.gnu.linkonce.t.bar, "a", %progbits
 +	.globl	symbar
 +symbar:
---- ld/testsuite/ld-elf/linkoncerdiff2.s	2008-10-22 21:16:04.000000000 +0200
-+++ ld/testsuite/ld-elf/linkoncerdiff2.s	2008-10-29 18:17:07.000000000 +0100
+--- /dev/null	2008-11-21 14:50:50.404125628 +0000
++++ ld/testsuite/ld-elf/linkoncerdiff2.s	2008-11-21 16:12:11.000000000 +0000
 @@ -0,0 +1,17 @@
 +	.section	.gnu.linkonce.t.foo, "a", %progbits
 +1:

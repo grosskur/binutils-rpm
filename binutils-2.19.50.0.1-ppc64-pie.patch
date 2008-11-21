@@ -1,6 +1,6 @@
---- bfd/elf64-ppc.c.jj	2004-09-27 16:46:06.000000000 -0400
-+++ bfd/elf64-ppc.c	2004-10-04 09:09:50.000000000 -0400
-@@ -9681,7 +9681,12 @@ ppc64_elf_relocate_section (bfd *output_
+--- ../binutils-2.19.50.0.1.orig/bfd/elf64-ppc.c	2008-11-21 16:45:02.000000000 +0000
++++ bfd/elf64-ppc.c	2008-11-21 16:53:28.000000000 +0000
+@@ -11296,7 +11296,12 @@ ppc64_elf_relocate_section (bfd *output_
  	      else if (!SYMBOL_REFERENCES_LOCAL (info, &h->elf)
  		       && !is_opd
  		       && r_type != R_PPC64_TOC)
@@ -9,7 +9,7 @@
 +		  outrel.r_info = ELF64_R_INFO (h->elf.dynindx, r_type);
 +		  if (h->elf.dynindx == -1
 +		      && h->elf.root.type == bfd_link_hash_undefweak)
-+		  memset (&outrel, 0, sizeof outrel);
++		    memset (&outrel, 0, sizeof outrel);
 +		}
  	      else
  		{

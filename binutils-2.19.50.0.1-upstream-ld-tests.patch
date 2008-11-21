@@ -1,0 +1,107 @@
+http://sourceware.org/ml/binutils-cvs/2008-09/msg00088.html
+http://sourceware.org/ml/binutils/2008-09/msg00125.html
+
+2008-09-17  Jan Kratochvil  <jan.kratochvil@redhat.com>
+
+	* ld-elf/eh-group.exp, ld-elf/eh-group1.s, ld-elf/eh-group2.s: New test.
+
+http://sourceware.org/ml/binutils-cvs/2008-09/msg00107.html
+http://sourceware.org/ml/binutils/2008-09/msg00145.html
+
+testsuite/
+2008-09-20  Jan Kratochvil  <jan.kratochvil@redhat.com>
+
+	Provide virtual target "cfi" for targets supporting CFI.
+	* ld-elf/eh-frame-hdr.d: Replace target and xfail statements by single
+	`target: cfi'.
+	* ld-elf/eh-group.exp: Call check_as_cfi instead of is_elf_format.
+	* ld-elf/eh-group1.s, elf/eh-group2.s: Use more compatible section
+	flags prefix '%'.
+	* ld-elf/eh5.d: Replace target statement by `target: cfi' with an Alpha
+	exception.  Relax the `Code alignment factor' matching.
+	* lib/ld-lib.exp: Rename istarget as istarget_ld.
+	(istarget, check_as_cfi): New procedure.
+	(run_dump_test): New comment for the virtual target `cfi'.
+
+diff -rup ../binutils-2.19.1/ld/testsuite/ld-elf/eh-group1.s ld/testsuite/ld-elf/eh-group1.s
+--- ../binutils-2.19.1/ld/testsuite/ld-elf/eh-group1.s	2008-11-21 14:57:18.000000000 +0000
++++ ld/testsuite/ld-elf/eh-group1.s	2008-11-21 16:24:07.000000000 +0000
+@@ -4,3 +4,9 @@ _start:
+ 	.cfi_startproc
+ 	.skip 16
+ 	.cfi_endproc
++	.section	sect, "axG", %progbits, sectgroup, comdat
++	.global	_start
++_start:
++	.cfi_startproc
++	.skip 16
++	.cfi_endproc
+diff -rup ../binutils-2.19.1/ld/testsuite/ld-elf/eh-group2.s ld/testsuite/ld-elf/eh-group2.s
+--- ../binutils-2.19.1/ld/testsuite/ld-elf/eh-group2.s	2008-11-21 14:57:18.000000000 +0000
++++ ld/testsuite/ld-elf/eh-group2.s	2008-11-21 16:24:07.000000000 +0000
+@@ -2,3 +2,7 @@
+ 	.cfi_startproc
+ 	.skip 16
+ 	.cfi_endproc
++	.section	sect, "axG", %progbits, sectgroup, comdat
++	.cfi_startproc
++	.skip 16
++	.cfi_endproc
+diff -rup ../binutils-2.19.1/ld/testsuite/ld-elf/eh-group.exp ld/testsuite/ld-elf/eh-group.exp
+--- ../binutils-2.19.50.0.1.orig/ld/testsuite/ld-elf/eh-group.exp	2008-11-21 16:45:00.000000000 +0000
++++ ld/testsuite/ld-elf/eh-group.exp	2008-11-21 17:06:16.000000000 +0000
+@@ -54,3 +54,54 @@ if [ld_simple_link $ld "tmpdir/eh-group"
+ } else {
+     fail $testname
+ }
++# Expect script for .eh_frame entries to a removed section.
++#   Copyright 2008  Free Software Foundation, Inc.
++#
++# This file is part of the GNU Binutils.
++#
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 3 of the License, or
++# (at your option) any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 51 Franklin Street - Fifth Floor, Boston,
++# MA 02110-1301, USA.
++#
++
++#
++# Written by Jan Kratochvil (jan.kratochvil@redhat.com)
++#
++# .eh_frame with relocations to a removed (group) section did result to:
++# error in tmpdir/eh-group.o(.eh_frame); no .eh_frame_hdr table will be created.
++# The purpose of this test is to merge two .o files with -r and then link this
++# merged file (containing a discarded R_X86_64_NONE relocation) to the final
++# executable trying to create .eh_frame_hdr.  It needs a separate .exp file due
++# to the requirement of two `ld' runs.
++
++# Exclude non-CFI (such as ia64) targets.
++
++if {![check_as_cfi]} {
++    return
++}
++
++set build_tests_ld {
++  {"Build eh-group1.o"
++   "-r" ""
++   {eh-group1.s eh-group2.s} {} "eh-group.o"}
++}
++
++run_ld_link_tests $build_tests_ld
++
++set testname "Link eh-group.o to eh-group"
++if [ld_simple_link $ld "tmpdir/eh-group" "-e _start tmpdir/eh-group.o"] {
++    pass $testname
++} else {
++    fail $testname
++}
