@@ -29,8 +29,7 @@ Patch03: binutils-2.19.50.0.1-ia64-lib64.patch
 Patch04: binutils-2.19.50.0.1-symbolic-envvar-revert.patch
 Patch05: binutils-2.19.50.0.1-version.patch
 Patch06: binutils-2.19.50.0.1-set-long-long.patch
-Patch07: binutils-2.19.50.0.1-upstream-ld-tests.patch
-Patch08: binutils-2.19.50.0.1-linkonce-r-discard.patch
+Patch07: binutils-2.19.50.0.1-linkonce-r-discard.patch
 
 %if 0%{?_with_debug:1}
 # Define this if you want to skip the strip step and preserve debug info.
@@ -100,8 +99,7 @@ to consider using libelf instead of BFD.
 %patch04 -p0 -b .symbolic-envvar-revert~
 %patch05 -p0 -b .version~
 %patch06 -p0 -b .set-long-long~
-%patch07 -p0 -b .upstream-ld-tests~
-%patch08 -p0 -b .linkonce-r-discard~
+%patch07 -p0 -b .linkonce-r-discard~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
