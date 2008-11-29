@@ -30,6 +30,7 @@ Patch04: binutils-2.19.50.0.1-symbolic-envvar-revert.patch
 Patch05: binutils-2.19.50.0.1-version.patch
 Patch06: binutils-2.19.50.0.1-set-long-long.patch
 Patch07: binutils-2.19.50.0.1-linkonce-r-discard.patch
+Patch08: binutils-2.19.50.0.1-build-id.patch
 
 %if 0%{?_with_debug:1}
 # Define this if you want to skip the strip step and preserve debug info.
@@ -100,6 +101,7 @@ to consider using libelf instead of BFD.
 %patch05 -p0 -b .version~
 %patch06 -p0 -b .set-long-long~
 %patch07 -p0 -b .linkonce-r-discard~
+%patch08 -p0 -b .build-id~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -343,6 +345,10 @@ fi
 %endif # %{isnative}
 
 %changelog
+* Sat Nov 29 2008 Nick Clifton <nickc@redhat.com> 2.19.50.0.1
+- Add build-id patch to ensure that section contents are incorporated
+  into a build id.  (BZ472152)
+
 * Fri Nov 21 2008 Nick Clifton <nickc@redhat.com> 2.19.50.0.1
 - Rebase sources on 2.19.50.0.1 tarball.  Update all patches, trimming
   those that are no longer needed.
