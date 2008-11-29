@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.19.50.0.1
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -345,9 +345,9 @@ fi
 %endif # %{isnative}
 
 %changelog
-* Sat Nov 29 2008 Nick Clifton <nickc@redhat.com> 2.19.50.0.1
+* Sat Nov 29 2008 Nick Clifton <nickc@redhat.com> 2.19.50.0.1-8
 - Add build-id patch to ensure that section contents are incorporated
-  into a build id.  (BZ472152)
+  into a build id.  (BZ 472152)
 
 * Fri Nov 21 2008 Nick Clifton <nickc@redhat.com> 2.19.50.0.1
 - Rebase sources on 2.19.50.0.1 tarball.  Update all patches, trimming
