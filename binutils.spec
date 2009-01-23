@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.19.50.0.1
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -345,7 +345,7 @@ fi
 %endif # %{isnative}
 
 %changelog
-* Fri Jan 23 2009 Nick Clifton <nickc@redhat.com> 2.19.50.0.1-9
+* Fri Jan 23 2009 Nick Clifton <nickc@redhat.com> 2.19.50.0.1-10
 - Only require dejagnu if the testsuites are going to be run.  (BZ 481169)
 
 * Sat Nov 29 2008 Nick Clifton <nickc@redhat.com> 2.19.50.0.1-8
