@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.19.50.0.1
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -43,11 +43,11 @@ Patch08: binutils-2.19.50.0.1-build-id.patch
 %endif
 
 Buildroot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-BuildRequires: texinfo >= 4.0, dejagnu, gettext, flex, bison, zlib-devel
+BuildRequires: texinfo >= 4.0, gettext, flex, bison, zlib-devel
 # Required for: ld-bootstrap/bootstrap.exp bootstrap with --static
 # It should not be required for: ld-elf/elf.exp static {preinit,init,fini} array
 %if %{run_testsuite}
-BuildRequires: zlib-static
+BuildRequires: dejagnu, zlib-static
 %endif
 Conflicts: gcc-c++ < 4.0.0
 Requires(post): /sbin/install-info
@@ -345,6 +345,9 @@ fi
 %endif # %{isnative}
 
 %changelog
+* Fri Jan 23 2009 Nick Clifton <nickc@redhat.com> 2.19.50.0.1-9
+- Only require dejagnu if the testsuites are going to be run.  (BZ 481169)
+
 * Sat Nov 29 2008 Nick Clifton <nickc@redhat.com> 2.19.50.0.1-8
 - Add build-id patch to ensure that section contents are incorporated
   into a build id.  (BZ 472152)
