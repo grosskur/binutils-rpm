@@ -16,8 +16,8 @@
 
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
-Version: 2.19.50.0.1
-Release: 11%{?dist}
+Version: 2.19.51.0.2
+Release: 12%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -29,9 +29,7 @@ Patch03: binutils-2.19.50.0.1-ia64-lib64.patch
 Patch04: binutils-2.19.50.0.1-symbolic-envvar-revert.patch
 Patch05: binutils-2.19.50.0.1-version.patch
 Patch06: binutils-2.19.50.0.1-set-long-long.patch
-Patch07: binutils-2.19.50.0.1-linkonce-r-discard.patch
-Patch08: binutils-2.19.50.0.1-build-id.patch
-Patch09: binutils-2.19.50.0.1-gcc_except_table.patch
+Patch07: binutils-2.19.50.0.1-build-id.patch
 
 %if 0%{?_with_debug:1}
 # Define this if you want to skip the strip step and preserve debug info.
@@ -101,9 +99,7 @@ to consider using libelf instead of BFD.
 %patch04 -p0 -b .symbolic-envvar-revert~
 %patch05 -p0 -b .version~
 %patch06 -p0 -b .set-long-long~
-%patch07 -p0 -b .linkonce-r-discard~
-%patch08 -p0 -b .build-id~
-%patch09 -p0 -b .gcc_except_table~
+%patch07 -p0 -b .build-id~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -347,6 +343,10 @@ fi
 %endif # %{isnative}
 
 %changelog
+* Thu Feb  5 2009 Nick Clifton <nickc@redhat.com> 2.19.51.0.2-11
+- Rebase sources on 2.19.51.0.2 tarball.  Remove linkonce-r-discard and 
+  gcc-expect-table patches.
+
 * Mon Feb  2 2009 Jan Kratochvil <jan.kratochvil@redhat.com> 2.19.50.0.1-11
 - Fix .eh_frame_hdr build also for .gcc_except_table LSDA refs (BZ 461675).
 
