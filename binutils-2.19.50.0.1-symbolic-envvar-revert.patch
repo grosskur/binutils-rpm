@@ -1,9 +1,12 @@
 It reverts the H.J. Lu's binutils custom patch.
 
---- ../binutils-2.19.50.0.1.orig/ld/NEWS	2008-11-21 16:45:00.000000000 +0000
-+++ ld/NEWS	2008-11-21 17:03:12.000000000 +0000
-@@ -1,8 +1,5 @@
- -*- text -*-
+Index: ld/NEWS
+===================================================================
+--- ld/NEWS.orig	2009-02-04 19:21:50.000000000 +0100
++++ ld/NEWS	2009-02-23 16:18:35.000000000 +0100
+@@ -26,9 +26,6 @@
+   For the switch --enable-runtime-pseudo-reloc it uses for 32-bit
+   runtime pseudo relocation version one, for 64-bit the version two.
  
 -* ELF: Support environment variables, LD_SYMBOLIC for -Bsymbolic and
 -  LD_SYMBOLIC_FUNCTIONS for -Bsymbolic-functions.
@@ -11,9 +14,11 @@ It reverts the H.J. Lu's binutils custom patch.
  Changes in 2.19:
  
  * Linker scripts support a new INSERT command that makes it easier to
---- ld/ld.texinfo	2008-07-10 17:33:23.000000000 +0200
-+++ ld/ld.texinfo	2008-07-30 21:24:05.000000000 +0200
-@@ -1147,21 +1147,14 @@ When creating a shared library, bind ref
+Index: ld/ld.texinfo
+===================================================================
+--- ld/ld.texinfo.orig	2009-02-04 19:21:50.000000000 +0100
++++ ld/ld.texinfo	2009-02-23 16:18:06.000000000 +0100
+@@ -1163,21 +1163,14 @@ When creating a shared library, bind ref
  definition within the shared library, if any.  Normally, it is possible
  for a program linked against a shared library to override the definition
  within the shared library.  This option is only meaningful on ELF
@@ -37,11 +42,13 @@ It reverts the H.J. Lu's binutils custom patch.
  
  @kindex --dynamic-list=@var{dynamic-list-file}
  @item --dynamic-list=@var{dynamic-list-file}
---- ../binutils-2.19.50.0.1.orig/ld/ldmain.c	2008-11-21 16:45:00.000000000 +0000
-+++ ld/ldmain.c	2008-11-21 17:02:48.000000000 +0000
+Index: ld/ldmain.c
+===================================================================
+--- ld/ldmain.c.orig	2009-02-04 19:21:50.000000000 +0100
++++ ld/ldmain.c	2009-02-23 16:19:01.000000000 +0100
 @@ -256,11 +256,6 @@ main (int argc, char **argv)
    command_line.warn_search_mismatch = TRUE;
-   command_line.check_section_addresses = TRUE;
+   command_line.check_section_addresses = -1;
  
 -  if (getenv ("LD_SYMBOLIC") != NULL)
 -    command_line.symbolic = symbolic;

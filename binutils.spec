@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.19.51.0.2
-Release: 12%{?dist}
+Release: 13%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -343,7 +343,10 @@ fi
 %endif # %{isnative}
 
 %changelog
-* Thu Feb  5 2009 Nick Clifton <nickc@redhat.com> 2.19.51.0.2-11
+* Mon Feb 23 2009 Jan Kratochvil <jan.kratochvil@redhat.com> 2.19.50.0.2-13
+- Rediff the symbolic-envvar-revert patch to comply with rpm patch --fuzz=0.
+
+* Thu Feb  5 2009 Nick Clifton <nickc@redhat.com> 2.19.51.0.2-12
 - Rebase sources on 2.19.51.0.2 tarball.  Remove linkonce-r-discard and 
   gcc-expect-table patches.
 
