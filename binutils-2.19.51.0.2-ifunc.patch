@@ -1,0 +1,992 @@
+diff -rcp binutils-2.19.51.0.2.orig/bfd/bfd-in2.h binutils-2.19.51.0.2/bfd/bfd-in2.h
+*** binutils-2.19.51.0.2.orig/bfd/bfd-in2.h	2009-02-06 09:19:47.000000000 +0000
+--- binutils-2.19.51.0.2/bfd/bfd-in2.h	2009-02-10 12:27:00.000000000 +0000
+*************** typedef struct bfd_symbol
+*** 4568,4573 ****
+--- 4568,4579 ----
+    /* This symbol was created by bfd_get_synthetic_symtab.  */
+  #define BSF_SYNTHETIC          (1 << 21)
+  
++   /* This symbol is an indirect code object.  Unrelated to BSF_INDIRECT.
++      The dynamic linker will compute the value of this symbol by
++      calling the function that it points to.  BSF_FUNCTION must
++      also be also set.  */
++ #define BSF_GNU_INDIRECT_FUNCTION (1 << 22)
++ 
+    flagword flags;
+  
+    /* A pointer to the section to which this symbol is
+diff -rcp binutils-2.19.51.0.2.orig/bfd/elf32-i386.c binutils-2.19.51.0.2/bfd/elf32-i386.c
+*** binutils-2.19.51.0.2.orig/bfd/elf32-i386.c	2009-02-06 09:19:53.000000000 +0000
+--- binutils-2.19.51.0.2/bfd/elf32-i386.c	2009-03-02 12:26:12.000000000 +0000
+*************** elf_i386_tls_transition (struct bfd_link
+*** 1206,1211 ****
+--- 1206,1230 ----
+    return TRUE;
+  }
+  
++ /* Returns true if the hash entry refers to a symbol
++    marked for indirect handling during reloc processing.  */
++ 
++ static bfd_boolean
++ is_indirect_symbol (bfd * abfd, struct elf_link_hash_entry * h)
++ {
++   const struct elf_backend_data * bed;
++ 
++   if (abfd == NULL || h == NULL)
++     return FALSE;
++ 
++   bed = get_elf_backend_data (abfd);
++ 
++   return h->type == STT_GNU_IFUNC
++     && (bed->elf_osabi == ELFOSABI_LINUX
++ 	/* GNU/Linux is still using the default value 0.  */
++ 	|| bed->elf_osabi == ELFOSABI_NONE);
++ }
++ 
+  /* Look through the relocs for a section during the first phase, and
+     calculate needed space in the global offset table, procedure linkage
+     table, and dynamic reloc sections.  */
+*************** elf_i386_check_relocs (bfd *abfd,
+*** 1465,1471 ****
+  		  && (sec->flags & SEC_ALLOC) != 0
+  		  && h != NULL
+  		  && (h->root.type == bfd_link_hash_defweak
+! 		      || !h->def_regular)))
+  	    {
+  	      struct elf_i386_dyn_relocs *p;
+  	      struct elf_i386_dyn_relocs **head;
+--- 1484,1491 ----
+  		  && (sec->flags & SEC_ALLOC) != 0
+  		  && h != NULL
+  		  && (h->root.type == bfd_link_hash_defweak
+! 		      || !h->def_regular))
+! 	      || is_indirect_symbol (abfd, h))
+  	    {
+  	      struct elf_i386_dyn_relocs *p;
+  	      struct elf_i386_dyn_relocs **head;
+*************** elf_i386_check_relocs (bfd *abfd,
+*** 1483,1488 ****
+--- 1503,1514 ----
+  
+  		  if (sreloc == NULL)
+  		    return FALSE;
++ 
++ 		  /* Create the ifunc section as well, even if we have not encountered a
++ 		     indirect function symbol yet.  We may not even see one in the input
++ 		     object file, but we can still encounter them in libraries.  */
++ 		  (void) _bfd_elf_make_ifunc_reloc_section
++ 		    (abfd, sec, htab->elf.dynobj, 2);
+  		}
+  
+  	      /* If this is a global symbol, we count the number of
+*************** allocate_dynrelocs (struct elf_link_hash
+*** 2052,2057 ****
+--- 2078,2092 ----
+  	    }
+  	}
+      }
++   else if (is_indirect_symbol (info->output_bfd, h))
++     {
++       if (h->dynindx == -1
++ 	  && ! h->forced_local)
++ 	{
++ 	  if (! bfd_elf_link_record_dynamic_symbol (info, h))
++ 	    return FALSE;
++ 	}
++     }
+    else if (ELIMINATE_COPY_RELOCS)
+      {
+        /* For the non-shared case, discard space for relocs against
+*************** allocate_dynrelocs (struct elf_link_hash
+*** 2090,2096 ****
+      {
+        asection *sreloc;
+  
+!       sreloc = elf_section_data (p->sec)->sreloc;
+  
+        BFD_ASSERT (sreloc != NULL);
+        sreloc->size += p->count * sizeof (Elf32_External_Rel);
+--- 2125,2138 ----
+      {
+        asection *sreloc;
+  
+!       if (! info->shared
+!  	  && is_indirect_symbol (info->output_bfd, h))
+! 	{
+! 	  sreloc = elf_section_data (p->sec)->indirect_relocs;
+! 	  elf_tdata (info->output_bfd)->has_ifunc_relocs = TRUE;
+! 	}
+!       else
+!  	sreloc = elf_section_data (p->sec)->sreloc;
+  
+        BFD_ASSERT (sreloc != NULL);
+        sreloc->size += p->count * sizeof (Elf32_External_Rel);
+*************** elf_i386_relocate_section (bfd *output_b
+*** 2902,2908 ****
+  		  && ((h->def_dynamic
+  		       && !h->def_regular)
+  		      || h->root.type == bfd_link_hash_undefweak
+! 		      || h->root.type == bfd_link_hash_undefined)))
+  	    {
+  	      Elf_Internal_Rela outrel;
+  	      bfd_byte *loc;
+--- 2944,2951 ----
+  		  && ((h->def_dynamic
+  		       && !h->def_regular)
+  		      || h->root.type == bfd_link_hash_undefweak
+! 		      || h->root.type == bfd_link_hash_undefined))
+! 	      || is_indirect_symbol (output_bfd, h))
+  	    {
+  	      Elf_Internal_Rela outrel;
+  	      bfd_byte *loc;
+*************** elf_i386_relocate_section (bfd *output_b
+*** 2942,2948 ****
+  		  outrel.r_info = ELF32_R_INFO (0, R_386_RELATIVE);
+  		}
+  
+! 	      sreloc = elf_section_data (input_section)->sreloc;
+  
+  	      BFD_ASSERT (sreloc != NULL && sreloc->contents != NULL);
+  
+--- 2985,2994 ----
+  		  outrel.r_info = ELF32_R_INFO (0, R_386_RELATIVE);
+  		}
+  
+!  	      if (! info->shared && is_indirect_symbol (output_bfd, h))
+!  		sreloc = elf_section_data (input_section)->indirect_relocs;
+!  	      else
+!  		sreloc = elf_section_data (input_section)->sreloc;
+  
+  	      BFD_ASSERT (sreloc != NULL && sreloc->contents != NULL);
+  
+*************** elf_i386_relocate_section (bfd *output_b
+*** 2955,2961 ****
+  		 not want to fiddle with the addend.  Otherwise, we
+  		 need to include the symbol value so that it becomes
+  		 an addend for the dynamic reloc.  */
+! 	      if (! relocate)
+  		continue;
+  	    }
+  	  break;
+--- 3001,3007 ----
+  		 not want to fiddle with the addend.  Otherwise, we
+  		 need to include the symbol value so that it becomes
+  		 an addend for the dynamic reloc.  */
+! 	      if (! relocate || is_indirect_symbol (output_bfd, h))
+  		continue;
+  	    }
+  	  break;
+*************** elf_i386_hash_symbol (struct elf_link_ha
+*** 4128,4133 ****
+--- 4174,4182 ----
+  #define elf_backend_merge_symbol \
+    _bfd_elf_sharable_merge_symbol
+  
++ #undef	elf_backend_post_process_headers
++ #define	elf_backend_post_process_headers	_bfd_elf_set_osabi
++ 
+  #include "elf32-target.h"
+  
+  /* FreeBSD support.  */
+*************** elf_i386_hash_symbol (struct elf_link_ha
+*** 4144,4158 ****
+     executables and (for simplicity) also all other object files.  */
+  
+  static void
+! elf_i386_post_process_headers (bfd *abfd,
+! 			       struct bfd_link_info *info ATTRIBUTE_UNUSED)
+  {
+!   Elf_Internal_Ehdr *i_ehdrp;
+! 
+!   i_ehdrp = elf_elfheader (abfd);
+  
+-   /* Put an ABI label supported by FreeBSD >= 4.1.  */
+-   i_ehdrp->e_ident[EI_OSABI] = get_elf_backend_data (abfd)->elf_osabi;
+  #ifdef OLD_FREEBSD_ABI_LABEL
+    /* The ABI label supported by FreeBSD <= 4.0 is quite nonstandard.  */
+    memcpy (&i_ehdrp->e_ident[EI_ABIVERSION], "FreeBSD", 8);
+--- 4193,4202 ----
+     executables and (for simplicity) also all other object files.  */
+  
+  static void
+! elf_i386_post_process_headers (bfd *abfd, struct bfd_link_info *info)
+  {
+!   _bfd_elf_set_osabi (abfd, info);
+  
+  #ifdef OLD_FREEBSD_ABI_LABEL
+    /* The ABI label supported by FreeBSD <= 4.0 is quite nonstandard.  */
+    memcpy (&i_ehdrp->e_ident[EI_ABIVERSION], "FreeBSD", 8);
+diff -rcp binutils-2.19.51.0.2.orig/bfd/elf64-x86-64.c binutils-2.19.51.0.2/bfd/elf64-x86-64.c
+*** binutils-2.19.51.0.2.orig/bfd/elf64-x86-64.c	2009-02-06 09:19:46.000000000 +0000
+--- binutils-2.19.51.0.2/bfd/elf64-x86-64.c	2009-03-02 12:43:47.000000000 +0000
+*************** elf64_x86_64_tls_transition (struct bfd_
+*** 987,992 ****
+--- 987,1011 ----
+    return TRUE;
+  }
+  
++ /* Returns true if the hash entry refers to a symbol
++    marked for indirect handling during reloc processing.  */
++ 
++ static bfd_boolean
++ is_indirect_symbol (bfd * abfd, struct elf_link_hash_entry * h)
++ {
++   const struct elf_backend_data * bed;
++ 
++   if (abfd == NULL || h == NULL)
++     return FALSE;
++ 
++   bed = get_elf_backend_data (abfd);
++ 
++   return h->type == STT_GNU_IFUNC
++     && (bed->elf_osabi == ELFOSABI_LINUX
++ 	/* GNU/Linux is still using the default value 0.  */
++ 	|| bed->elf_osabi == ELFOSABI_NONE);
++ }
++ 
+  /* Look through the relocs for a section during the first phase, and
+     calculate needed space in the global offset table, procedure
+     linkage table, and dynamic reloc sections.  */
+*************** elf64_x86_64_check_relocs (bfd *abfd, st
+*** 1268,1274 ****
+  	     If on the other hand, we are creating an executable, we
+  	     may need to keep relocations for symbols satisfied by a
+  	     dynamic library if we manage to avoid copy relocs for the
+! 	     symbol.  */
+  
+  	  if ((info->shared
+  	       && (sec->flags & SEC_ALLOC) != 0
+--- 1287,1296 ----
+  	     If on the other hand, we are creating an executable, we
+  	     may need to keep relocations for symbols satisfied by a
+  	     dynamic library if we manage to avoid copy relocs for the
+! 	     symbol.
+! 
+! 	     Also we must keep any relocations against GNU_IFUNC symbols
+! 	     as they will be evaluated at load time.  */
+  
+  	  if ((info->shared
+  	       && (sec->flags & SEC_ALLOC) != 0
+*************** elf64_x86_64_check_relocs (bfd *abfd, st
+*** 1285,1291 ****
+  		  && (sec->flags & SEC_ALLOC) != 0
+  		  && h != NULL
+  		  && (h->root.type == bfd_link_hash_defweak
+! 		      || !h->def_regular)))
+  	    {
+  	      struct elf64_x86_64_dyn_relocs *p;
+  	      struct elf64_x86_64_dyn_relocs **head;
+--- 1307,1314 ----
+  		  && (sec->flags & SEC_ALLOC) != 0
+  		  && h != NULL
+  		  && (h->root.type == bfd_link_hash_defweak
+! 		      || !h->def_regular))
+! 	      || is_indirect_symbol (abfd, h))
+  	    {
+  	      struct elf64_x86_64_dyn_relocs *p;
+  	      struct elf64_x86_64_dyn_relocs **head;
+*************** elf64_x86_64_check_relocs (bfd *abfd, st
+*** 1303,1308 ****
+--- 1326,1337 ----
+  
+  		  if (sreloc == NULL)
+  		    return FALSE;
++ 
++ 		  /* Create the ifunc section as well, even if we have not encountered a
++ 		     indirect function symbol yet.  We may not even see one in the input
++ 		     object file, but we can still encounter them in libraries.  */
++ 		  (void) _bfd_elf_make_ifunc_reloc_section
++ 		    (abfd, sec, htab->elf.dynobj, 2);
+  		}
+  
+  	      /* If this is a global symbol, we count the number of
+*************** elf64_x86_64_check_relocs (bfd *abfd, st
+*** 1334,1339 ****
+--- 1363,1369 ----
+  	      if (p == NULL || p->sec != sec)
+  		{
+  		  bfd_size_type amt = sizeof *p;
++ 
+  		  p = ((struct elf64_x86_64_dyn_relocs *)
+  		       bfd_alloc (htab->elf.dynobj, amt));
+  		  if (p == NULL)
+*************** allocate_dynrelocs (struct elf_link_hash
+*** 1744,1750 ****
+        && !info->shared
+        && h->dynindx == -1
+        && elf64_x86_64_hash_entry (h)->tls_type == GOT_TLS_IE)
+!     h->got.offset = (bfd_vma) -1;
+    else if (h->got.refcount > 0)
+      {
+        asection *s;
+--- 1774,1782 ----
+        && !info->shared
+        && h->dynindx == -1
+        && elf64_x86_64_hash_entry (h)->tls_type == GOT_TLS_IE)
+!     {
+!       h->got.offset = (bfd_vma) -1;
+!     }
+    else if (h->got.refcount > 0)
+      {
+        asection *s;
+*************** allocate_dynrelocs (struct elf_link_hash
+*** 1843,1855 ****
+  	  /* Make sure undefined weak symbols are output as a dynamic
+  	     symbol in PIEs.  */
+  	  else if (h->dynindx == -1
+! 		   && !h->forced_local)
+! 	    {
+! 	      if (! bfd_elf_link_record_dynamic_symbol (info, h))
+! 		return FALSE;
+! 	    }
+  	}
+      }
+    else if (ELIMINATE_COPY_RELOCS)
+      {
+        /* For the non-shared case, discard space for relocs against
+--- 1875,1892 ----
+  	  /* Make sure undefined weak symbols are output as a dynamic
+  	     symbol in PIEs.  */
+  	  else if (h->dynindx == -1
+! 		   && ! h->forced_local
+! 		   && ! bfd_elf_link_record_dynamic_symbol (info, h))
+! 	    return FALSE;
+  	}
+      }
++   else if (is_indirect_symbol (info->output_bfd, h))
++     {
++       if (h->dynindx == -1
++ 	  && ! h->forced_local
++ 	  && ! bfd_elf_link_record_dynamic_symbol (info, h))
++ 	return FALSE;    
++     }
+    else if (ELIMINATE_COPY_RELOCS)
+      {
+        /* For the non-shared case, discard space for relocs against
+*************** allocate_dynrelocs (struct elf_link_hash
+*** 1866,1876 ****
+  	  /* Make sure this symbol is output as a dynamic symbol.
+  	     Undefined weak syms won't yet be marked as dynamic.  */
+  	  if (h->dynindx == -1
+! 	      && !h->forced_local)
+! 	    {
+! 	      if (! bfd_elf_link_record_dynamic_symbol (info, h))
+! 		return FALSE;
+! 	    }
+  
+  	  /* If that succeeded, we know we'll be keeping all the
+  	     relocs.  */
+--- 1903,1911 ----
+  	  /* Make sure this symbol is output as a dynamic symbol.
+  	     Undefined weak syms won't yet be marked as dynamic.  */
+  	  if (h->dynindx == -1
+! 	      && ! h->forced_local
+! 	      && ! bfd_elf_link_record_dynamic_symbol (info, h))
+! 	    return FALSE;
+  
+  	  /* If that succeeded, we know we'll be keeping all the
+  	     relocs.  */
+*************** allocate_dynrelocs (struct elf_link_hash
+*** 1888,1894 ****
+      {
+        asection * sreloc;
+  
+!       sreloc = elf_section_data (p->sec)->sreloc;
+  
+        BFD_ASSERT (sreloc != NULL);
+  
+--- 1923,1936 ----
+      {
+        asection * sreloc;
+  
+!       if (! info->shared
+! 	  && is_indirect_symbol (info->output_bfd, h))
+! 	{
+! 	  sreloc = elf_section_data (p->sec)->indirect_relocs;
+! 	  elf_tdata (info->output_bfd)->has_ifunc_relocs = TRUE;
+! 	}
+!       else
+! 	sreloc = elf_section_data (p->sec)->sreloc;
+  
+        BFD_ASSERT (sreloc != NULL);
+  
+*************** elf64_x86_64_relocate_section (bfd *outp
+*** 2704,2710 ****
+  		  && ((h->def_dynamic
+  		       && !h->def_regular)
+  		      || h->root.type == bfd_link_hash_undefweak
+! 		      || h->root.type == bfd_link_hash_undefined)))
+  	    {
+  	      Elf_Internal_Rela outrel;
+  	      bfd_byte *loc;
+--- 2746,2753 ----
+  		  && ((h->def_dynamic
+  		       && !h->def_regular)
+  		      || h->root.type == bfd_link_hash_undefweak
+! 		      || h->root.type == bfd_link_hash_undefined))
+! 	      || is_indirect_symbol (output_bfd, h))
+  	    {
+  	      Elf_Internal_Rela outrel;
+  	      bfd_byte *loc;
+*************** elf64_x86_64_relocate_section (bfd *outp
+*** 2790,2796 ****
+  		    }
+  		}
+  
+! 	      sreloc = elf_section_data (input_section)->sreloc;
+  		
+  	      BFD_ASSERT (sreloc != NULL && sreloc->contents != NULL);
+  
+--- 2833,2842 ----
+  		    }
+  		}
+  
+! 	      if (! info->shared && is_indirect_symbol (output_bfd, h))
+! 		sreloc = elf_section_data (input_section)->indirect_relocs;
+! 	      else
+! 		sreloc = elf_section_data (input_section)->sreloc;
+  		
+  	      BFD_ASSERT (sreloc != NULL && sreloc->contents != NULL);
+  
+*************** elf64_x86_64_relocate_section (bfd *outp
+*** 2802,2808 ****
+  		 not want to fiddle with the addend.  Otherwise, we
+  		 need to include the symbol value so that it becomes
+  		 an addend for the dynamic reloc.  */
+! 	      if (! relocate)
+  		continue;
+  	    }
+  
+--- 2848,2854 ----
+  		 not want to fiddle with the addend.  Otherwise, we
+  		 need to include the symbol value so that it becomes
+  		 an addend for the dynamic reloc.  */
+! 	      if (! relocate || is_indirect_symbol (output_bfd, h))
+  		continue;
+  	    }
+  
+*************** static const struct bfd_elf_special_sect
+*** 3958,3963 ****
+--- 4004,4012 ----
+  #define elf_backend_hash_symbol \
+    elf64_x86_64_hash_symbol
+  
++ #undef  elf_backend_post_process_headers
++ #define elf_backend_post_process_headers  _bfd_elf_set_osabi
++ 
+  #include "elf64-target.h"
+  
+  /* FreeBSD support.  */
+*************** static const struct bfd_elf_special_sect
+*** 3970,3978 ****
+  #undef	ELF_OSABI
+  #define	ELF_OSABI			    ELFOSABI_FREEBSD
+  
+- #undef  elf_backend_post_process_headers
+- #define elf_backend_post_process_headers  _bfd_elf_set_osabi
+- 
+  #undef  elf64_bed
+  #define elf64_bed elf64_x86_64_fbsd_bed
+  
+--- 4019,4024 ----
+diff -rcp binutils-2.19.51.0.2.orig/bfd/elf-bfd.h binutils-2.19.51.0.2/bfd/elf-bfd.h
+*** binutils-2.19.51.0.2.orig/bfd/elf-bfd.h	2009-02-06 09:19:48.000000000 +0000
+--- binutils-2.19.51.0.2/bfd/elf-bfd.h	2009-03-02 12:14:23.000000000 +0000
+*************** struct bfd_elf_section_data
+*** 1294,1299 ****
+--- 1294,1302 ----
+    /* A pointer to the bfd section used for dynamic relocs.  */
+    asection *sreloc;
+  
++   /* A pointer to the bfd section used for dynamic relocs against ifunc symbols.  */
++   asection *indirect_relocs;
++ 
+    union {
+      /* Group name, if this section is a member of a group.  */
+      const char *name;
+*************** struct elf_obj_tdata
+*** 1556,1561 ****
+--- 1559,1569 ----
+    bfd_size_type build_id_size;
+    bfd_byte *build_id;
+  
++   /* True if the bfd contains relocs that refer to symbols that
++      have the STT_GNU_IFUNC symbol type.  Used to set the osabi
++      field in the ELF header structure.  */
++   bfd_boolean has_ifunc_relocs;
++ 
+    /* An identifier used to distinguish different target
+       specific extensions to this structure.  */
+    enum elf_object_id object_id;
+*************** extern int _bfd_elf_obj_attrs_arg_type (
+*** 2158,2163 ****
+--- 2166,2174 ----
+  extern void _bfd_elf_parse_attributes (bfd *, Elf_Internal_Shdr *);
+  extern bfd_boolean _bfd_elf_merge_object_attributes (bfd *, bfd *);
+  
++ extern asection * _bfd_elf_make_ifunc_reloc_section
++   (bfd *, asection *, bfd *, unsigned int);
++ 
+  /* Large common section.  */
+  extern asection _bfd_elf_large_com_section;
+  
+diff -rcp binutils-2.19.51.0.2.orig/bfd/elf.c binutils-2.19.51.0.2/bfd/elf.c
+*** binutils-2.19.51.0.2.orig/bfd/elf.c	2009-02-06 09:19:47.000000000 +0000
+--- binutils-2.19.51.0.2/bfd/elf.c	2009-03-02 12:43:58.000000000 +0000
+*************** Unable to find equivalent output section
+*** 6508,6513 ****
+--- 6508,6515 ----
+  
+        if ((flags & BSF_THREAD_LOCAL) != 0)
+  	type = STT_TLS;
++       else if ((flags & BSF_GNU_INDIRECT_FUNCTION) != 0)
++ 	type = STT_GNU_IFUNC;
+        else if ((flags & BSF_FUNCTION) != 0)
+  	type = STT_FUNC;
+        else if ((flags & BSF_OBJECT) != 0)
+*************** _bfd_elf_set_osabi (bfd * abfd,
+*** 9014,9028 ****
+    i_ehdrp = elf_elfheader (abfd);
+  
+    i_ehdrp->e_ident[EI_OSABI] = get_elf_backend_data (abfd)->elf_osabi;
+  }
+  
+  
+  /* Return TRUE for ELF symbol types that represent functions.
+     This is the default version of this function, which is sufficient for
+!    most targets.  It returns true if TYPE is STT_FUNC.  */
+  
+  bfd_boolean
+  _bfd_elf_is_function_type (unsigned int type)
+  {
+!   return (type == STT_FUNC);
+  }
+--- 9016,9038 ----
+    i_ehdrp = elf_elfheader (abfd);
+  
+    i_ehdrp->e_ident[EI_OSABI] = get_elf_backend_data (abfd)->elf_osabi;
++ 
++   /* To make things simpler for the loader on Linux systems we set the
++      osabi field to ELFOSABI_LINUX if the binary contains relocs that
++      reference symbols with the STT_GNU_IFUNC type.  */
++   if (i_ehdrp->e_ident[EI_OSABI] == ELFOSABI_NONE
++       && elf_tdata (abfd)->has_ifunc_relocs)
++     i_ehdrp->e_ident[EI_OSABI] = ELFOSABI_LINUX;
+  }
+  
+  
+  /* Return TRUE for ELF symbol types that represent functions.
+     This is the default version of this function, which is sufficient for
+!    most targets.  It returns true if TYPE is STT_FUNC or STT_GNU_IFUNC.  */
+  
+  bfd_boolean
+  _bfd_elf_is_function_type (unsigned int type)
+  {
+!   return (type == STT_FUNC
+! 	  || type == STT_GNU_IFUNC);
+  }
+diff -rcp binutils-2.19.51.0.2.orig/bfd/elfcode.h binutils-2.19.51.0.2/bfd/elfcode.h
+*** binutils-2.19.51.0.2.orig/bfd/elfcode.h	2009-02-06 09:19:47.000000000 +0000
+--- binutils-2.19.51.0.2/bfd/elfcode.h	2009-02-10 12:27:38.000000000 +0000
+*************** elf_slurp_symbol_table (bfd *abfd, asymb
+*** 1371,1376 ****
+--- 1371,1379 ----
+  	    case STT_SRELC:
+  	      sym->symbol.flags |= BSF_SRELC;
+  	      break;
++ 	    case STT_GNU_IFUNC:
++ 	      sym->symbol.flags |= BSF_GNU_INDIRECT_FUNCTION;
++ 	      break;
+  	    }
+  
+  	  if (dynamic)
+diff -rcp binutils-2.19.51.0.2.orig/bfd/elflink.c binutils-2.19.51.0.2/bfd/elflink.c
+*** binutils-2.19.51.0.2.orig/bfd/elflink.c	2009-02-06 09:19:47.000000000 +0000
+--- binutils-2.19.51.0.2/bfd/elflink.c	2009-02-10 12:28:16.000000000 +0000
+*************** _bfd_elf_adjust_dynamic_symbol (struct e
+*** 2776,2781 ****
+--- 2776,2788 ----
+    dynobj = elf_hash_table (eif->info)->dynobj;
+    bed = get_elf_backend_data (dynobj);
+  
++ 
++   if (h->type == STT_GNU_IFUNC
++       && (bed->elf_osabi == ELFOSABI_LINUX
++ 	  /* GNU/Linux is still using the default value 0.  */
++ 	  || bed->elf_osabi == ELFOSABI_NONE))
++     h->needs_plt = 1;
++ 
+    if (! (*bed->elf_backend_adjust_dynamic_symbol) (eif->info, h))
+      {
+        eif->failed = TRUE;
+*************** _bfd_elf_sharable_merge_symbol
+*** 12806,12808 ****
+--- 12813,12882 ----
+  
+    return TRUE;
+  }
++ 
++ /* Returns the name of the ifunc using dynamic reloc section associated with SEC.  */
++ #define IFUNC_INFIX ".ifunc"
++ 
++ static const char *
++ get_ifunc_reloc_section_name (bfd *       abfd,
++ 			      asection *  sec)
++ {
++   const char *  dot;
++   char *  name;
++   const char *  base_name;
++   unsigned int  strndx = elf_elfheader (abfd)->e_shstrndx;
++   unsigned int  shnam = elf_section_data (sec)->rel_hdr.sh_name;
++ 
++   base_name = bfd_elf_string_from_elf_section (abfd, strndx, shnam);
++   if (base_name == NULL)
++     return NULL;
++ 
++   dot = strchr (base_name + 1, '.');
++   name = bfd_alloc (abfd, strlen (base_name) + strlen (IFUNC_INFIX) + 1);
++   sprintf (name, "%.*s%s%s", (int)(dot - base_name), base_name, IFUNC_INFIX, dot);
++ 
++   return name;
++ }
++ 
++ /* Like _bfd_elf_make_dynamic_reloc_section but it creates a
++    section for holding relocs against symbols with the STT_GNU_IFUNC
++    type.  The section is attached to the OWNER bfd but it is created
++    with a name based on SEC from ABFD.  */
++ 
++ asection *
++ _bfd_elf_make_ifunc_reloc_section (bfd *         abfd,
++ 				   asection *    sec,
++ 				   bfd *         owner,
++ 				   unsigned int  align)
++ {
++   asection * reloc_sec = elf_section_data (sec)->indirect_relocs;
++ 
++   if (reloc_sec == NULL)
++     {
++       const char * name = get_ifunc_reloc_section_name (abfd, sec);
++ 
++       if (name == NULL)
++ 	return NULL;
++ 
++       reloc_sec = bfd_get_section_by_name (owner, name);
++ 
++       if (reloc_sec == NULL)
++ 	{
++ 	  flagword flags;
++ 
++ 	  flags = (SEC_HAS_CONTENTS | SEC_READONLY | SEC_IN_MEMORY | SEC_LINKER_CREATED);
++ 	  if ((sec->flags & SEC_ALLOC) != 0)
++ 	    flags |= SEC_ALLOC | SEC_LOAD;
++ 
++ 	  reloc_sec = bfd_make_section_with_flags (owner, name, flags);
++ 	  
++ 	  if (reloc_sec != NULL
++ 	      && ! bfd_set_section_alignment (owner, reloc_sec, align))
++ 	    reloc_sec = NULL;
++ 	}
++ 
++       elf_section_data (sec)->indirect_relocs = reloc_sec;
++     }
++ 
++   return reloc_sec;
++ }
+diff -rcp binutils-2.19.51.0.2.orig/bfd/elfxx-target.h binutils-2.19.51.0.2/bfd/elfxx-target.h
+*** binutils-2.19.51.0.2.orig/bfd/elfxx-target.h	2009-02-06 09:19:48.000000000 +0000
+--- binutils-2.19.51.0.2/bfd/elfxx-target.h	2009-03-02 12:05:55.000000000 +0000
+*************** static struct elf_backend_data elfNN_bed
+*** 742,748 ****
+    elf_backend_want_got_sym,
+    elf_backend_want_dynbss,
+    elf_backend_want_p_paddr_set_to_zero,
+!   elf_backend_default_execstack
+  };
+  
+  /* Forward declaration for use when initialising alternative_target field.  */
+--- 742,748 ----
+    elf_backend_want_got_sym,
+    elf_backend_want_dynbss,
+    elf_backend_want_p_paddr_set_to_zero,
+!   elf_backend_default_execstack,
+  };
+  
+  /* Forward declaration for use when initialising alternative_target field.  */
+diff -rcp binutils-2.19.51.0.2.orig/bfd/syms.c binutils-2.19.51.0.2/bfd/syms.c
+*** binutils-2.19.51.0.2.orig/bfd/syms.c	2009-02-06 09:19:51.000000000 +0000
+--- binutils-2.19.51.0.2/bfd/syms.c	2009-02-10 12:21:59.000000000 +0000
+*************** CODE_FRAGMENT
+*** 297,302 ****
+--- 297,308 ----
+  .  {* This symbol was created by bfd_get_synthetic_symtab.  *}
+  .#define BSF_SYNTHETIC		(1 << 21)
+  .
++ .  {* This symbol is an indirect code object.  Unrelated to BSF_INDIRECT.
++ .     The dynamic linker will compute the value of this symbol by
++ .     calling the function that it points to.  BSF_FUNCTION must
++ .     also be also set.  *}
++ .#define BSF_GNU_INDIRECT_FUNCTION (1 << 22)
++ .
+  .  flagword flags;
+  .
+  .  {* A pointer to the section to which this symbol is
+*************** bfd_print_symbol_vandf (bfd *abfd, void 
+*** 483,489 ****
+  	   (type & BSF_WEAK) ? 'w' : ' ',
+  	   (type & BSF_CONSTRUCTOR) ? 'C' : ' ',
+  	   (type & BSF_WARNING) ? 'W' : ' ',
+! 	   (type & BSF_INDIRECT) ? 'I' : ' ',
+  	   (type & BSF_DEBUGGING) ? 'd' : (type & BSF_DYNAMIC) ? 'D' : ' ',
+  	   ((type & BSF_FUNCTION)
+  	    ? 'F'
+--- 489,495 ----
+  	   (type & BSF_WEAK) ? 'w' : ' ',
+  	   (type & BSF_CONSTRUCTOR) ? 'C' : ' ',
+  	   (type & BSF_WARNING) ? 'W' : ' ',
+! 	   (type & BSF_INDIRECT) ? 'I' : (type & BSF_GNU_INDIRECT_FUNCTION) ? 'i' : ' ',
+  	   (type & BSF_DEBUGGING) ? 'd' : (type & BSF_DYNAMIC) ? 'D' : ' ',
+  	   ((type & BSF_FUNCTION)
+  	    ? 'F'
+*************** bfd_decode_symclass (asymbol *symbol)
+*** 669,674 ****
+--- 675,682 ----
+      }
+    if (bfd_is_ind_section (symbol->section))
+      return 'I';
++   if (symbol->flags & BSF_GNU_INDIRECT_FUNCTION)
++     return 'i';
+    if (symbol->flags & BSF_WEAK)
+      {
+        /* If weak, determine if it's specifically an object
+diff -rcp binutils-2.19.51.0.2.orig/binutils/objdump.c binutils-2.19.51.0.2/binutils/objdump.c
+*** binutils-2.19.51.0.2.orig/binutils/objdump.c	2009-02-06 09:18:56.000000000 +0000
+--- binutils-2.19.51.0.2/binutils/objdump.c	2009-02-09 17:36:51.000000000 +0000
+*************** dump_reloc_set (bfd *abfd, asection *sec
+*** 2804,2809 ****
+--- 2804,2810 ----
+        if (q->addend)
+  	{
+  	  bfd_signed_vma addend = q->addend;
++ 
+  	  if (addend < 0)
+  	    {
+  	      printf ("-0x");
+diff -rcp binutils-2.19.51.0.2.orig/binutils/readelf.c binutils-2.19.51.0.2/binutils/readelf.c
+*** binutils-2.19.51.0.2.orig/binutils/readelf.c	2009-02-06 09:18:59.000000000 +0000
+--- binutils-2.19.51.0.2/binutils/readelf.c	2009-02-10 12:31:17.000000000 +0000
+*************** dump_relocations (FILE *file,
+*** 1247,1255 ****
+  
+  	      printf (" ");
+  
+- 	      print_vma (psym->st_value, LONG_HEX);
+  
+! 	      printf (is_32bit_elf ? "   " : " ");
+  
+  	      if (psym->st_name == 0)
+  		{
+--- 1247,1285 ----
+  
+  	      printf (" ");
+  
+  
+! 	      if (ELF_ST_TYPE (psym->st_info) == STT_GNU_IFUNC)
+! 		{
+! 		  const char * name;
+! 		  unsigned int len;
+! 		  unsigned int width = is_32bit_elf ? 8 : 14;
+! 
+! 		  /* Relocations against GNU_IFUNC symbols do not use the value
+! 		     of the symbol as the address to relocate against.  Instead
+! 		     they invoke the function named by the symbol and use its
+! 		     result as the address for relocation.
+! 
+! 		     To indicate this to the user, do not display the value of
+! 		     the symbol in the "Symbols's Value" field.  Instead show
+! 		     its name followed by () as a hint that the symbol is
+! 		     invoked.  */
+! 
+! 		  if (strtab == NULL
+! 		      || psym->st_name == 0
+! 		      || psym->st_name >= strtablen)
+! 		    name = "??";
+! 		  else
+! 		    name = strtab + psym->st_name;
+! 
+! 		  len = print_symbol (width, name);
+! 		  printf ("()%-*s", len <= width ? (width + 1) - len : 1, " ");
+! 		}
+! 	      else
+! 		{
+! 		  print_vma (psym->st_value, LONG_HEX);
+! 
+! 		  printf (is_32bit_elf ? "   " : " ");
+! 		}
+  
+  	      if (psym->st_name == 0)
+  		{
+*************** get_symbol_type (unsigned int type)
+*** 7166,7171 ****
+--- 7196,7207 ----
+  		return "HP_STUB";
+  	    }
+  
++ 	  if (type == STT_GNU_IFUNC
++ 	      && (elf_header.e_ident[EI_OSABI] == ELFOSABI_LINUX
++ 		  /* GNU/Linux is still using the default value 0.  */
++ 		  || elf_header.e_ident[EI_OSABI] == ELFOSABI_NONE))
++ 	    return "IFUNC";
++ 
+  	  snprintf (buff, sizeof (buff), _("<OS specific>: %d"), type);
+  	}
+        else
+diff -rcp binutils-2.19.51.0.2.orig/elfcpp/elfcpp.h binutils-2.19.51.0.2/elfcpp/elfcpp.h
+*** binutils-2.19.51.0.2.orig/elfcpp/elfcpp.h	2009-02-06 09:18:19.000000000 +0000
+--- binutils-2.19.51.0.2/elfcpp/elfcpp.h	2009-02-10 12:19:01.000000000 +0000
+*************** enum STT
+*** 476,481 ****
+--- 476,482 ----
+    STT_COMMON = 5,
+    STT_TLS = 6,
+    STT_LOOS = 10,
++   STT_GNU_IFUNC = 10,
+    STT_HIOS = 12,
+    STT_LOPROC = 13,
+    STT_HIPROC = 15,
+diff -rcp binutils-2.19.51.0.2.orig/gas/config/obj-elf.c binutils-2.19.51.0.2/gas/config/obj-elf.c
+*** binutils-2.19.51.0.2.orig/gas/config/obj-elf.c	2009-02-06 09:19:19.000000000 +0000
+--- binutils-2.19.51.0.2/gas/config/obj-elf.c	2009-02-10 12:26:06.000000000 +0000
+*************** obj_elf_type (int ignore ATTRIBUTE_UNUSE
+*** 1706,1711 ****
+--- 1706,1725 ----
+  	    }
+  	}
+      }
++   else if (strcmp (typename, "gnu_indirect_function") == 0
++       || strcmp (typename, "10") == 0
++       || strcmp (typename, "STT_GNU_IFUNC") == 0)
++     {
++       const struct elf_backend_data *bed;
++ 
++       bed = get_elf_backend_data (stdoutput);
++       if (!(bed->elf_osabi == ELFOSABI_LINUX
++ 	    /* GNU/Linux is still using the default value 0.  */
++ 	    || bed->elf_osabi == ELFOSABI_NONE))
++ 	as_bad (_("symbol type \"%s\" is supported only by GNU targets"),
++ 		typename);
++       type = BSF_FUNCTION | BSF_GNU_INDIRECT_FUNCTION;
++     }
+  #ifdef md_elf_symbol_type
+    else if ((type = md_elf_symbol_type (typename, sym, elfsym)) != -1)
+      ;
+diff -rcp binutils-2.19.51.0.2.orig/gas/config/tc-i386.c binutils-2.19.51.0.2/gas/config/tc-i386.c
+*** binutils-2.19.51.0.2.orig/gas/config/tc-i386.c	2009-02-06 09:19:20.000000000 +0000
+--- binutils-2.19.51.0.2/gas/config/tc-i386.c	2009-03-02 12:41:09.000000000 +0000
+*************** tc_i386_fix_adjustable (fixS *fixP ATTRI
+*** 2499,2504 ****
+--- 2499,2508 ----
+        || fixP->fx_r_type == BFD_RELOC_VTABLE_INHERIT
+        || fixP->fx_r_type == BFD_RELOC_VTABLE_ENTRY)
+      return 0;
++ 
++   if (fixP->fx_addsy != NULL
++       && symbol_get_bfdsym (fixP->fx_addsy)->flags & BSF_GNU_INDIRECT_FUNCTION)
++     return 0;
+  #endif
+    return 1;
+  }
+diff -rcp binutils-2.19.51.0.2.orig/gas/doc/as.texinfo binutils-2.19.51.0.2/gas/doc/as.texinfo
+*** binutils-2.19.51.0.2.orig/gas/doc/as.texinfo	2009-02-06 09:19:18.000000000 +0000
+--- binutils-2.19.51.0.2/gas/doc/as.texinfo	2009-02-10 12:25:39.000000000 +0000
+*************** The types supported are:
+*** 6277,6282 ****
+--- 6277,6287 ----
+  @itemx function
+  Mark the symbol as being a function name.
+  
++ @item STT_GNU_IFUNC
++ @itemx gnu_indirect_function
++ Mark the symbol as an indirect function when evaluated during reloc
++ processing.  (This is only supported on Linux targeted assemblers).
++ 
+  @item STT_OBJECT
+  @itemx object
+  Mark the symbol as being a data object.
+diff -rcp binutils-2.19.51.0.2.orig/gas/NEWS binutils-2.19.51.0.2/gas/NEWS
+*** binutils-2.19.51.0.2.orig/gas/NEWS	2009-02-06 09:19:44.000000000 +0000
+--- binutils-2.19.51.0.2/gas/NEWS	2009-02-09 18:10:40.000000000 +0000
+***************
+*** 1,5 ****
+--- 1,10 ----
+  -*- text -*-
+  
++ * The .type pseudo-op now accepts a type of STT_GNU_IFUNC which can be used to
++   indicate that if the symbol is the target of a relocation, its value should
++   not be use.  Instead the function should be invoked and its result used as
++   the value.
++  
+  * Add support for Lattice Mico32 (lm32) architecture.
+  
+  Changes in 2.19:
+diff -rcp binutils-2.19.51.0.2.orig/gas/testsuite/gas/elf/type.e binutils-2.19.51.0.2/gas/testsuite/gas/elf/type.e
+*** binutils-2.19.51.0.2.orig/gas/testsuite/gas/elf/type.e	2009-02-06 09:19:32.000000000 +0000
+--- binutils-2.19.51.0.2/gas/testsuite/gas/elf/type.e	2009-02-10 12:31:27.000000000 +0000
+***************
+*** 1,5 ****
+       .: 0+0     1 FUNC    LOCAL  DEFAULT    . function
+       .: 0+0     1 OBJECT  LOCAL  DEFAULT    . object
+       .: 0+1     1 TLS     LOCAL  DEFAULT    . tls_object
+!      .: 0+2     1 NOTYPE  LOCAL  DEFAULT    . notype
+      ..: 0+1     1 (COMMON|OBJECT)  GLOBAL DEFAULT  COM common
+--- 1,6 ----
+       .: 0+0     1 FUNC    LOCAL  DEFAULT    . function
++      .: 0+1     1 IFUNC   LOCAL  DEFAULT    . indirect_function
+       .: 0+0     1 OBJECT  LOCAL  DEFAULT    . object
+       .: 0+1     1 TLS     LOCAL  DEFAULT    . tls_object
+!     ..: 0+2     1 NOTYPE  LOCAL  DEFAULT    . notype
+      ..: 0+1     1 (COMMON|OBJECT)  GLOBAL DEFAULT  COM common
+diff -rcp binutils-2.19.51.0.2.orig/gas/testsuite/gas/elf/type.s binutils-2.19.51.0.2/gas/testsuite/gas/elf/type.s
+*** binutils-2.19.51.0.2.orig/gas/testsuite/gas/elf/type.s	2009-02-06 09:19:32.000000000 +0000
+--- binutils-2.19.51.0.2/gas/testsuite/gas/elf/type.s	2009-02-10 12:26:29.000000000 +0000
+***************
+*** 3,8 ****
+--- 3,12 ----
+          .type   function,%function
+  function:
+  	.byte	0x0
++         .size   indirect_function,1
++         .type   indirect_function,%gnu_indirect_function
++ indirect_function:
++ 	.byte	0x0
+          .data
+          .type   object,%object
+          .size   object,1
+diff -rcp binutils-2.19.51.0.2.orig/include/elf/common.h binutils-2.19.51.0.2/include/elf/common.h
+*** binutils-2.19.51.0.2.orig/include/elf/common.h	2009-02-06 09:18:19.000000000 +0000
+--- binutils-2.19.51.0.2/include/elf/common.h	2009-02-10 12:18:39.000000000 +0000
+***************
+*** 549,554 ****
+--- 549,555 ----
+  #define STT_RELC	8		/* Complex relocation expression */
+  #define STT_SRELC	9		/* Signed Complex relocation expression */
+  #define STT_LOOS	10		/* OS-specific semantics */
++ #define STT_GNU_IFUNC	10		/* Symbol is an indirect code object */
+  #define STT_HIOS	12		/* OS-specific semantics */
+  #define STT_LOPROC	13		/* Application-specific semantics */
+  #define STT_HIPROC	15		/* Application-specific semantics */
+diff -rcp binutils-2.19.51.0.2.orig/ld/NEWS binutils-2.19.51.0.2/ld/NEWS
+*** binutils-2.19.51.0.2.orig/ld/NEWS	2009-02-06 09:18:41.000000000 +0000
+--- binutils-2.19.51.0.2/ld/NEWS	2009-02-09 18:11:13.000000000 +0000
+***************
+*** 1,5 ****
+--- 1,9 ----
+  -*- text -*-
+  
++ * For GNU/Linux systems the linker will now avoid processing any relocations
++   made against symbols of the STT_GNU_IFUNC type and instead emit them into
++   the resulting binary for processing by the loader.
++ 
+  * --as-needed now links in a dynamic library if it satisfies undefined
+    symbols in regular objects, or in other dynamic libraries.  In the
+    latter case the library is not linked if it is found in a DT_NEEDED

@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.19.51.0.2
-Release: 14%{?dist}
+Release: 15%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -30,6 +30,7 @@ Patch04: binutils-2.19.50.0.1-symbolic-envvar-revert.patch
 Patch05: binutils-2.19.50.0.1-version.patch
 Patch06: binutils-2.19.50.0.1-set-long-long.patch
 Patch07: binutils-2.19.50.0.1-build-id.patch
+Patch08: binutils-2.19.51.0.2-ifunc.patch
 
 %if 0%{?_with_debug:1}
 # Define this if you want to skip the strip step and preserve debug info.
@@ -100,6 +101,7 @@ to consider using libelf instead of BFD.
 %patch05 -p0 -b .version~
 %patch06 -p0 -b .set-long-long~
 %patch07 -p0 -b .build-id~
+%patch08 -p0 -b .ifunc~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -343,6 +345,9 @@ fi
 %endif # %{isnative}
 
 %changelog
+* Mon Mar 02 2009 Nick Clifton <nickc@redhat.com> 2.19.51.0.2-15
+- Add IFUNC support.  (BZ 465302)
+
 * Mon Feb 23 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.19.51.0.2-14
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
 
