@@ -101,7 +101,7 @@ to consider using libelf instead of BFD.
 %patch05 -p0 -b .version~
 %patch06 -p0 -b .set-long-long~
 %patch07 -p0 -b .build-id~
-%patch08 -p0 -b .ifunc~
+%patch08 -p1 -b .ifunc~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
