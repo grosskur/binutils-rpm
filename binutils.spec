@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.19.51.0.2
-Release: 16%{?dist}
+Release: 17%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -48,7 +48,7 @@ BuildRequires: texinfo >= 4.0, gettext, flex, bison, zlib-devel
 # Required for: ld-bootstrap/bootstrap.exp bootstrap with --static
 # It should not be required for: ld-elf/elf.exp static {preinit,init,fini} array
 %if %{run_testsuite}
-BuildRequires: dejagnu, zlib-static
+BuildRequires: dejagnu, zlib-static glibc-static
 %endif
 Conflicts: gcc-c++ < 4.0.0
 Requires(post): /sbin/install-info
@@ -347,6 +347,9 @@ fi
 %endif # %{isnative}
 
 %changelog
+* Tue Mar 17 2009 Nick Clifton <nickc@redhat.com> 2.19.51.0.2-17
+- Add glibc-static to BuildRequires when running the testsuite.
+
 * Thu Mar 05 2009 Nick Clifton <nickc@redhat.com> 2.19.51.0.2-16
 - Add IBM Power7 support.  (BZ 487887)
 
