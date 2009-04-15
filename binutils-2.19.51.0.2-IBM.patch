@@ -1,6 +1,6 @@
-diff -rcp ../binutils-2.19.51.0.2.15/bfd/elf32-lm32.c ./bfd/elf32-lm32.c
-*** ../binutils-2.19.51.0.2.15/bfd/elf32-lm32.c	2009-03-02 14:05:10.000000000 +0000
---- ./bfd/elf32-lm32.c	2009-03-05 12:12:25.000000000 +0000
+diff -rcp ../binutils-2.19.51.0.2.orig/bfd/elf32-lm32.c ./bfd/elf32-lm32.c
+*** ../binutils-2.19.51.0.2.orig/bfd/elf32-lm32.c	2009-04-15 13:09:53.000000000 +0100
+--- ./bfd/elf32-lm32.c	2009-04-15 13:10:01.000000000 +0100
 *************** lm32_elf_relocate_section (bfd *output_b
 *** 888,898 ****
             /* It's a global symbol.  */
@@ -27,9 +27,9 @@ diff -rcp ../binutils-2.19.51.0.2.15/bfd/elf32-lm32.c ./bfd/elf32-lm32.c
   	  osec = sec;
   	  name = h->root.root.string;
           }
-diff -rcp ../binutils-2.19.51.0.2.15/bfd/elf32-ppc.c ./bfd/elf32-ppc.c
-*** ../binutils-2.19.51.0.2.15/bfd/elf32-ppc.c	2009-03-02 14:05:10.000000000 +0000
---- ./bfd/elf32-ppc.c	2009-03-05 12:20:26.000000000 +0000
+diff -rcp ../binutils-2.19.51.0.2.orig/bfd/elf32-ppc.c ./bfd/elf32-ppc.c
+*** ../binutils-2.19.51.0.2.orig/bfd/elf32-ppc.c	2009-04-15 13:09:53.000000000 +0100
+--- ./bfd/elf32-ppc.c	2009-04-15 13:10:01.000000000 +0100
 ***************
 *** 1,6 ****
   /* PowerPC-specific support for 32-bit ELF
@@ -203,9 +203,9 @@ diff -rcp ../binutils-2.19.51.0.2.15/bfd/elf32-ppc.c ./bfd/elf32-ppc.c
   		  r_type = (((r_type - (R_PPC_GOT_TLSGD16 & 3)) & 3)
   			    + R_PPC_GOT_TPREL16);
   		  rel->r_info = ELF32_R_INFO (r_symndx, r_type);
-diff -rcp ../binutils-2.19.51.0.2.15/bfd/elf64-ppc.c ./bfd/elf64-ppc.c
-*** ../binutils-2.19.51.0.2.15/bfd/elf64-ppc.c	2009-03-02 14:05:10.000000000 +0000
---- ./bfd/elf64-ppc.c	2009-03-05 12:20:26.000000000 +0000
+diff -rcp ../binutils-2.19.51.0.2.orig/bfd/elf64-ppc.c ./bfd/elf64-ppc.c
+*** ../binutils-2.19.51.0.2.orig/bfd/elf64-ppc.c	2009-04-15 13:09:53.000000000 +0100
+--- ./bfd/elf64-ppc.c	2009-04-15 13:10:01.000000000 +0100
 ***************
 *** 1,6 ****
   /* PowerPC64-specific support for 64-bit ELF.
@@ -796,9 +796,9 @@ diff -rcp ../binutils-2.19.51.0.2.15/bfd/elf64-ppc.c ./bfd/elf64-ppc.c
   			|| ELF_ST_VISIBILITY (h->elf.other) == STV_DEFAULT
   			|| h->elf.root.type != bfd_link_hash_undefweak))
   		  {
-diff -rcp ../binutils-2.19.51.0.2.15/gas/config/tc-ppc.c ./gas/config/tc-ppc.c
-*** ../binutils-2.19.51.0.2.15/gas/config/tc-ppc.c	2009-03-02 14:05:00.000000000 +0000
---- ./gas/config/tc-ppc.c	2009-03-05 12:20:26.000000000 +0000
+diff -rcp ../binutils-2.19.51.0.2.orig/gas/config/tc-ppc.c ./gas/config/tc-ppc.c
+*** ../binutils-2.19.51.0.2.orig/gas/config/tc-ppc.c	2009-04-15 13:09:53.000000000 +0100
+--- ./gas/config/tc-ppc.c	2009-04-15 13:10:01.000000000 +0100
 *************** static const struct pd_reg pre_defined_r
 *** 358,366 ****
 --- 358,399 ----
@@ -1085,9 +1085,9 @@ diff -rcp ../binutils-2.19.51.0.2.15/gas/config/tc-ppc.c ./gas/config/tc-ppc.c
       {
         /* These are all version "1".  */
         if (opcode->flags & PPC_OPCODE_SPE)
-diff -rcp ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/booke.d ./gas/testsuite/gas/ppc/booke.d
-*** ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/booke.d	2009-03-02 14:05:01.000000000 +0000
---- ./gas/testsuite/gas/ppc/booke.d	2009-03-05 12:20:26.000000000 +0000
+diff -rcp ../binutils-2.19.51.0.2.orig/gas/testsuite/gas/ppc/booke.d ./gas/testsuite/gas/ppc/booke.d
+*** ../binutils-2.19.51.0.2.orig/gas/testsuite/gas/ppc/booke.d	2009-04-15 13:09:53.000000000 +0100
+--- ./gas/testsuite/gas/ppc/booke.d	2009-04-15 13:10:01.000000000 +0100
 *************** Disassembly of section \.text:
 *** 38,40 ****
 --- 38,43 ----
@@ -1097,9 +1097,9 @@ diff -rcp ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/booke.d ./gas/testsui
 +   74:	7c 05 32 2c 	dcbt    r5,r6
 +   78:	7c 05 32 2c 	dcbt    r5,r6
 +   7c:	7d 05 32 2c 	dcbt    8,r5,r6
-diff -rcp ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/booke.s ./gas/testsuite/gas/ppc/booke.s
-*** ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/booke.s	2009-03-02 14:05:01.000000000 +0000
---- ./gas/testsuite/gas/ppc/booke.s	2009-03-05 12:20:26.000000000 +0000
+diff -rcp ../binutils-2.19.51.0.2.orig/gas/testsuite/gas/ppc/booke.s ./gas/testsuite/gas/ppc/booke.s
+*** ../binutils-2.19.51.0.2.orig/gas/testsuite/gas/ppc/booke.s	2009-04-15 13:09:53.000000000 +0100
+--- ./gas/testsuite/gas/ppc/booke.s	2009-04-15 13:10:01.000000000 +0100
 *************** branch_target_2:	
 *** 36,38 ****
 --- 36,42 ----
@@ -1110,9 +1110,9 @@ diff -rcp ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/booke.s ./gas/testsui
 + 	dcbt 5,6
 + 	dcbt 0,5,6
 + 	dcbt 8,5,6
-diff -rcp ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/e500mc.d ./gas/testsuite/gas/ppc/e500mc.d
-*** ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/e500mc.d	2009-03-02 14:05:01.000000000 +0000
---- ./gas/testsuite/gas/ppc/e500mc.d	2009-03-05 12:20:26.000000000 +0000
+diff -rcp ../binutils-2.19.51.0.2.orig/gas/testsuite/gas/ppc/e500mc.d ./gas/testsuite/gas/ppc/e500mc.d
+*** ../binutils-2.19.51.0.2.orig/gas/testsuite/gas/ppc/e500mc.d	2009-04-15 13:09:53.000000000 +0100
+--- ./gas/testsuite/gas/ppc/e500mc.d	2009-04-15 13:10:11.000000000 +0100
 ***************
 *** 6,12 ****
   
@@ -1170,7 +1170,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/e500mc.d ./gas/testsu
 !   9c:	7c 20 06 26 	tlbilx  1,0,r0
 !   a0:	7c 62 1e 26 	tlbilx  3,r2,r3
 !   a4:	7c 64 2e 26 	tlbilx  3,r4,r5
---- 14,56 ----
+--- 14,57 ----
     10:	7c 09 57 be 	icbiep  r9,r10
     14:	7c 00 69 dc 	msgclr  r13
     18:	7c 00 71 9c 	msgsnd  r14
@@ -1210,13 +1210,14 @@ diff -rcp ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/e500mc.d ./gas/testsu
 !   a0:	7c 64 29 fe 	dcbtstep r3,r4,r5
 !   a4:	7c c7 42 7e 	dcbtep  r6,r7,r8
 !   a8:	7c 0b 67 fe 	dcbzep  r11,r12
-!   ac:	7c 00 06 26 	tlbilx  0,0,r0
-!   b0:	7c 20 06 26 	tlbilx  1,0,r0
-!   b4:	7c 62 1e 26 	tlbilx  3,r2,r3
-!   b8:	7c 64 2e 26 	tlbilx  3,r4,r5
-diff -rcp ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/e500mc.s ./gas/testsuite/gas/ppc/e500mc.s
-*** ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/e500mc.s	2009-03-02 14:05:01.000000000 +0000
---- ./gas/testsuite/gas/ppc/e500mc.s	2009-03-05 12:20:26.000000000 +0000
+!   ac:	7c 00 00 24 	tlbilxlpid
+!   b0:	7c 20 00 24 	tlbilxpid
+!   b4:	7c 62 18 24 	tlbilxva r2,r3
+!   b8:	7c 64 28 24 	tlbilxva r4,r5
+! 
+diff -rcp ../binutils-2.19.51.0.2.orig/gas/testsuite/gas/ppc/e500mc.s ./gas/testsuite/gas/ppc/e500mc.s
+*** ../binutils-2.19.51.0.2.orig/gas/testsuite/gas/ppc/e500mc.s	2009-04-15 13:09:53.000000000 +0100
+--- ./gas/testsuite/gas/ppc/e500mc.s	2009-04-15 13:10:01.000000000 +0100
 *************** start:
 *** 9,14 ****
 --- 9,19 ----
@@ -1231,9 +1232,9 @@ diff -rcp ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/e500mc.s ./gas/testsu
   	mdors
   	ehpriv
   	dsn	24, 25
-diff -rcp ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/power4_32.d ./gas/testsuite/gas/ppc/power4_32.d
-*** ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/power4_32.d	2009-03-02 14:05:01.000000000 +0000
---- ./gas/testsuite/gas/ppc/power4_32.d	2009-03-05 12:20:26.000000000 +0000
+diff -rcp ../binutils-2.19.51.0.2.orig/gas/testsuite/gas/ppc/power4_32.d ./gas/testsuite/gas/ppc/power4_32.d
+*** ../binutils-2.19.51.0.2.orig/gas/testsuite/gas/ppc/power4_32.d	2009-04-15 13:09:53.000000000 +0100
+--- ./gas/testsuite/gas/ppc/power4_32.d	2009-04-15 13:10:01.000000000 +0100
 *************** Disassembly of section \.text:
 *** 41,43 ****
 --- 41,46 ----
@@ -1243,9 +1244,9 @@ diff -rcp ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/power4_32.d ./gas/tes
 +   88:	7c 05 32 2c 	dcbt    r5,r6
 +   8c:	7c 05 32 2c 	dcbt    r5,r6
 +   90:	7d 05 32 2c 	dcbt    r5,r6,8
-diff -rcp ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/power4_32.s ./gas/testsuite/gas/ppc/power4_32.s
-*** ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/power4_32.s	2009-03-02 14:05:01.000000000 +0000
---- ./gas/testsuite/gas/ppc/power4_32.s	2009-03-05 12:20:26.000000000 +0000
+diff -rcp ../binutils-2.19.51.0.2.orig/gas/testsuite/gas/ppc/power4_32.s ./gas/testsuite/gas/ppc/power4_32.s
+*** ../binutils-2.19.51.0.2.orig/gas/testsuite/gas/ppc/power4_32.s	2009-04-15 13:09:53.000000000 +0100
+--- ./gas/testsuite/gas/ppc/power4_32.s	2009-04-15 13:10:01.000000000 +0100
 *************** start:
 *** 34,36 ****
 --- 34,39 ----
@@ -1255,9 +1256,9 @@ diff -rcp ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/power4_32.s ./gas/tes
 + 	dcbt    5,6
 + 	dcbt    5,6,0
 + 	dcbt    5,6,8
-diff -rcp ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/power6.d ./gas/testsuite/gas/ppc/power6.d
-*** ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/power6.d	2009-03-02 14:05:01.000000000 +0000
---- ./gas/testsuite/gas/ppc/power6.d	2009-03-05 12:20:26.000000000 +0000
+diff -rcp ../binutils-2.19.51.0.2.orig/gas/testsuite/gas/ppc/power6.d ./gas/testsuite/gas/ppc/power6.d
+*** ../binutils-2.19.51.0.2.orig/gas/testsuite/gas/ppc/power6.d	2009-04-15 13:09:53.000000000 +0100
+--- ./gas/testsuite/gas/ppc/power6.d	2009-04-15 13:10:01.000000000 +0100
 *************** Disassembly of section \.text:
 *** 66,68 ****
 --- 66,71 ----
@@ -1267,9 +1268,9 @@ diff -rcp ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/power6.d ./gas/testsu
 +   ec:	7d 6a 02 74 	cbcdtd  r10,r11
 +   f0:	7d 6a 02 34 	cdtbcd  r10,r11
 +   f4:	7d 4b 60 94 	addg6s  r10,r11,r12
-diff -rcp ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/power6.s ./gas/testsuite/gas/ppc/power6.s
-*** ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/power6.s	2009-03-02 14:05:01.000000000 +0000
---- ./gas/testsuite/gas/ppc/power6.s	2009-03-05 12:20:26.000000000 +0000
+diff -rcp ../binutils-2.19.51.0.2.orig/gas/testsuite/gas/ppc/power6.s ./gas/testsuite/gas/ppc/power6.s
+*** ../binutils-2.19.51.0.2.orig/gas/testsuite/gas/ppc/power6.s	2009-04-15 13:09:53.000000000 +0100
+--- ./gas/testsuite/gas/ppc/power6.s	2009-04-15 13:10:01.000000000 +0100
 *************** start:
 *** 61,63 ****
 --- 61,66 ----
@@ -1279,9 +1280,9 @@ diff -rcp ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/power6.s ./gas/testsu
 + 	cbcdtd  10,11
 + 	cdtbcd  10,11
 + 	addg6s  10,11,12
-diff -rcp ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/power7.d ./gas/testsuite/gas/ppc/power7.d
-*** ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/power7.d	2009-03-02 14:05:01.000000000 +0000
---- ./gas/testsuite/gas/ppc/power7.d	2009-03-05 12:20:26.000000000 +0000
+diff -rcp ../binutils-2.19.51.0.2.orig/gas/testsuite/gas/ppc/power7.d ./gas/testsuite/gas/ppc/power7.d
+*** ../binutils-2.19.51.0.2.orig/gas/testsuite/gas/ppc/power7.d	2009-04-15 13:09:53.000000000 +0100
+--- ./gas/testsuite/gas/ppc/power7.d	2009-04-15 13:10:01.000000000 +0100
 ***************
 *** 1,8 ****
 ! #as: -a32 -mpower7
@@ -1410,9 +1411,9 @@ diff -rcp ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/power7.d ./gas/testsu
 !  194:	ed c0 78 34 	frsqrtes f14,f15
 !  198:	ed c0 78 35 	frsqrtes\. f14,f15
 !  19c:	7c 43 27 1e 	isel    r2,r3,r4,28
-diff -rcp ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/power7.s ./gas/testsuite/gas/ppc/power7.s
-*** ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/power7.s	2009-03-02 14:05:01.000000000 +0000
---- ./gas/testsuite/gas/ppc/power7.s	2009-03-05 12:20:26.000000000 +0000
+diff -rcp ../binutils-2.19.51.0.2.orig/gas/testsuite/gas/ppc/power7.s ./gas/testsuite/gas/ppc/power7.s
+*** ../binutils-2.19.51.0.2.orig/gas/testsuite/gas/ppc/power7.s	2009-04-15 13:09:53.000000000 +0100
+--- ./gas/testsuite/gas/ppc/power7.s	2009-04-15 13:10:01.000000000 +0100
 ***************
 *** 1,9 ****
 - 	.file	"power7.c"
@@ -1520,9 +1521,9 @@ diff -rcp ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/power7.s ./gas/testsu
 ! 	frsqrtes  14,15
 ! 	frsqrtes. 14,15
 ! 	isel	  2,3,4,28
-diff -rcp ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/ppc.exp ./gas/testsuite/gas/ppc/ppc.exp
-*** ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/ppc.exp	2009-03-02 14:05:01.000000000 +0000
---- ./gas/testsuite/gas/ppc/ppc.exp	2009-03-05 12:20:26.000000000 +0000
+diff -rcp ../binutils-2.19.51.0.2.orig/gas/testsuite/gas/ppc/ppc.exp ./gas/testsuite/gas/ppc/ppc.exp
+*** ../binutils-2.19.51.0.2.orig/gas/testsuite/gas/ppc/ppc.exp	2009-04-15 13:09:53.000000000 +0100
+--- ./gas/testsuite/gas/ppc/ppc.exp	2009-04-15 13:10:01.000000000 +0100
 *************** if { [istarget powerpc*-*-*] } then {
 *** 47,51 ****
 --- 47,52 ----
@@ -1532,11 +1533,9 @@ diff -rcp ../binutils-2.19.51.0.2.15/gas/testsuite/gas/ppc/ppc.exp ./gas/testsui
 + 	run_dump_test "vsx"
       }
   }
-Only in ./gas/testsuite/gas/ppc: vsx.d
-Only in ./gas/testsuite/gas/ppc: vsx.s
-diff -rcp ../binutils-2.19.51.0.2.15/include/opcode/ppc.h ./include/opcode/ppc.h
-*** ../binutils-2.19.51.0.2.15/include/opcode/ppc.h	2009-03-02 14:04:52.000000000 +0000
---- ./include/opcode/ppc.h	2009-03-05 12:20:26.000000000 +0000
+diff -rcp ../binutils-2.19.51.0.2.orig/include/opcode/ppc.h ./include/opcode/ppc.h
+*** ../binutils-2.19.51.0.2.orig/include/opcode/ppc.h	2009-04-15 13:09:52.000000000 +0100
+--- ./include/opcode/ppc.h	2009-04-15 13:10:01.000000000 +0100
 *************** extern const int powerpc_num_opcodes;
 *** 114,119 ****
 --- 114,122 ----
@@ -1549,9 +1548,9 @@ diff -rcp ../binutils-2.19.51.0.2.15/include/opcode/ppc.h ./include/opcode/ppc.h
   /* Opcode is only supported by POWERPC Classic architecture.  */
   #define PPC_OPCODE_CLASSIC	   0x10000
   
-diff -rcp ../binutils-2.19.51.0.2.15/ld/emultempl/beos.em ./ld/emultempl/beos.em
-*** ../binutils-2.19.51.0.2.15/ld/emultempl/beos.em	2009-03-02 14:04:53.000000000 +0000
---- ./ld/emultempl/beos.em	2009-03-05 12:20:26.000000000 +0000
+diff -rcp ../binutils-2.19.51.0.2.orig/ld/emultempl/beos.em ./ld/emultempl/beos.em
+*** ../binutils-2.19.51.0.2.orig/ld/emultempl/beos.em	2009-04-15 13:09:52.000000000 +0100
+--- ./ld/emultempl/beos.em	2009-04-15 13:10:01.000000000 +0100
 *************** fi
 *** 8,14 ****
   fragment <<EOF
@@ -1626,9 +1625,9 @@ diff -rcp ../binutils-2.19.51.0.2.15/ld/emultempl/beos.em ./ld/emultempl/beos.em
     /* Here we rummage through the found bfds to collect toc information */
     {
 --- 606,611 ----
-diff -rcp ../binutils-2.19.51.0.2.15/ld/emultempl/pe.em ./ld/emultempl/pe.em
-*** ../binutils-2.19.51.0.2.15/ld/emultempl/pe.em	2009-03-02 14:04:53.000000000 +0000
---- ./ld/emultempl/pe.em	2009-03-05 12:20:26.000000000 +0000
+diff -rcp ../binutils-2.19.51.0.2.orig/ld/emultempl/pe.em ./ld/emultempl/pe.em
+*** ../binutils-2.19.51.0.2.orig/ld/emultempl/pe.em	2009-04-15 13:09:52.000000000 +0100
+--- ./ld/emultempl/pe.em	2009-04-15 13:10:01.000000000 +0100
 *************** rm -f e${EMULATION_NAME}.c
 *** 10,16 ****
   (echo;echo;echo;echo;echo)>e${EMULATION_NAME}.c # there, now line numbers match ;-)
@@ -1692,9 +1691,9 @@ diff -rcp ../binutils-2.19.51.0.2.15/ld/emultempl/pe.em ./ld/emultempl/pe.em
   
     if (pe.FileAlignment >
         pe.SectionAlignment)
-diff -rcp ../binutils-2.19.51.0.2.15/ld/emultempl/pep.em ./ld/emultempl/pep.em
-*** ../binutils-2.19.51.0.2.15/ld/emultempl/pep.em	2009-03-02 14:04:53.000000000 +0000
---- ./ld/emultempl/pep.em	2009-03-05 12:20:26.000000000 +0000
+diff -rcp ../binutils-2.19.51.0.2.orig/ld/emultempl/pep.em ./ld/emultempl/pep.em
+*** ../binutils-2.19.51.0.2.orig/ld/emultempl/pep.em	2009-04-15 13:09:52.000000000 +0100
+--- ./ld/emultempl/pep.em	2009-04-15 13:10:01.000000000 +0100
 *************** fi
 *** 9,15 ****
   rm -f e${EMULATION_NAME}.c
@@ -1758,9 +1757,9 @@ diff -rcp ../binutils-2.19.51.0.2.15/ld/emultempl/pep.em ./ld/emultempl/pep.em
   
     if (pep.FileAlignment > pep.SectionAlignment)
       {
-diff -rcp ../binutils-2.19.51.0.2.15/ld/emultempl/xtensaelf.em ./ld/emultempl/xtensaelf.em
-*** ../binutils-2.19.51.0.2.15/ld/emultempl/xtensaelf.em	2009-03-02 14:04:53.000000000 +0000
---- ./ld/emultempl/xtensaelf.em	2009-03-05 12:20:26.000000000 +0000
+diff -rcp ../binutils-2.19.51.0.2.orig/ld/emultempl/xtensaelf.em ./ld/emultempl/xtensaelf.em
+*** ../binutils-2.19.51.0.2.orig/ld/emultempl/xtensaelf.em	2009-04-15 13:09:52.000000000 +0100
+--- ./ld/emultempl/xtensaelf.em	2009-04-15 13:10:01.000000000 +0100
 ***************
 *** 1,5 ****
   # This shell script emits a C file. -*- C -*-
@@ -1814,9 +1813,9 @@ diff -rcp ../binutils-2.19.51.0.2.15/ld/emultempl/xtensaelf.em ./ld/emultempl/xt
   
   		assign_union->header.next = l;
   		*(*stack_p)->iterloc.loc = assign_union;
-diff -rcp ../binutils-2.19.51.0.2.15/ld/ldctor.c ./ld/ldctor.c
-*** ../binutils-2.19.51.0.2.15/ld/ldctor.c	2009-03-02 14:04:56.000000000 +0000
---- ./ld/ldctor.c	2009-03-05 12:20:26.000000000 +0000
+diff -rcp ../binutils-2.19.51.0.2.orig/ld/ldctor.c ./ld/ldctor.c
+*** ../binutils-2.19.51.0.2.orig/ld/ldctor.c	2009-04-15 13:09:53.000000000 +0100
+--- ./ld/ldctor.c	2009-04-15 13:10:01.000000000 +0100
 ***************
 *** 1,6 ****
   /* ldctor.c -- constructor support routines
@@ -1877,9 +1876,9 @@ diff -rcp ../binutils-2.19.51.0.2.15/ld/ldctor.c ./ld/ldctor.c
   
 !   pop_stat_ptr ();
   }
-diff -rcp ../binutils-2.19.51.0.2.15/ld/ldlang.c ./ld/ldlang.c
-*** ../binutils-2.19.51.0.2.15/ld/ldlang.c	2009-03-02 14:04:56.000000000 +0000
---- ./ld/ldlang.c	2009-03-05 12:20:26.000000000 +0000
+diff -rcp ../binutils-2.19.51.0.2.orig/ld/ldlang.c ./ld/ldlang.c
+*** ../binutils-2.19.51.0.2.orig/ld/ldlang.c	2009-04-15 13:09:53.000000000 +0100
+--- ./ld/ldlang.c	2009-04-15 13:10:01.000000000 +0100
 ***************
 *** 1,6 ****
   /* Linker command language support.
@@ -2211,9 +2210,9 @@ diff -rcp ../binutils-2.19.51.0.2.15/ld/ldlang.c ./ld/ldlang.c
   }
   
   /* Add a new program header.  This is called for each entry in a PHDRS
-diff -rcp ../binutils-2.19.51.0.2.15/ld/ldlang.h ./ld/ldlang.h
-*** ../binutils-2.19.51.0.2.15/ld/ldlang.h	2009-03-02 14:04:53.000000000 +0000
---- ./ld/ldlang.h	2009-03-05 12:20:26.000000000 +0000
+diff -rcp ../binutils-2.19.51.0.2.orig/ld/ldlang.h ./ld/ldlang.h
+*** ../binutils-2.19.51.0.2.orig/ld/ldlang.h	2009-04-15 13:09:52.000000000 +0100
+--- ./ld/ldlang.h	2009-04-15 13:10:01.000000000 +0100
 ***************
 *** 1,6 ****
   /* ldlang.h - linker command language support
@@ -2242,9 +2241,9 @@ diff -rcp ../binutils-2.19.51.0.2.15/ld/ldlang.h ./ld/ldlang.h
   extern void lang_add_data
     (int type, union etree_union *);
   extern void lang_add_reloc
-diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-dis.c ./opcodes/ppc-dis.c
-*** ../binutils-2.19.51.0.2.15/opcodes/ppc-dis.c	2009-03-02 14:04:59.000000000 +0000
---- ./opcodes/ppc-dis.c	2009-03-05 12:20:26.000000000 +0000
+diff -rcp ../binutils-2.19.51.0.2.orig/opcodes/ppc-dis.c ./opcodes/ppc-dis.c
+*** ../binutils-2.19.51.0.2.orig/opcodes/ppc-dis.c	2009-04-15 13:09:53.000000000 +0100
+--- ./opcodes/ppc-dis.c	2009-04-15 13:10:01.000000000 +0100
 *************** powerpc_init_dialect (struct disassemble
 *** 112,119 ****
   
@@ -2265,9 +2264,9 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-dis.c ./opcodes/ppc-dis.c
   
     if (info->disassembler_options
         && strstr (info->disassembler_options, "vsx") != NULL)
-diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
-*** ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c	2009-03-02 14:05:00.000000000 +0000
---- ./opcodes/ppc-opc.c	2009-03-05 12:20:26.000000000 +0000
+diff -rcp ../binutils-2.19.51.0.2.orig/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
+*** ../binutils-2.19.51.0.2.orig/opcodes/ppc-opc.c	2009-04-15 13:09:53.000000000 +0100
+--- ./opcodes/ppc-opc.c	2009-04-15 13:11:26.000000000 +0100
 ***************
 *** 1,6 ****
   /* ppc-opc.c -- PowerPC opcode list
@@ -2505,8 +2504,22 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   #define PPC32	PPC_OPCODE_32 | PPC_OPCODE_PPC
   #define PPC64	PPC_OPCODE_64 | PPC_OPCODE_PPC
 *************** const struct powerpc_opcode powerpc_opco
+*** 3377,3382 ****
+--- 3464,3474 ----
+  
+  {"isellt",	X(31,15),	X_MASK,      PPCISEL,	PPCNONE,	{RT, RA, RB}},
+  
++ {"tlbilxlpid",	XTO(31,18,0),	XTO_MASK,    E500MC,	PPCNONE,	{0}},
++ {"tlbilxpid",	XTO(31,18,1),	XTO_MASK,    E500MC,	PPCNONE,	{0}},
++ {"tlbilxva",	XTO(31,18,3),	XTO_MASK,    E500MC,	PPCNONE,	{RA0, RB}},
++ {"tlbilx",	X(31,18),	X_MASK,      E500MC,	PPCNONE,	{T, RA0, RB}},
++ 
+  {"mfcr",	XFXM(31,19,0,0), XRARB_MASK, COM,	POWER4,		{RT}},
+  {"mfcr",	XFXM(31,19,0,0), XFXFXM_MASK, POWER4,	PPCNONE,	{RT, FXM4}},
+  {"mfocrf",	XFXM(31,19,0,1), XFXFXM_MASK, COM,	PPCNONE,	{RT, FXM}},
+*************** const struct powerpc_opcode powerpc_opco
 *** 3425,3430 ****
---- 3512,3519 ----
+--- 3517,3524 ----
   
   {"lvewx",	X(31,71),	X_MASK,      PPCVEC,	PPCNONE,	{VD, RA, RB}},
   
@@ -2517,7 +2530,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   {"isel",	XISEL(31,15),	XISEL_MASK,  PPCISEL,	PPCNONE,	{RT, RA, RB, CRB}},
 *************** const struct powerpc_opcode powerpc_opco
 *** 3434,3439 ****
---- 3523,3530 ----
+--- 3528,3535 ----
   {"subf.",	XO(31,40,0,1),	XO_MASK,     PPC,	PPCNONE,	{RT, RA, RB}},
   {"sub.",	XO(31,40,0,1),	XO_MASK,     PPC,	PPCNONE,	{RT, RB, RA}},
   
@@ -2535,7 +2548,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   
   {"dcbstep",	XRT(31,63,0),	XRT_MASK,    E500MC,	PPCNONE,	{RA, RB}},
   
---- 3538,3546 ----
+--- 3543,3551 ----
   {"andc",	XRC(31,60,0),	X_MASK,      COM,	PPCNONE,	{RA, RS, RB}},
   {"andc.",	XRC(31,60,1),	X_MASK,      COM,	PPCNONE,	{RA, RS, RB}},
   
@@ -2547,7 +2560,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   
 *************** const struct powerpc_opcode powerpc_opco
 *** 3501,3506 ****
---- 3594,3601 ----
+--- 3599,3606 ----
   
   {"mtsrdin",	X(31,114),	XRA_MASK,    PPC64,	PPCNONE,	{RS, RB}},
   
@@ -2571,7 +2584,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   {"dcbtstep",	XRT(31,255,0),	X_MASK,      E500MC,	PPCNONE,	{RT, RA, RB}},
   
   {"mfdcrx",	X(31,259),	X_MASK,      BOOKE,	PPCNONE,	{RS, RA}},
---- 3731,3747 ----
+--- 3736,3752 ----
   {"mtsrin",	X(31,242),	XRA_MASK,    PPC32,	PPCNONE,	{RS, RB}},
   {"mtsri",	X(31,242),	XRA_MASK,    POWER32,	PPCNONE,	{RS, RB}},
   
@@ -2601,7 +2614,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   {"eqv",		XRC(31,284,0),	X_MASK,      COM,	PPCNONE,	{RA, RS, RB}},
   {"eqv.",	XRC(31,284,1),	X_MASK,      COM,	PPCNONE,	{RA, RS, RB}},
   
---- 3766,3779 ----
+--- 3771,3784 ----
   {"lscbx",	XRC(31,277,0),	X_MASK,      M601,	PPCNONE,	{RT, RA, RB}},
   {"lscbx.",	XRC(31,277,1),	X_MASK,      M601,	PPCNONE,	{RT, RA, RB}},
   
@@ -2618,7 +2631,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   
 *************** const struct powerpc_opcode powerpc_opco
 *** 3685,3690 ****
---- 3788,3795 ----
+--- 3793,3800 ----
   
   {"lhzux",	X(31,311),	X_MASK,      COM,	PPCNONE,	{RT, RAL, RB}},
   
@@ -2629,7 +2642,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   
 *************** const struct powerpc_opcode powerpc_opco
 *** 3729,3734 ****
---- 3834,3841 ----
+--- 3839,3846 ----
   {"div",		XO(31,331,0,0),	XO_MASK,     M601,	PPCNONE,	{RT, RA, RB}},
   {"div.",	XO(31,331,0,1),	XO_MASK,     M601,	PPCNONE,	{RT, RA, RB}},
   
@@ -2647,7 +2660,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   
   {"lwaux",	X(31,373),	X_MASK,      PPC64,	PPCNONE,	{RT, RAL, RB}},
   
---- 4042,4048 ----
+--- 4047,4053 ----
   
   {"mftbl",	XSPR(31,371,268), XSPR_MASK, CLASSIC,	PPCNONE,	{RT}},
   {"mftbu",	XSPR(31,371,269), XSPR_MASK, CLASSIC,	PPCNONE,	{RT}},
@@ -2657,7 +2670,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   
 *************** const struct powerpc_opcode powerpc_opco
 *** 3943,3953 ****
---- 4050,4067 ----
+--- 4055,4072 ----
   
   {"lhaux",	X(31,375),	X_MASK,      COM,	PPCNONE,	{RT, RAL, RB}},
   
@@ -2678,7 +2691,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   {"slbmte",	X(31,402),	XRA_MASK,    PPC64,	PPCNONE,	{RS, RB}},
 *************** const struct powerpc_opcode powerpc_opco
 *** 3961,3966 ****
---- 4075,4085 ----
+--- 4080,4090 ----
   
   {"mtdcrux",	X(31,419),	X_MASK,      PPC464,	PPCNONE,	{RA, RS}},
   
@@ -2701,7 +2714,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   
   {"lbdx",	X(31,515),	X_MASK,      E500MC,	PPCNONE,	{RT, RA, RB}},
   
---- 4321,4331 ----
+--- 4326,4336 ----
   
   {"cli",		X(31,502),	XRB_MASK,    POWER,	PPCNONE,	{RT, RA}},
   
@@ -2722,7 +2735,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   
   {"lswx",	X(31,533),	X_MASK,      PPCCOM,	PPCNONE,	{RT, RA0, RB}},
   {"lsx",		X(31,533),	X_MASK,      PWRCOM,	PPCNONE,	{RT, RA, RB}},
---- 4348,4354 ----
+--- 4353,4359 ----
   
   {"clcs",	X(31,531),	XRB_MASK,    M601,	PPCNONE,	{RT, RA}},
   
@@ -2732,7 +2745,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   {"lsx",		X(31,533),	X_MASK,      PWRCOM,	PPCNONE,	{RT, RA, RB}},
 *************** const struct powerpc_opcode powerpc_opco
 *** 4271,4276 ****
---- 4392,4399 ----
+--- 4397,4404 ----
   
   {"lwfcmux",	APU(31,583,0), 	APU_MASK,    PPC405,	PPCNONE,	{FCRT, RA, RB}},
   
@@ -2751,7 +2764,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   
   {"lddx",	X(31,611),	X_MASK,      E500MC,	PPCNONE,	{RT, RA, RB}},
   
---- 4407,4414 ----
+--- 4412,4419 ----
   
   {"lfdx",	X(31,599),	X_MASK,      COM,	PPCNONE,	{FRT, RA0, RB}},
   
@@ -2762,7 +2775,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   
 *************** const struct powerpc_opcode powerpc_opco
 *** 4297,4302 ****
---- 4420,4427 ----
+--- 4425,4432 ----
   {"mulo",	XO(31,107,1,0),	XO_MASK,     M601,	PPCNONE,	{RT, RA, RB}},
   {"mulo.",	XO(31,107,1,1),	XO_MASK,     M601,	PPCNONE,	{RT, RA, RB}},
   
@@ -2780,7 +2793,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   
   {"stswx",	X(31,661),	X_MASK,      PPCCOM,	PPCNONE,	{RS, RA0, RB}},
   {"stsx",	X(31,661),	X_MASK,      PWRCOM,	PPCNONE,	{RS, RA0, RB}},
---- 4445,4451 ----
+--- 4450,4456 ----
   
   {"mfsrin",	X(31,659),	XRA_MASK,    PPC32,	PPCNONE,	{RT, RB}},
   
@@ -2790,7 +2803,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   {"stsx",	X(31,661),	X_MASK,      PWRCOM,	PPCNONE,	{RS, RA0, RB}},
 *************** const struct powerpc_opcode powerpc_opco
 *** 4341,4346 ****
---- 4466,4473 ----
+--- 4471,4478 ----
   {"stvrx",	X(31,679),	X_MASK,      CELL,	PPCNONE,	{VS, RA0, RB}},
   {"sthfcmux",	APU(31,679,0), 	APU_MASK,    PPC405,	PPCNONE,	{FCRT, RA, RB}},
   
@@ -2801,7 +2814,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   {"sriq",	XRC(31,696,0),	X_MASK,      M601,	PPCNONE,	{RA, RS, SH}},
 *************** const struct powerpc_opcode powerpc_opco
 *** 4350,4355 ****
---- 4477,4484 ----
+--- 4482,4489 ----
   
   {"stwfcmux",	APU(31,711,0), 	APU_MASK,    PPC405,	PPCNONE,	{FCRT, RA, RB}},
   
@@ -2812,7 +2825,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   {"subfzeo.",	XO(31,200,1,1),	XORB_MASK,   PPCCOM,	PPCNONE,	{RT, RA}},
 *************** const struct powerpc_opcode powerpc_opco
 *** 4363,4368 ****
---- 4492,4499 ----
+--- 4497,4504 ----
   {"stswi",	X(31,725),	X_MASK,      PPCCOM,	PPCNONE,	{RS, RA0, NB}},
   {"stsi",	X(31,725),	X_MASK,      PWRCOM,	PPCNONE,	{RS, RA0, NB}},
   
@@ -2836,7 +2849,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   {"subfmeo",	XO(31,232,1,0),	XORB_MASK,   PPCCOM,	PPCNONE,	{RT, RA}},
   {"sfmeo",	XO(31,232,1,0),	XORB_MASK,   PWRCOM,	PPCNONE,	{RT, RA}},
   {"subfmeo.",	XO(31,232,1,1),	XORB_MASK,   PPCCOM,	PPCNONE,	{RT, RA}},
---- 4502,4516 ----
+--- 4507,4521 ----
   {"sreq",	XRC(31,729,0),	X_MASK,      M601,	PPCNONE,	{RA, RS, RB}},
   {"sreq.",	XRC(31,729,1),	X_MASK,      M601,	PPCNONE,	{RA, RS, RB}},
   
@@ -2853,18 +2866,17 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   {"sfmeo",	XO(31,232,1,0),	XORB_MASK,   PWRCOM,	PPCNONE,	{RT, RA}},
   {"subfmeo.",	XO(31,232,1,1),	XORB_MASK,   PPCCOM,	PPCNONE,	{RT, RA}},
 *************** const struct powerpc_opcode powerpc_opco
-*** 4415,4420 ****
---- 4548,4555 ----
+*** 4415,4432 ****
   {"addo.",	XO(31,266,1,1),	XO_MASK,     PPCCOM,	PPCNONE,	{RT, RA, RB}},
   {"caxo.",	XO(31,266,1,1),	XO_MASK,     PWRCOM,	PPCNONE,	{RT, RA, RB}},
   
-+ {"lxvw4x",	X(31,780),	XX1_MASK,    PPCVSX,	PPCNONE,	{XT6, RA, RB}},
-+ 
   {"tlbivax",	X(31,786),	XRT_MASK,    BOOKE,	PPCNONE,	{RA, RB}},
-  {"tlbilx",	X(31,787),	X_MASK,      E500MC,	PPCNONE,	{T, RA0, RB}},
-  {"tlbilxlpid",	XTO(31,787,0),	XTO_MASK,    E500MC,	PPCNONE,	{0}},
-*************** const struct powerpc_opcode powerpc_opco
-*** 4425,4432 ****
+- {"tlbilx",	X(31,787),	X_MASK,      E500MC,	PPCNONE,	{T, RA0, RB}},
+- {"tlbilxlpid",	XTO(31,787,0),	XTO_MASK,    E500MC,	PPCNONE,	{0}},
+- {"tlbilxpid",	XTO(31,787,1),	XTO_MASK,    E500MC,	PPCNONE,	{0}},
+- {"tlbilxva",	XTO(31,787,3),	XTO_MASK,    E500MC,	PPCNONE,	{RA0, RB}},
+  
+  {"lwzcix",	X(31,789),	X_MASK,      POWER6,	PPCNONE,	{RT, RA0, RB}},
   
   {"lhbrx",	X(31,790),	X_MASK,      COM,	PPCNONE,	{RT, RA0, RB}},
   
@@ -2873,7 +2885,15 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   
   {"sraw",	XRC(31,792,0),	X_MASK,      PPCCOM,	PPCNONE,	{RA, RS, RB}},
   {"sra",		XRC(31,792,0),	X_MASK,      PWRCOM,	PPCNONE,	{RA, RS, RB}},
---- 4560,4567 ----
+--- 4553,4568 ----
+  {"addo.",	XO(31,266,1,1),	XO_MASK,     PPCCOM,	PPCNONE,	{RT, RA, RB}},
+  {"caxo.",	XO(31,266,1,1),	XO_MASK,     PWRCOM,	PPCNONE,	{RT, RA, RB}},
+  
++ {"lxvw4x",	X(31,780),	XX1_MASK,    PPCVSX,	PPCNONE,	{XT6, RA, RB}},
++ 
+  {"tlbivax",	X(31,786),	XRT_MASK,    BOOKE,	PPCNONE,	{RA, RB}},
+  
+  {"lwzcix",	X(31,789),	X_MASK,      POWER6,	PPCNONE,	{RT, RA0, RB}},
   
   {"lhbrx",	X(31,790),	X_MASK,      COM,	PPCNONE,	{RT, RA0, RB}},
   
@@ -2884,7 +2904,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   {"sra",		XRC(31,792,0),	X_MASK,      PWRCOM,	PPCNONE,	{RA, RS, RB}},
 *************** const struct powerpc_opcode powerpc_opco
 *** 4440,4445 ****
---- 4575,4582 ----
+--- 4576,4583 ----
   
   {"lvrxl",	X(31,807),	X_MASK,      CELL,	PPCNONE,	{VD, RA0, RB}},
   
@@ -2895,7 +2915,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   {"lhzcix",	X(31,821),	X_MASK,      POWER6,	PPCNONE,	{RT, RA0, RB}},
 *************** const struct powerpc_opcode powerpc_opco
 *** 4480,4488 ****
---- 4617,4634 ----
+--- 4618,4635 ----
   
   {"ldcix",	X(31,885),	X_MASK,      POWER6,	PPCNONE,	{RT, RA0, RB}},
   
@@ -2924,7 +2944,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   
   {"sraq",	XRC(31,920,0),	X_MASK,      M601,	PPCNONE,	{RA, RS, RB}},
   {"sraq.",	XRC(31,920,1),	X_MASK,      M601,	PPCNONE,	{RA, RS, RB}},
---- 4638,4645 ----
+--- 4639,4646 ----
   
   {"sthbrx",	X(31,918),	X_MASK,      COM,	PPCNONE,	{RS, RA0, RB}},
   
@@ -2935,7 +2955,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   {"sraq.",	XRC(31,920,1),	X_MASK,      M601,	PPCNONE,	{RA, RS, RB}},
 *************** const struct powerpc_opcode powerpc_opco
 *** 4510,4515 ****
---- 4656,4668 ----
+--- 4657,4669 ----
   
   {"stvrxl",	X(31,935),	X_MASK,      CELL,	PPCNONE,	{VS, RA0, RB}},
   
@@ -2963,7 +2983,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   {"ld",		DSO(58,0),	DS_MASK,     PPC64,	PPCNONE,	{RT, DS, RA0}},
   {"ldu",		DSO(58,1),	DS_MASK,     PPC64,	PPCNONE,	{RT, DS, RAL}},
   {"lwa",		DSO(58,2),	DS_MASK,     PPC64,	PPCNONE,	{RT, DS, RA0}},
---- 4801,4812 ----
+--- 4802,4813 ----
   
   {"psq_l",	OP(56),		OP_MASK,     PPCPS,	PPCNONE,	{FRT,PSD,RA,PSW,PSQ}},
   
@@ -2992,7 +3012,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   
   {"fmsubs",	A(59,28,0),	A_MASK,      PPC,	PPCNONE,	{FRT, FRA, FRC, FRB}},
   {"fmsubs.",	A(59,28,1),	A_MASK,      PPC,	PPCNONE,	{FRT, FRA, FRC, FRB}},
---- 4829,4846 ----
+--- 4830,4847 ----
   {"fsqrts",	A(59,22,0),    AFRAFRC_MASK, PPC,	PPCNONE,	{FRT, FRB}},
   {"fsqrts.",	A(59,22,1),    AFRAFRC_MASK, PPC,	PPCNONE,	{FRT, FRB}},
   
@@ -3041,7 +3061,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   {"std",		DSO(62,0),	DS_MASK,     PPC64,	PPCNONE,	{RS, DS, RA0}},
   {"stdu",	DSO(62,1),	DS_MASK,     PPC64,	PPCNONE,	{RS, DS, RAS}},
   {"stq",		DSO(62,2),	DS_MASK,     POWER4,	PPCNONE,	{RSQ, DS, RA0}},
---- 4906,5078 ----
+--- 4907,5079 ----
   {"drsp",	XRC(59,770,0),	X_MASK,      POWER6,	PPCNONE,	{FRT, FRB}},
   {"drsp.",	XRC(59,770,1),	X_MASK,      POWER6,	PPCNONE,	{FRT, FRB}},
   
@@ -3233,7 +3253,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   
   {"fmsub",	A(63,28,0),	A_MASK,      PPCCOM,	PPCNONE,	{FRT, FRA, FRC, FRB}},
   {"fms",		A(63,28,0),	A_MASK,      PWRCOM,	PPCNONE,	{FRT, FRA, FRC, FRB}},
---- 5122,5141 ----
+--- 5123,5142 ----
   {"fsel",	A(63,23,0),	A_MASK,      PPC,	PPCNONE,	{FRT, FRA, FRC, FRB}},
   {"fsel.",	A(63,23,1),	A_MASK,      PPC,	PPCNONE,	{FRT, FRA, FRC, FRB}},
   
@@ -3256,7 +3276,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   {"fms",		A(63,28,0),	A_MASK,      PWRCOM,	PPCNONE,	{FRT, FRA, FRC, FRB}},
 *************** const struct powerpc_opcode powerpc_opco
 *** 4885,4890 ****
---- 5191,5198 ----
+--- 5192,5199 ----
   {"drintxq",	ZRC(63,99,0),	Z2_MASK,     POWER6,	PPCNONE,	{R, FRT, FRB, RMC}},
   {"drintxq.",	ZRC(63,99,1),	Z2_MASK,     POWER6,	PPCNONE,	{R, FRT, FRB, RMC}},
   
@@ -3267,7 +3287,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   {"mtfsfi",  XRC(63,134,0), XRA_MASK|(3<<21)|(1<<11), COM, POWER6,	{BFF, U}},
 *************** const struct powerpc_opcode powerpc_opco
 *** 4895,4900 ****
---- 5203,5215 ----
+--- 5204,5216 ----
   {"fnabs",	XRC(63,136,0),	XRA_MASK,    COM,	PPCNONE,	{FRT, FRB}},
   {"fnabs.",	XRC(63,136,1),	XRA_MASK,    COM,	PPCNONE,	{FRT, FRB}},
   
@@ -3283,7 +3303,7 @@ diff -rcp ../binutils-2.19.51.0.2.15/opcodes/ppc-opc.c ./opcodes/ppc-opc.c
   {"dtstdgq",	Z(63,226),	Z_MASK,      POWER6,	PPCNONE,	{BF, FRA, DGM}},
 *************** const struct powerpc_opcode powerpc_opco
 *** 4965,4970 ****
---- 5280,5293 ----
+--- 5281,5294 ----
   {"diexq",	XRC(63,866,0),	X_MASK,      POWER6,	PPCNONE,	{FRT, FRA, FRB}},
   {"diexq.",	XRC(63,866,1),	X_MASK,      POWER6,	PPCNONE,	{FRT, FRA, FRB}},
   

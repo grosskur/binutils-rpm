@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.19.51.0.2
-Release: 17%{?dist}
+Release: 18%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -347,6 +347,9 @@ fi
 %endif # %{isnative}
 
 %changelog
+* Wed Apr 15 2009 Nick Clifton <nickc@redhat.com> 2.19.51.0.2-18
+- Update IBM Power 7 support patch to fix tlbilx opcode.  (BZ 494718)
+
 * Tue Mar 17 2009 Nick Clifton <nickc@redhat.com> 2.19.51.0.2-17
 - Add glibc-static to BuildRequires when running the testsuite.
 
