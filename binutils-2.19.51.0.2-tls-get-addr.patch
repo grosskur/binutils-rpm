@@ -1,0 +1,40 @@
+diff -rcp ../copy-of-build-sources/bfd/elf32-i386.c bfd/elf32-i386.c
+*** ../copy-of-build-sources/bfd/elf32-i386.c	2009-05-27 12:09:07.000000000 +0100
+--- bfd/elf32-i386.c	2009-05-27 12:00:10.000000000 +0100
+*************** elf_i386_check_tls_transition (bfd *abfd
+*** 1024,1030 ****
+  	      && h->root.root.string != NULL
+  	      && (ELF32_R_TYPE (rel[1].r_info) == R_386_PC32
+  		  || ELF32_R_TYPE (rel[1].r_info) == R_386_PLT32)
+! 	      && (strcmp (h->root.root.string, "___tls_get_addr") == 0));
+  
+      case R_386_TLS_IE:
+        /* Check transition from IE access model:
+--- 1024,1030 ----
+  	      && h->root.root.string != NULL
+  	      && (ELF32_R_TYPE (rel[1].r_info) == R_386_PC32
+  		  || ELF32_R_TYPE (rel[1].r_info) == R_386_PLT32)
+! 	      && CONST_STRNEQ (h->root.root.string, "___tls_get_addr"));
+  
+      case R_386_TLS_IE:
+        /* Check transition from IE access model:
+diff -rcp ../copy-of-build-sources/bfd/elf64-x86-64.c bfd/elf64-x86-64.c
+*** ../copy-of-build-sources/bfd/elf64-x86-64.c	2009-05-27 12:09:28.000000000 +0100
+--- bfd/elf64-x86-64.c	2009-05-27 12:00:27.000000000 +0100
+*************** elf64_x86_64_check_tls_transition (bfd *
+*** 833,839 ****
+  	      && h->root.root.string != NULL
+  	      && (ELF64_R_TYPE (rel[1].r_info) == R_X86_64_PC32
+  		  || ELF64_R_TYPE (rel[1].r_info) == R_X86_64_PLT32)
+! 	      && (strcmp (h->root.root.string, "__tls_get_addr") == 0));
+  
+      case R_X86_64_GOTTPOFF:
+        /* Check transition from IE access model:
+--- 833,839 ----
+  	      && h->root.root.string != NULL
+  	      && (ELF64_R_TYPE (rel[1].r_info) == R_X86_64_PC32
+  		  || ELF64_R_TYPE (rel[1].r_info) == R_X86_64_PLT32)
+! 	      && CONST_STRNEQ (h->root.root.string, "__tls_get_addr"));
+  
+      case R_X86_64_GOTTPOFF:
+        /* Check transition from IE access model:

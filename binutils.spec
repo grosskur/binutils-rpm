@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.19.51.0.2
-Release: 18%{?dist}
+Release: 19%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -32,6 +32,7 @@ Patch06: binutils-2.19.50.0.1-set-long-long.patch
 Patch07: binutils-2.19.50.0.1-build-id.patch
 Patch08: binutils-2.19.51.0.2-ifunc.patch
 Patch09: binutils-2.19.51.0.2-IBM.patch
+Patch10: binutils-2.19.51.0.2-tls-get-addr.patch
 
 %if 0%{?_with_debug:1}
 # Define this if you want to skip the strip step and preserve debug info.
@@ -104,6 +105,7 @@ to consider using libelf instead of BFD.
 %patch07 -p0 -b .build-id~
 %patch08 -p1 -b .ifunc~
 %patch09 -p0 -b .IBM~
+%patch10 -p0 -b .tls-get-addr~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -347,6 +349,9 @@ fi
 %endif # %{isnative}
 
 %changelog
+* Wed May 27 2009 Nick Clifton <nickc@redhat.com> 2.19.51.0.2-19
+- Import fix for binutils PR #9938.  (BZ 500295)
+
 * Wed Apr 15 2009 Nick Clifton <nickc@redhat.com> 2.19.51.0.2-18
 - Update IBM Power 7 support patch to fix tlbilx opcode.  (BZ 494718)
 
