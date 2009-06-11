@@ -1,0 +1,39 @@
+diff -rcp ../copy-of-build-sources/bfd/opncls.c ./bfd/opncls.c
+*** ../copy-of-build-sources/bfd/opncls.c	2009-05-27 12:38:06.000000000 +0100
+--- ./bfd/opncls.c	2009-06-11 15:56:04.000000000 +0100
+*************** bfd_close (bfd *abfd)
+*** 681,687 ****
+      {
+        struct stat buf;
+  
+!       if (stat (abfd->filename, &buf) == 0)
+  	{
+  	  unsigned int mask = umask (0);
+  
+--- 681,688 ----
+      {
+        struct stat buf;
+  
+!       if (stat (abfd->filename, &buf) == 0
+! 	  && S_ISREG(buf.st_mode))
+  	{
+  	  unsigned int mask = umask (0);
+  
+*************** bfd_close_all_done (bfd *abfd)
+*** 734,740 ****
+      {
+        struct stat buf;
+  
+!       if (stat (abfd->filename, &buf) == 0)
+  	{
+  	  unsigned int mask = umask (0);
+  
+--- 735,742 ----
+      {
+        struct stat buf;
+  
+!       if (stat (abfd->filename, &buf) == 0
+! 	  && S_ISREG(buf.st_mode))
+  	{
+  	  unsigned int mask = umask (0);
+  

@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.19.51.0.2
-Release: 20%{?dist}
+Release: 21%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -34,6 +34,7 @@ Patch08: binutils-2.19.51.0.2-ifunc.patch
 Patch09: binutils-2.19.51.0.2-IBM.patch
 Patch10: binutils-2.19.51.0.2-tls-get-addr.patch
 Patch11: binutils-2.19.51.0.2-pr10255.patch
+Patch12: binutils-2.19.51.0.2-sisreg.patch
 
 %if 0%{?_with_debug:1}
 # Define this if you want to skip the strip step and preserve debug info.
@@ -108,6 +109,7 @@ to consider using libelf instead of BFD.
 %patch09 -p0 -b .IBM~
 %patch10 -p0 -b .tls-get-addr~
 %patch11 -p0 -b .pr10255~
+%patch12 -p0 -b .sisreg~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -351,6 +353,9 @@ fi
 %endif # %{isnative}
 
 %changelog
+* Thu Jun 11 2009 Nick Clifton <nickc@redhat.com> 2.19.51.0.2-21
+- Do not attempt to set execute permission on non-regular files.  (BZ 503426)
+
 * Tue Jun  9 2009 Jakub Jelinek <jakub@redhat.com> 2.19.51.0.2-20
 - Fix .cfi_* skip over >= 64KB of code.  (PR gas/10255)
 
