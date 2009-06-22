@@ -1,6 +1,6 @@
---- ../binutils-2.19/bfd/Makefile.am	2008-10-16 14:20:34.000000000 +0100
-+++ bfd/Makefile.am	2008-11-21 15:52:53.000000000 +0000
-@@ -994,12 +994,12 @@ bfdver.h: $(srcdir)/version.h $(srcdir)/
+--- ../binutils-2.19.51.0.10.orig/bfd/Makefile.am	2009-06-22 15:56:55.000000000 +0100
++++ ./bfd/Makefile.am	2009-06-22 16:13:31.000000000 +0100
+@@ -1038,12 +1038,12 @@ bfdver.h: $(srcdir)/version.h $(srcdir)/
  	report_bugs_to="\"$(REPORT_BUGS_TO)\"" ;\
  	if test "x$(RELEASE)" = x ; then \
  	  bfd_version_date=`sed -n -e 's/.*DATE //p' < $(srcdir)/version.h` ;\
@@ -16,9 +16,9 @@
  	    -e "s,@report_bugs_to@,$$report_bugs_to," \
  	    < $(srcdir)/version.h > $@; \
  	echo "$${bfd_soversion}" > libtool-soversion
---- ../binutils-2.19.50.0.1.orig/bfd/Makefile.in	2008-11-21 16:45:02.000000000 +0000
-+++ bfd/Makefile.in	2008-11-21 16:57:07.000000000 +0000
-@@ -1590,12 +1590,12 @@ bfdver.h: $(srcdir)/version.h $(srcdir)/
+--- ../binutils-2.19.51.0.10.orig/bfd/Makefile.in	2009-06-22 15:56:55.000000000 +0100
++++ ./bfd/Makefile.in	2009-06-22 16:13:31.000000000 +0100
+@@ -1639,12 +1639,12 @@ bfdver.h: $(srcdir)/version.h $(srcdir)/
  	report_bugs_to="\"$(REPORT_BUGS_TO)\"" ;\
  	if test "x$(RELEASE)" = x ; then \
  	  bfd_version_date=`sed -n -e 's/.*DATE //p' < $(srcdir)/version.h` ;\

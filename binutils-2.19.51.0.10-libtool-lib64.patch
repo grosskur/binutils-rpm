@@ -1,7 +1,7 @@
-diff -rup ../binutils-2.19.50.0.1.orig/bfd/configure ./bfd/configure
---- ../binutils-2.19.50.0.1.orig/bfd/configure	2008-11-21 16:45:02.000000000 +0000
-+++ ./bfd/configure	2008-11-21 16:49:02.000000000 +0000
-@@ -10487,10 +10487,34 @@ rm -f conftest.err conftest.$ac_objext \
+diff -rup ../binutils-2.19.51.0.10.orig/bfd/configure ./bfd/configure
+--- ../binutils-2.19.51.0.10.orig/bfd/configure	2009-06-22 15:56:55.000000000 +0100
++++ ./bfd/configure	2009-06-22 15:58:46.000000000 +0100
+@@ -10137,10 +10137,34 @@ fi
    # before this can be enabled.
    hardcode_into_libs=yes
  
@@ -37,10 +37,11 @@ diff -rup ../binutils-2.19.50.0.1.orig/bfd/configure ./bfd/configure
    fi
  
    # We used to test for /lib/ld.so.1 and disable shared libraries on
-diff -rup ../binutils-2.19.50.0.1.orig/binutils/configure ./binutils/configure
---- ../binutils-2.19.50.0.1.orig/binutils/configure	2008-11-21 16:45:00.000000000 +0000
-+++ ./binutils/configure	2008-11-21 16:49:40.000000000 +0000
-@@ -10318,10 +10318,34 @@ rm -f conftest.err conftest.$ac_objext \
+Only in ./bfd: configure.orig
+diff -rup ../binutils-2.19.51.0.10.orig/binutils/configure ./binutils/configure
+--- ../binutils-2.19.51.0.10.orig/binutils/configure	2009-06-22 15:56:54.000000000 +0100
++++ ./binutils/configure	2009-06-22 15:58:46.000000000 +0100
+@@ -10362,10 +10362,34 @@ fi
    # before this can be enabled.
    hardcode_into_libs=yes
  
@@ -76,10 +77,11 @@ diff -rup ../binutils-2.19.50.0.1.orig/binutils/configure ./binutils/configure
    fi
  
    # We used to test for /lib/ld.so.1 and disable shared libraries on
-diff -rup ../binutils-2.19.50.0.1.orig/gas/configure ./gas/configure
---- ../binutils-2.19.50.0.1.orig/gas/configure	2008-11-21 16:45:02.000000000 +0000
-+++ ./gas/configure	2008-11-21 16:50:18.000000000 +0000
-@@ -10316,10 +10316,34 @@ rm -f conftest.err conftest.$ac_objext \
+Only in ./binutils: configure.orig
+diff -rup ../binutils-2.19.51.0.10.orig/gas/configure ./gas/configure
+--- ../binutils-2.19.51.0.10.orig/gas/configure	2009-06-22 15:56:55.000000000 +0100
++++ ./gas/configure	2009-06-22 15:58:46.000000000 +0100
+@@ -10330,10 +10330,34 @@ fi
    # before this can be enabled.
    hardcode_into_libs=yes
  
@@ -115,10 +117,11 @@ diff -rup ../binutils-2.19.50.0.1.orig/gas/configure ./gas/configure
    fi
  
    # We used to test for /lib/ld.so.1 and disable shared libraries on
-diff -rup ../binutils-2.19.50.0.1.orig/gprof/configure ./gprof/configure
---- ../binutils-2.19.50.0.1.orig/gprof/configure	2008-11-21 16:45:00.000000000 +0000
-+++ ./gprof/configure	2008-11-21 16:50:42.000000000 +0000
-@@ -10407,10 +10407,34 @@ rm -f conftest.err conftest.$ac_objext \
+Only in ./gas: configure.orig
+diff -rup ../binutils-2.19.51.0.10.orig/gprof/configure ./gprof/configure
+--- ../binutils-2.19.51.0.10.orig/gprof/configure	2009-06-22 15:56:54.000000000 +0100
++++ ./gprof/configure	2009-06-22 15:58:46.000000000 +0100
+@@ -10422,10 +10422,34 @@ fi
    # before this can be enabled.
    hardcode_into_libs=yes
  
@@ -154,10 +157,11 @@ diff -rup ../binutils-2.19.50.0.1.orig/gprof/configure ./gprof/configure
    fi
  
    # We used to test for /lib/ld.so.1 and disable shared libraries on
-diff -rup ../binutils-2.19.50.0.1.orig/ld/configure ./ld/configure
---- ../binutils-2.19.50.0.1.orig/ld/configure	2008-11-21 16:45:00.000000000 +0000
-+++ ./ld/configure	2008-11-21 16:51:10.000000000 +0000
-@@ -10607,10 +10607,34 @@ rm -f conftest.err conftest.$ac_objext \
+Only in ./gprof: configure.orig
+diff -rup ../binutils-2.19.51.0.10.orig/ld/configure ./ld/configure
+--- ../binutils-2.19.51.0.10.orig/ld/configure	2009-06-22 15:56:54.000000000 +0100
++++ ./ld/configure	2009-06-22 15:58:46.000000000 +0100
+@@ -10622,10 +10622,34 @@ fi
    # before this can be enabled.
    hardcode_into_libs=yes
  
@@ -193,10 +197,11 @@ diff -rup ../binutils-2.19.50.0.1.orig/ld/configure ./ld/configure
    fi
  
    # We used to test for /lib/ld.so.1 and disable shared libraries on
-diff -rup ../binutils-2.19.50.0.1.orig/libtool.m4 ./libtool.m4
---- ../binutils-2.19.50.0.1.orig/libtool.m4	2008-11-21 16:45:00.000000000 +0000
-+++ ./libtool.m4	2008-11-21 16:51:35.000000000 +0000
-@@ -2470,10 +2470,30 @@ linux* | k*bsd*-gnu)
+Only in ./ld: configure.orig
+diff -rup ../binutils-2.19.51.0.10.orig/libtool.m4 ./libtool.m4
+--- ../binutils-2.19.51.0.10.orig/libtool.m4	2009-06-22 15:56:54.000000000 +0100
++++ ./libtool.m4	2009-06-22 15:58:46.000000000 +0100
+@@ -2475,10 +2475,30 @@ linux* | k*bsd*-gnu | kopensolaris*-gnu)
    # before this can be enabled.
    hardcode_into_libs=yes
  
@@ -228,10 +233,11 @@ diff -rup ../binutils-2.19.50.0.1.orig/libtool.m4 ./libtool.m4
    fi
  
    # We used to test for /lib/ld.so.1 and disable shared libraries on
-diff -rup ../binutils-2.19.50.0.1.orig/opcodes/configure ./opcodes/configure
---- ../binutils-2.19.50.0.1.orig/opcodes/configure	2008-11-21 16:45:00.000000000 +0000
-+++ ./opcodes/configure	2008-11-21 16:52:05.000000000 +0000
-@@ -10118,10 +10118,34 @@ rm -f conftest.err conftest.$ac_objext \
+Only in .: libtool.m4.orig
+diff -rup ../binutils-2.19.51.0.10.orig/opcodes/configure ./opcodes/configure
+--- ../binutils-2.19.51.0.10.orig/opcodes/configure	2009-06-22 15:56:54.000000000 +0100
++++ ./opcodes/configure	2009-06-22 15:58:46.000000000 +0100
+@@ -10132,10 +10132,34 @@ fi
    # before this can be enabled.
    hardcode_into_libs=yes
  
@@ -267,3 +273,4 @@ diff -rup ../binutils-2.19.50.0.1.orig/opcodes/configure ./opcodes/configure
    fi
  
    # We used to test for /lib/ld.so.1 and disable shared libraries on
+Only in ./opcodes: configure.orig
