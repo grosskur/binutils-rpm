@@ -16,8 +16,8 @@
 
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
-Version: 2.19.51.0.10
-Release: 22%{?dist}
+Version: 2.19.51.0.11
+Release: 23%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -344,6 +344,9 @@ fi
 %endif # %{isnative}
 
 %changelog
+* Tue Jun 30 2009 Nick Clifton <nickc@redhat.com> 2.19.51.0.11-23
+- Rebase sources on the 2.19.51.0.11 tarball.
+
 * Mon Jun 22 2009 Nick Clifton <nickc@redhat.com> 2.19.51.0.10-22
 - Rebase sources on the 2.19.51.0.10 tarball.
 
