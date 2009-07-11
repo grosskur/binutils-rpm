@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.19.51.0.11
-Release: 23%{?dist}
+Release: 24%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -46,7 +46,7 @@ BuildRequires: texinfo >= 4.0, gettext, flex, bison, zlib-devel
 # Required for: ld-bootstrap/bootstrap.exp bootstrap with --static
 # It should not be required for: ld-elf/elf.exp static {preinit,init,fini} array
 %if %{run_testsuite}
-BuildRequires: dejagnu, zlib-static, glibc-static
+BuildRequires: dejagnu, zlib-static, glibc-static, sharutils
 %endif
 Conflicts: gcc-c++ < 4.0.0
 Requires(post): /sbin/install-info
@@ -176,10 +176,17 @@ make %{_smp_mflags} tooldir=%{_prefix} info
 %if !%{run_testsuite}
 echo ====================TESTSUITE DISABLED=========================
 %else
-make -k check < /dev/null > check.log 2>&1 || :
+make -k check < /dev/null || :
 echo ====================TESTING=========================
-cat check.log
+cat {gas/testsuite/gas,ld/ld,binutils/binutils}.sum
 echo ====================TESTING END=====================
+for file in {gas/testsuite/gas,ld/ld,binutils/binutils}.{sum,log}
+do
+  ln $file binutils-%{_target_platform}-$(basename $file) || :
+done
+tar cjf binutils-%{_target_platform}.tar.bz2 binutils-%{_target_platform}-*.{sum,log}
+uuencode binutils-%{_target_platform}.tar.bz2 binutils-%{_target_platform}.tar.bz2
+rm -f binutils-%{_target_platform}.tar.bz2 binutils-%{_target_platform}-*.{sum,log}
 %endif
 
 %install
@@ -344,6 +351,9 @@ fi
 %endif # %{isnative}
 
 %changelog
+* Sat Jul 11 2009 Jan Kratochvil <jan.kratochvil@redhat.com> 2.19.51.0.11-24
+- Provide uuencode output of the testsuite results.
+
 * Tue Jun 30 2009 Nick Clifton <nickc@redhat.com> 2.19.51.0.11-23
 - Rebase sources on the 2.19.51.0.11 tarball.
 
