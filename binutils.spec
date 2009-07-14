@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.19.51.0.11
-Release: 24%{?dist}
+Release: 25%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -351,6 +351,9 @@ fi
 %endif # %{isnative}
 
 %changelog
+* Tue Jul 14 2009 Nick Clifton <nickc@redhat.com> 2.19.51.0.11-25
+- Fix build-id patch to avoid memory corruption.  (BZ 501582)
+
 * Sat Jul 11 2009 Jan Kratochvil <jan.kratochvil@redhat.com> 2.19.51.0.11-24
 - Provide uuencode output of the testsuite results.
 
