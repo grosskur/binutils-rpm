@@ -16,8 +16,8 @@
 
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
-Version: 2.19.51.0.11
-Release: 27%{?dist}
+Version: 2.19.51.0.13
+Release: 28%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -30,7 +30,6 @@ Patch04: binutils-2.19.51.0.10-envvar-revert.patch
 Patch05: binutils-2.19.51.0.10-version.patch
 Patch06: binutils-2.19.51.0.10-set-long-long.patch
 Patch07: binutils-2.19.51.0.10-build-id.patch
-Patch08: binutils-2.19.51.0.11-orphan-section-placement.patch
 Patch09: binutils-2.19.51.0.11-moxie.patch
 
 %if 0%{?_with_debug:1}
@@ -103,7 +102,6 @@ to consider using libelf instead of BFD.
 %patch05 -p0 -b .version~
 %patch06 -p0 -b .set-long-long~
 %patch07 -p0 -b .build-id~
-%patch08 -p0 -b .orphan-section-placement~
 %patch09 -p0 -b .moxie~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
@@ -355,6 +353,9 @@ fi
 %endif # %{isnative}
 
 %changelog
+* Wed Jul 22 2009 Nick Clifton <nickc@redhat.com> 2.19.51.0.11-28
+- Rebase sources on 2.19.51.0.113 tarball.  Remove redundant orphan section placement patch. (BZ 512937)
+
 * Tue Jul 14 2009 Nick Clifton <nickc@redhat.com> 2.19.51.0.11-27
 - Add patch to allow moxie target to build, and hence --enable-targets=all to work.
 
