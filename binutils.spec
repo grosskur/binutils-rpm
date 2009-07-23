@@ -16,8 +16,8 @@
 
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
-Version: 2.19.51.0.13
-Release: 28%{?dist}
+Version: 2.19.51.0.14
+Release: 29%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -354,7 +354,10 @@ fi
 
 %changelog
 * Wed Jul 22 2009 Nick Clifton <nickc@redhat.com> 2.19.51.0.11-28
-- Rebase sources on 2.19.51.0.113 tarball.  Remove redundant orphan section placement patch. (BZ 512937)
+- Rebase sources on 2.19.51.0.14 tarball.  Gain fixes for PRs 10429 and 10433.
+
+* Wed Jul 22 2009 Nick Clifton <nickc@redhat.com> 2.19.51.0.11-28
+- Rebase sources on 2.19.51.0.13 tarball.  Remove redundant orphan section placement patch. (BZ 512937)
 
 * Tue Jul 14 2009 Nick Clifton <nickc@redhat.com> 2.19.51.0.11-27
 - Add patch to allow moxie target to build, and hence --enable-targets=all to work.
