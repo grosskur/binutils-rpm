@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.19.51.0.14
-Release: 29%{?dist}
+Release: 30%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -353,6 +353,9 @@ fi
 %endif # %{isnative}
 
 %changelog
+* Fri Jul 24 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.19.51.0.14-30
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
+
 * Wed Jul 22 2009 Nick Clifton <nickc@redhat.com> 2.19.51.0.11-28
 - Rebase sources on 2.19.51.0.14 tarball.  Gain fixes for PRs 10429 and 10433.
 
