@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.19.51.0.14
-Release: 30%{?dist}
+Release: 31%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -31,6 +31,7 @@ Patch05: binutils-2.19.51.0.10-version.patch
 Patch06: binutils-2.19.51.0.10-set-long-long.patch
 Patch07: binutils-2.19.51.0.10-build-id.patch
 Patch09: binutils-2.19.51.0.11-moxie.patch
+Patch10: binutils-2.19.51.0.14-unique-is-global.patch
 
 %if 0%{?_with_debug:1}
 # Define this if you want to skip the strip step and preserve debug info.
@@ -103,6 +104,7 @@ to consider using libelf instead of BFD.
 %patch06 -p0 -b .set-long-long~
 %patch07 -p0 -b .build-id~
 %patch09 -p0 -b .moxie~
+%patch10 -p0 -b .unique-is-global~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -353,6 +355,9 @@ fi
 %endif # %{isnative}
 
 %changelog
+* Thu Aug  6 2009 Jakub Jelinek <jakub@redhat.com> 2.19.51.0.14-31
+- Fix strip on objects with STB_GNU_UNIQUE symbols. (BZ 515700, PR binutils/10492)
+
 * Fri Jul 24 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.19.51.0.14-30
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
 
