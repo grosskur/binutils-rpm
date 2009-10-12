@@ -1,6 +1,5 @@
-diff -rup ../binutils-2.19.51.0.10.orig/ld/ldmain.c ./ld/ldmain.c
---- ../binutils-2.19.51.0.10.orig/ld/ldmain.c	2009-06-22 15:56:54.000000000 +0100
-+++ ./ld/ldmain.c	2009-06-22 16:05:54.000000000 +0100
+--- ../binutils-2.20.51.0.2.orig/ld/ldmain.c	2009-10-12 11:28:44.000000000 +0100
++++ ld/ldmain.c	2009-10-12 11:38:36.000000000 +0100
 @@ -256,14 +256,6 @@ main (int argc, char **argv)
    command_line.warn_search_mismatch = TRUE;
    command_line.check_section_addresses = -1;
@@ -16,10 +15,9 @@ diff -rup ../binutils-2.19.51.0.10.orig/ld/ldmain.c ./ld/ldmain.c
    /* We initialize DEMANGLING based on the environment variable
       COLLECT_NO_DEMANGLE.  The gcc collect2 program will demangle the
       output of the linker, unless COLLECT_NO_DEMANGLE is set in the
-diff -rup ../binutils-2.19.51.0.10.orig/ld/ld.texinfo ./ld/ld.texinfo
---- ../binutils-2.19.51.0.10.orig/ld/ld.texinfo	2009-06-22 15:56:53.000000000 +0100
-+++ ./ld/ld.texinfo	2009-06-22 16:05:42.000000000 +0100
-@@ -1118,10 +1118,7 @@ for a library that satisfies a symbol re
+--- ../binutils-2.20.51.0.2.orig/ld/ld.texinfo	2009-10-12 11:28:44.000000000 +0100
++++ ld/ld.texinfo	2009-10-12 11:38:36.000000000 +0100
+@@ -1140,10 +1140,7 @@ for a library that satisfies a symbol re
  which is undefined at the point that the library was linked, or, if
  the library is not found in the DT_NEEDED lists of other libraries
  linked up to that point, a reference from another dynamic library.
@@ -31,7 +29,7 @@ diff -rup ../binutils-2.19.51.0.10.orig/ld/ld.texinfo ./ld/ld.texinfo
  
  @kindex --add-needed
  @kindex --no-add-needed
-@@ -1185,21 +1182,14 @@ When creating a shared library, bind ref
+@@ -1207,21 +1204,14 @@ When creating a shared library, bind ref
  definition within the shared library, if any.  Normally, it is possible
  for a program linked against a shared library to override the definition
  within the shared library.  This option is only meaningful on ELF
@@ -55,10 +53,9 @@ diff -rup ../binutils-2.19.51.0.10.orig/ld/ld.texinfo ./ld/ld.texinfo
  
  @kindex --dynamic-list=@var{dynamic-list-file}
  @item --dynamic-list=@var{dynamic-list-file}
-diff -rup ../binutils-2.19.51.0.10.orig/ld/NEWS ./ld/NEWS
---- ../binutils-2.19.51.0.10.orig/ld/NEWS	2009-06-22 15:56:54.000000000 +0100
-+++ ./ld/NEWS	2009-06-22 16:04:15.000000000 +0100
-@@ -55,11 +55,6 @@
+--- ../binutils-2.20.51.0.2.orig/ld/NEWS	2009-10-12 11:28:44.000000000 +0100
++++ ld/NEWS	2009-10-12 11:38:36.000000000 +0100
+@@ -64,11 +64,6 @@ Changes in 2.20:
    For the switch --enable-runtime-pseudo-reloc it uses for 32-bit
    runtime pseudo relocation version one, for 64-bit the version two.
  

@@ -1,7 +1,7 @@
-diff -rup ../binutils-2.19.51.0.10.orig/bfd/configure ./bfd/configure
---- ../binutils-2.19.51.0.10.orig/bfd/configure	2009-06-22 15:56:55.000000000 +0100
-+++ ./bfd/configure	2009-06-22 15:58:46.000000000 +0100
-@@ -10137,10 +10137,34 @@ fi
+diff -rup ../binutils-2.20.51.0.2.orig/bfd/configure ./bfd/configure
+--- ../binutils-2.20.51.0.2.orig/bfd/configure	2009-10-12 11:28:45.000000000 +0100
++++ ./bfd/configure	2009-10-12 11:31:43.000000000 +0100
+@@ -10670,10 +10670,34 @@ fi
    # before this can be enabled.
    hardcode_into_libs=yes
  
@@ -38,10 +38,10 @@ diff -rup ../binutils-2.19.51.0.10.orig/bfd/configure ./bfd/configure
  
    # We used to test for /lib/ld.so.1 and disable shared libraries on
 Only in ./bfd: configure.orig
-diff -rup ../binutils-2.19.51.0.10.orig/binutils/configure ./binutils/configure
---- ../binutils-2.19.51.0.10.orig/binutils/configure	2009-06-22 15:56:54.000000000 +0100
-+++ ./binutils/configure	2009-06-22 15:58:46.000000000 +0100
-@@ -10362,10 +10362,34 @@ fi
+diff -rup ../binutils-2.20.51.0.2.orig/binutils/configure ./binutils/configure
+--- ../binutils-2.20.51.0.2.orig/binutils/configure	2009-10-12 11:28:44.000000000 +0100
++++ ./binutils/configure	2009-10-12 11:31:43.000000000 +0100
+@@ -10461,10 +10461,34 @@ fi
    # before this can be enabled.
    hardcode_into_libs=yes
  
@@ -78,10 +78,10 @@ diff -rup ../binutils-2.19.51.0.10.orig/binutils/configure ./binutils/configure
  
    # We used to test for /lib/ld.so.1 and disable shared libraries on
 Only in ./binutils: configure.orig
-diff -rup ../binutils-2.19.51.0.10.orig/gas/configure ./gas/configure
---- ../binutils-2.19.51.0.10.orig/gas/configure	2009-06-22 15:56:55.000000000 +0100
-+++ ./gas/configure	2009-06-22 15:58:46.000000000 +0100
-@@ -10330,10 +10330,34 @@ fi
+diff -rup ../binutils-2.20.51.0.2.orig/gas/configure ./gas/configure
+--- ../binutils-2.20.51.0.2.orig/gas/configure	2009-10-12 11:28:45.000000000 +0100
++++ ./gas/configure	2009-10-12 11:31:43.000000000 +0100
+@@ -10418,10 +10418,34 @@ fi
    # before this can be enabled.
    hardcode_into_libs=yes
  
@@ -118,10 +118,10 @@ diff -rup ../binutils-2.19.51.0.10.orig/gas/configure ./gas/configure
  
    # We used to test for /lib/ld.so.1 and disable shared libraries on
 Only in ./gas: configure.orig
-diff -rup ../binutils-2.19.51.0.10.orig/gprof/configure ./gprof/configure
---- ../binutils-2.19.51.0.10.orig/gprof/configure	2009-06-22 15:56:54.000000000 +0100
-+++ ./gprof/configure	2009-06-22 15:58:46.000000000 +0100
-@@ -10422,10 +10422,34 @@ fi
+diff -rup ../binutils-2.20.51.0.2.orig/gprof/configure ./gprof/configure
+--- ../binutils-2.20.51.0.2.orig/gprof/configure	2009-10-12 11:28:44.000000000 +0100
++++ ./gprof/configure	2009-10-12 11:31:43.000000000 +0100
+@@ -10356,10 +10356,34 @@ fi
    # before this can be enabled.
    hardcode_into_libs=yes
  
@@ -158,10 +158,10 @@ diff -rup ../binutils-2.19.51.0.10.orig/gprof/configure ./gprof/configure
  
    # We used to test for /lib/ld.so.1 and disable shared libraries on
 Only in ./gprof: configure.orig
-diff -rup ../binutils-2.19.51.0.10.orig/ld/configure ./ld/configure
---- ../binutils-2.19.51.0.10.orig/ld/configure	2009-06-22 15:56:54.000000000 +0100
-+++ ./ld/configure	2009-06-22 15:58:46.000000000 +0100
-@@ -10622,10 +10622,34 @@ fi
+diff -rup ../binutils-2.20.51.0.2.orig/ld/configure ./ld/configure
+--- ../binutils-2.20.51.0.2.orig/ld/configure	2009-10-12 11:28:44.000000000 +0100
++++ ./ld/configure	2009-10-12 11:31:43.000000000 +0100
+@@ -10806,10 +10806,34 @@ fi
    # before this can be enabled.
    hardcode_into_libs=yes
  
@@ -198,9 +198,9 @@ diff -rup ../binutils-2.19.51.0.10.orig/ld/configure ./ld/configure
  
    # We used to test for /lib/ld.so.1 and disable shared libraries on
 Only in ./ld: configure.orig
-diff -rup ../binutils-2.19.51.0.10.orig/libtool.m4 ./libtool.m4
---- ../binutils-2.19.51.0.10.orig/libtool.m4	2009-06-22 15:56:54.000000000 +0100
-+++ ./libtool.m4	2009-06-22 15:58:46.000000000 +0100
+diff -rup ../binutils-2.20.51.0.2.orig/libtool.m4 ./libtool.m4
+--- ../binutils-2.20.51.0.2.orig/libtool.m4	2009-10-12 11:28:44.000000000 +0100
++++ ./libtool.m4	2009-10-12 11:31:43.000000000 +0100
 @@ -2475,10 +2475,30 @@ linux* | k*bsd*-gnu | kopensolaris*-gnu)
    # before this can be enabled.
    hardcode_into_libs=yes
@@ -233,11 +233,10 @@ diff -rup ../binutils-2.19.51.0.10.orig/libtool.m4 ./libtool.m4
    fi
  
    # We used to test for /lib/ld.so.1 and disable shared libraries on
-Only in .: libtool.m4.orig
-diff -rup ../binutils-2.19.51.0.10.orig/opcodes/configure ./opcodes/configure
---- ../binutils-2.19.51.0.10.orig/opcodes/configure	2009-06-22 15:56:54.000000000 +0100
-+++ ./opcodes/configure	2009-06-22 15:58:46.000000000 +0100
-@@ -10132,10 +10132,34 @@ fi
+diff -rup ../binutils-2.20.51.0.2.orig/opcodes/configure ./opcodes/configure
+--- ../binutils-2.20.51.0.2.orig/opcodes/configure	2009-10-12 11:28:44.000000000 +0100
++++ ./opcodes/configure	2009-10-12 11:31:43.000000000 +0100
+@@ -10406,10 +10406,34 @@ fi
    # before this can be enabled.
    hardcode_into_libs=yes
  

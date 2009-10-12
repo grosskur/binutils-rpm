@@ -1,6 +1,6 @@
---- ../binutils-2.19.51.0.10.orig/bfd/elf64-ppc.c	2009-06-22 15:56:55.000000000 +0100
-+++ ./bfd/elf64-ppc.c	2009-06-22 16:00:39.000000000 +0100
-@@ -11466,7 +11466,12 @@ ppc64_elf_relocate_section (bfd *output_
+--- ../binutils-2.20.51.0.2.orig/bfd/elf64-ppc.c	2009-10-12 11:28:45.000000000 +0100
++++ bfd/elf64-ppc.c	2009-10-12 11:34:17.000000000 +0100
+@@ -11992,7 +11992,12 @@ ppc64_elf_relocate_section (bfd *output_
  	      else if (!SYMBOL_REFERENCES_LOCAL (info, &h->elf)
  		       && !is_opd
  		       && r_type != R_PPC64_TOC)

@@ -16,23 +16,20 @@
 
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
-Version: 2.19.51.0.14
-Release: 32%{?dist}
+Version: 2.20.51.0.2
+Release: 1%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
 Source2: binutils-2.19.50.0.1-output-format.sed
-Patch01: binutils-2.19.51.0.10-libtool-lib64.patch
-Patch02: binutils-2.19.51.0.10-ppc64-pie.patch
-Patch03: binutils-2.19.50.0.1-ia64-lib64.patch
-Patch04: binutils-2.19.51.0.10-envvar-revert.patch
-Patch05: binutils-2.19.51.0.10-version.patch
-Patch06: binutils-2.19.51.0.10-set-long-long.patch
-Patch07: binutils-2.19.51.0.10-build-id.patch
-Patch09: binutils-2.19.51.0.11-moxie.patch
-Patch10: binutils-2.19.51.0.14-unique-is-global.patch
-Patch11: binutils-2.19.51.0.14-cxxfilt-java-doc.patch
+Patch01: binutils-2.20.51.0.2-libtool-lib64.patch
+Patch02: binutils-2.20.51.0.2-ppc64-pie.patch
+Patch03: binutils-2.20.51.0.2-ia64-lib64.patch
+Patch04: binutils-2.20.51.0.2-envvar-revert.patch
+Patch05: binutils-2.20.51.0.2-version.patch
+Patch06: binutils-2.20.51.0.2-set-long-long.patch
+Patch07: binutils-2.20.51.0.2-build-id.patch
 
 %if 0%{?_with_debug:1}
 # Define this if you want to skip the strip step and preserve debug info.
@@ -104,9 +101,6 @@ to consider using libelf instead of BFD.
 %patch05 -p0 -b .version~
 %patch06 -p0 -b .set-long-long~
 %patch07 -p0 -b .build-id~
-%patch09 -p0 -b .moxie~
-%patch10 -p0 -b .unique-is-global~
-%patch11 -p0 -b .cxxfilt-java-doc~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -357,6 +351,12 @@ fi
 %endif # %{isnative}
 
 %changelog
+* Mon Oct 12 2009 Nick Clifton <nickc@redhat.com> 2.20.51.0.2-1
+- Rebase on 2.20 tarball.
+- Remove redundant moxie patch.
+- Remove redundant unique is global patch.
+- Remove redundant cxxfilt java doc patch.
+
 * Tue Sep 29 2009 Jan Kratochvil <jan.kratochvil@redhat.com> 2.19.51.0.14-32
 - Remove spurious description of nonexistent --java switch for cxxfilt.
 
