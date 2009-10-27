@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.20.51.0.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -297,34 +297,51 @@ rm -rf %{buildroot}
 %if %{isnative}
 %post
 /sbin/ldconfig
-/sbin/install-info --info-dir=%{_infodir} %{_infodir}/as.info
-/sbin/install-info --info-dir=%{_infodir} %{_infodir}/binutils.info
-/sbin/install-info --info-dir=%{_infodir} %{_infodir}/gprof.info
-/sbin/install-info --info-dir=%{_infodir} %{_infodir}/ld.info
-/sbin/install-info --info-dir=%{_infodir} %{_infodir}/standards.info
-/sbin/install-info --info-dir=%{_infodir} %{_infodir}/configure.info
+# For --excludedocs:
+if [ -e %{_infodir}/binutils.info.gz ]
+then
+  /sbin/install-info --info-dir=%{_infodir} %{_infodir}/as.info.gz
+  /sbin/install-info --info-dir=%{_infodir} %{_infodir}/binutils.info.gz
+  /sbin/install-info --info-dir=%{_infodir} %{_infodir}/gprof.info.gz
+  /sbin/install-info --info-dir=%{_infodir} %{_infodir}/ld.info.gz
+  /sbin/install-info --info-dir=%{_infodir} %{_infodir}/standards.info.gz
+  /sbin/install-info --info-dir=%{_infodir} %{_infodir}/configure.info.gz
+fi
 exit 0
 
 %preun
-if [ $1 = 0 ] ;then
-  /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/as.info
-  /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/binutils.info
-  /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/gprof.info
-  /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/ld.info
-  /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/standards.info
-  /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/configure.info
+if [ $1 = 0 ]
+then
+  if [ -e %{_infodir}/binutils.info.gz ]
+  then
+    /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/as.info.gz
+    /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/binutils.info.gz
+    /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/gprof.info.gz
+    /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/ld.info.gz
+    /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/standards.info.gz
+    /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/configure.info.gz
+  fi
 fi
 exit 0
 
 %postun -p /sbin/ldconfig
 
 %post devel
-/sbin/install-info --info-dir=%{_infodir} %{_infodir}/bfd.info
+if [ -e %{_infodir}/bfd.info.gz ]
+then
+  /sbin/install-info --info-dir=%{_infodir} %{_infodir}/bfd.info.gz
+fi
+exit 0
 
 %preun devel
-if [ $1 = 0 ] ;then
-  /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/bfd.info
+if [ $1 = 0 ]
+then
+  if [ -e %{_infodir}/bfd.info.gz ]
+  then
+    /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/bfd.info.gz
+  fi
 fi
+exit 0
 %endif # %{isnative}
 
 %files -f %{?cross}binutils.lang
@@ -351,6 +368,10 @@ fi
 %endif # %{isnative}
 
 %changelog
+* Tue Oct 27 2009 Jan Kratochvil <jan.kratochvil@redhat.com> 2.20.51.0.2-2
+- Fix rpm --excludedocs (BZ 515922).
+- Fix spurious scriplet errors by `exit 0'. (BZ 517979, Nick Clifton)
+
 * Mon Oct 12 2009 Nick Clifton <nickc@redhat.com> 2.20.51.0.2-1
 - Rebase on 2.20 tarball.
 - Remove redundant moxie patch.
