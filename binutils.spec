@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.20.51.0.2
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -30,6 +30,7 @@ Patch04: binutils-2.20.51.0.2-envvar-revert.patch
 Patch05: binutils-2.20.51.0.2-version.patch
 Patch06: binutils-2.20.51.0.2-set-long-long.patch
 Patch07: binutils-2.20.51.0.2-build-id.patch
+Patch08: binutils-2.20.51.0.2-add-needed.patch
 
 %if 0%{?_with_debug:1}
 # Define this if you want to skip the strip step and preserve debug info.
@@ -101,6 +102,7 @@ to consider using libelf instead of BFD.
 %patch05 -p0 -b .version~
 %patch06 -p0 -b .set-long-long~
 %patch07 -p0 -b .build-id~
+%patch08 -p0 -b .add-needed~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -368,6 +370,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Thu Nov 05 2009 Nick CLifton <nickc@redhat.com> 2.20.51.0.2-3
+- Rename --add-needed to --copy-dt-needed-entries and improve error message about unresolved symbols in DT_NEEDED DSOs.
+
 * Tue Oct 27 2009 Jan Kratochvil <jan.kratochvil@redhat.com> 2.20.51.0.2-2
 - Fix rpm --excludedocs (BZ 515922).
 - Fix spurious scriplet errors by `exit 0'. (BZ 517979, Nick Clifton)
