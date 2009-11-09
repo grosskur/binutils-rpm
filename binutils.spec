@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.20.51.0.2
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -31,6 +31,8 @@ Patch05: binutils-2.20.51.0.2-version.patch
 Patch06: binutils-2.20.51.0.2-set-long-long.patch
 Patch07: binutils-2.20.51.0.2-build-id.patch
 Patch08: binutils-2.20.51.0.2-add-needed.patch
+Patch09: binutils-2.20.51.0.2-ifunc-ld-s.patch
+Patch10: binutils-2.20.51.0.2-lwp.patch
 
 %if 0%{?_with_debug:1}
 # Define this if you want to skip the strip step and preserve debug info.
@@ -103,6 +105,8 @@ to consider using libelf instead of BFD.
 %patch06 -p0 -b .set-long-long~
 %patch07 -p0 -b .build-id~
 %patch08 -p0 -b .add-needed~
+%patch09 -p0 -b .ifunc-ld-s~
+%patch10 -p0 -b .lwp~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -370,6 +374,10 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Mon Nov  9 2009 Jakub Jelinek <jakub@redhat.com> 2.20.51.0.2-4
+- Fix ld -s with IRELATIVE relocations.  (BZ 533321, PR ld/10911)
+- Add AMD Orochi LWP support, fix FMA4 support.
+
 * Thu Nov 05 2009 Nick CLifton <nickc@redhat.com> 2.20.51.0.2-3
 - Rename --add-needed to --copy-dt-needed-entries and improve error message about unresolved symbols in DT_NEEDED DSOs.
 
