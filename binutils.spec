@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.20.51.0.2
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -374,6 +374,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Mon Nov  9 2009 Jakub Jelinek <jakub@redhat.com> 2.20.51.0.2-5
+- Fix up --copy-dt-needed-entries default.  (Nick Clifton)
+
 * Mon Nov  9 2009 Jakub Jelinek <jakub@redhat.com> 2.20.51.0.2-4
 - Fix ld -s with IRELATIVE relocations.  (BZ 533321, PR ld/10911)
 - Add AMD Orochi LWP support, fix FMA4 support.
