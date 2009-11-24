@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.20.51.0.2
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -359,7 +359,6 @@ fi
 %endif
 %if %{isnative}
 if [ $1 = 0 ]; then
-then
   if [ -e %{_infodir}/binutils.info.gz ]
   then
     /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/as.info.gz
@@ -424,7 +423,7 @@ exit 0
 %endif # %{isnative}
 
 %changelog
-* Tue Nov 24 2009 Roland McGrath <roland@redhat.com> - 2.20.51.0.2-6
+* Tue Nov 24 2009 Roland McGrath <roland@redhat.com> - 2.20.51.0.2-7
 - Add support for building gold.
 
 * Mon Nov  9 2009 Jakub Jelinek <jakub@redhat.com> 2.20.51.0.2-5
