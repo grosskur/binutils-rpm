@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.20.51.0.2
-Release: 5%{?dist}
+Release: 6.gold%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -33,6 +33,15 @@ Patch07: binutils-2.20.51.0.2-build-id.patch
 Patch08: binutils-2.20.51.0.2-add-needed.patch
 Patch09: binutils-2.20.51.0.2-ifunc-ld-s.patch
 Patch10: binutils-2.20.51.0.2-lwp.patch
+Patch11: binutils-2.20.51.0.2-enable-gold.patch
+
+%define gold_arches %ix86 x86_64 %sparc %arm ppc ppc64
+
+%ifarch %gold_arches
+%define build_gold	both
+%else
+%define build_gold	no
+%endif
 
 %if 0%{?_with_debug:1}
 # Define this if you want to skip the strip step and preserve debug info.
@@ -56,6 +65,15 @@ Requires(post): /sbin/install-info
 Requires(preun): /sbin/install-info
 %ifarch ia64
 Obsoletes: gnupro <= 1117-1
+%endif
+
+# The higher of these two numbers determines the default ld.
+%{!?ld_bfd_priority: %define ld_bfd_priority	50}
+%{!?ld_gold_priority:%define ld_gold_priority	30}
+
+%if "%{build_gold}" == "both"
+Requires(post): %{_sbindir}/alternatives
+Requires(preun): %{_sbindir}/alternatives
 %endif
 
 # On ARM EABI systems, we do want -gnueabi to be part of the
@@ -107,6 +125,7 @@ to consider using libelf instead of BFD.
 %patch08 -p0 -b .add-needed~
 %patch09 -p0 -b .ifunc-ld-s~
 %patch10 -p0 -b .lwp~
+%patch11 -p0 -b .enable-gold~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -161,6 +180,7 @@ CFLAGS="$CFLAGS -O0 -ggdb2"
 %configure \
   --build=%{_target_platform} --host=%{_target_platform} \
   --target=%{binutils_target} \
+  --enable-gold=%{build_gold} \
 %if !%{isnative}
   --enable-targets=%{_host} \
   --with-sysroot=%{_prefix}/%{binutils_target}/sys-root \
@@ -212,22 +232,22 @@ make CFLAGS="-g -fPIC $RPM_OPT_FLAGS" -C libiberty
 make -C bfd clean
 make CFLAGS="-g -fPIC $RPM_OPT_FLAGS -fvisibility=hidden" -C bfd
 
-install -m 644 bfd/libbfd.a %{buildroot}%{_prefix}/%{_lib}
-install -m 644 libiberty/libiberty.a %{buildroot}%{_prefix}/%{_lib}
+install -m 644 bfd/libbfd.a %{buildroot}%{_libdir}
+install -m 644 libiberty/libiberty.a %{buildroot}%{_libdir}
 install -m 644 include/libiberty.h %{buildroot}%{_prefix}/include
 # Remove Windows/Novell only man pages
 rm -f %{buildroot}%{_mandir}/man1/{dlltool,nlmconv,windres}*
 
 %if %{enable_shared}
-chmod +x %{buildroot}%{_prefix}/%{_lib}/lib*.so*
+chmod +x %{buildroot}%{_libdir}/lib*.so*
 %endif
 
-# Prevent programs to link against libbfd and libopcodes dynamically,
-# they are changing far too often
-rm -f %{buildroot}%{_prefix}/%{_lib}/lib{bfd,opcodes}.so
+# Prevent programs from linking against libbfd and libopcodes
+# dynamically, as they are change far too often.
+rm -f %{buildroot}%{_libdir}/lib{bfd,opcodes}.so
 
 # Remove libtool files, which reference the .so libs
-rm -f %{buildroot}%{_prefix}/%{_lib}/lib{bfd,opcodes}.la
+rm -f %{buildroot}%{_libdir}/lib{bfd,opcodes}.la
 
 # Sanity check --enable-64-bit-bfd really works.
 grep '^#define BFD_ARCH_SIZE 64$' %{buildroot}%{_prefix}/include/bfd.h
@@ -255,7 +275,7 @@ OUTPUT_FORMAT="\
    on a multi-architecture system.  */
 $(gcc $CFLAGS $LDFLAGS -shared -x c /dev/null -o /dev/null -Wl,--verbose -v 2>&1 | sed -n -f "%{SOURCE2}")"
 
-tee %{buildroot}%{_prefix}/%{_lib}/libbfd.so <<EOH
+tee %{buildroot}%{_libdir}/libbfd.so <<EOH
 /* GNU ld script */
 
 $OUTPUT_FORMAT
@@ -264,7 +284,7 @@ $OUTPUT_FORMAT
 INPUT ( %{_libdir}/libbfd.a -liberty -lz )
 EOH
 
-tee %{buildroot}%{_prefix}/%{_lib}/libopcodes.so <<EOH
+tee %{buildroot}%{_libdir}/libopcodes.so <<EOH
 /* GNU ld script */
 
 $OUTPUT_FORMAT
@@ -278,7 +298,7 @@ rm -rf %{buildroot}%{_infodir}
 # We keep these as one can have native + cross binutils of different versions.
 #rm -rf %{buildroot}%{_prefix}/share/locale
 #rm -rf %{buildroot}%{_mandir}
-rm -rf %{buildroot}%{_prefix}/%{_lib}/libiberty.a
+rm -rf %{buildroot}%{_libdir}/libiberty.a
 %endif # !%{isnative}
 
 # This one comes from gcc
@@ -289,19 +309,33 @@ rm -rf %{buildroot}%{_prefix}/%{binutils_target}
 %find_lang %{?cross}opcodes
 %find_lang %{?cross}bfd
 %find_lang %{?cross}gas
-%find_lang %{?cross}ld
 %find_lang %{?cross}gprof
 cat %{?cross}opcodes.lang >> %{?cross}binutils.lang
 cat %{?cross}bfd.lang >> %{?cross}binutils.lang
 cat %{?cross}gas.lang >> %{?cross}binutils.lang
-cat %{?cross}ld.lang >> %{?cross}binutils.lang
 cat %{?cross}gprof.lang >> %{?cross}binutils.lang
+
+if [ -x ld/ld-new ]; then
+  %find_lang %{?cross}ld
+  cat %{?cross}ld.lang >> %{?cross}binutils.lang
+fi
+if [ -x gold/ld-new ]; then
+  %find_lang %{?cross}gold
+  cat %{?cross}gold.lang >> %{?cross}binutils.lang
+fi
 
 %clean
 rm -rf %{buildroot}
 
-%if %{isnative}
 %post
+%if "%{build_gold}" == "both"
+%__rm -f %{_bindir}/%{?cross}ld
+%{_sbindir}/alternatives --install %{_bindir}/%{?cross}ld %{?cross}ld \
+  %{_bindir}/%{?cross}ld.bfd %{ld_bfd_priority}
+%{_sbindir}/alternatives --install %{_bindir}/%{?cross}ld %{?cross}ld \
+  %{_bindir}/%{?cross}ld.gold %{ld_gold_priority}
+%endif
+%if %{isnative}
 /sbin/ldconfig
 # For --excludedocs:
 if [ -e %{_infodir}/binutils.info.gz ]
@@ -313,10 +347,18 @@ then
   /sbin/install-info --info-dir=%{_infodir} %{_infodir}/standards.info.gz
   /sbin/install-info --info-dir=%{_infodir} %{_infodir}/configure.info.gz
 fi
+%endif # %{isnative}
 exit 0
 
 %preun
-if [ $1 = 0 ]
+%if "%{build_gold}" == "both"
+if [ $1 = 0 ]; then
+  %{_sbindir}/alternatives --remove %{?cross}ld %{_bindir}/%{?cross}ld.bfd
+  %{_sbindir}/alternatives --remove %{?cross}ld %{_bindir}/%{?cross}ld.gold
+fi
+%endif
+%if %{isnative}
+if [ $1 = 0 ]; then
 then
   if [ -e %{_infodir}/binutils.info.gz ]
   then
@@ -328,8 +370,10 @@ then
     /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/configure.info.gz
   fi
 fi
+%endif
 exit 0
 
+%if %{isnative}
 %postun -p /sbin/ldconfig
 
 %post devel
@@ -353,12 +397,18 @@ exit 0
 %files -f %{?cross}binutils.lang
 %defattr(-,root,root,-)
 %doc README
-%{_prefix}/bin/*
+%{_bindir}/%{?cross}[!l]*
+%if "%{build_gold}" == "both"
+%{_bindir}/%{?cross}ld.*
+%ghost %{_bindir}/%{?cross}ld
+%else
+%{_bindir}/%{?cross}ld
+%endif
 %{_mandir}/man1/*
 %if %{enable_shared}
-%{_prefix}/%{_lib}/lib*.so
-%exclude %{_prefix}/%{_lib}/libbfd.so
-%exclude %{_prefix}/%{_lib}/libopcodes.so
+%{_libdir}/lib*.so
+%exclude %{_libdir}/libbfd.so
+%exclude %{_libdir}/libopcodes.so
 %endif
 %if %{isnative}
 %{_infodir}/[^b]*info*
@@ -367,13 +417,16 @@ exit 0
 %files devel
 %defattr(-,root,root,-)
 %{_prefix}/include/*
-%{_prefix}/%{_lib}/libbfd.so
-%{_prefix}/%{_lib}/libopcodes.so
-%{_prefix}/%{_lib}/lib*.a
+%{_libdir}/libbfd.so
+%{_libdir}/libopcodes.so
+%{_libdir}/lib*.a
 %{_infodir}/bfd*info*
 %endif # %{isnative}
 
 %changelog
+* Thu Nov 12 2009 Roland McGrath <roland@redhat.com> 2.20.51.0.2-6.gold
+- Add support for building gold.
+
 * Mon Nov  9 2009 Jakub Jelinek <jakub@redhat.com> 2.20.51.0.2-5
 - Fix up --copy-dt-needed-entries default.  (Nick Clifton)
 
