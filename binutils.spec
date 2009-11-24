@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.20.51.0.2
-Release: 6.gold%{?dist}
+Release: 6%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -424,7 +424,7 @@ exit 0
 %endif # %{isnative}
 
 %changelog
-* Thu Nov 12 2009 Roland McGrath <roland@redhat.com> 2.20.51.0.2-6.gold
+* Tue Nov 24 2009 Roland McGrath <roland@redhat.com> - 2.20.51.0.2-6
 - Add support for building gold.
 
 * Mon Nov  9 2009 Jakub Jelinek <jakub@redhat.com> 2.20.51.0.2-5
@@ -508,7 +508,7 @@ exit 0
 - Rediff the symbolic-envvar-revert patch to comply with rpm patch --fuzz=0.
 
 * Thu Feb  5 2009 Nick Clifton <nickc@redhat.com> 2.19.51.0.2-12
-- Rebase sources on 2.19.51.0.2 tarball.  Remove linkonce-r-discard and 
+- Rebase sources on 2.19.51.0.2 tarball.  Remove linkonce-r-discard and
   gcc-expect-table patches.
 
 * Mon Feb  2 2009 Jan Kratochvil <jan.kratochvil@redhat.com> 2.19.50.0.1-11
