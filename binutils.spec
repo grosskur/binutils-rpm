@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.20.51.0.2
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -35,7 +35,7 @@ Patch09: binutils-2.20.51.0.2-ifunc-ld-s.patch
 Patch10: binutils-2.20.51.0.2-lwp.patch
 Patch11: binutils-2.20.51.0.2-enable-gold.patch
 
-%define gold_arches %ix86 x86_64 %sparc %arm ppc ppc64
+%define gold_arches %ix86 x86_64
 
 %ifarch %gold_arches
 %define build_gold	both
@@ -423,6 +423,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Tue Dec  1 2009 Roland McGrath <roland@redhat.com> - 2.20.51.0.2-8
+- Build gold only for x86 flavors until others are tested.
+
 * Tue Nov 24 2009 Roland McGrath <roland@redhat.com> - 2.20.51.0.2-7
 - Add support for building gold.
 
