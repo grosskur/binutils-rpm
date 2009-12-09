@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.20.51.0.2
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -34,6 +34,7 @@ Patch08: binutils-2.20.51.0.2-add-needed.patch
 Patch09: binutils-2.20.51.0.2-ifunc-ld-s.patch
 Patch10: binutils-2.20.51.0.2-lwp.patch
 Patch11: binutils-2.20.51.0.2-enable-gold.patch
+Patch12: binutils-2.20.51.0.2-gas-expr.patch
 
 %define gold_arches %ix86 x86_64
 
@@ -126,6 +127,7 @@ to consider using libelf instead of BFD.
 %patch09 -p0 -b .ifunc-ld-s~
 %patch10 -p0 -b .lwp~
 %patch11 -p0 -b .enable-gold~
+%patch12 -p0 -b .gas-expr~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -423,6 +425,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Wed Dec  9 2009 Nick Clifton <nickc@redhat.com> - 2.20.51.0.2-9
+- Apply patch for PR 10856.  (BZ 544358)
+
 * Tue Dec  1 2009 Roland McGrath <roland@redhat.com> - 2.20.51.0.2-8
 - Build gold only for x86 flavors until others are tested.
 
