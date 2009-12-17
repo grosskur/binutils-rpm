@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.20.51.0.2
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -35,6 +35,7 @@ Patch09: binutils-2.20.51.0.2-ifunc-ld-s.patch
 Patch10: binutils-2.20.51.0.2-lwp.patch
 Patch11: binutils-2.20.51.0.2-enable-gold.patch
 Patch12: binutils-2.20.51.0.2-gas-expr.patch
+Patch13: binutils-2.20.51.0.2-ppc64-hidden-plt-relocs.patch
 
 %define gold_arches %ix86 x86_64
 
@@ -128,6 +129,7 @@ to consider using libelf instead of BFD.
 %patch10 -p0 -b .lwp~
 %patch11 -p0 -b .enable-gold~
 %patch12 -p0 -b .gas-expr~
+%patch13 -p0 -b .hidden-plt~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -425,6 +427,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Thu Dec  17 2009 Nick Clifton <nickc@redhat.com> - 2.20.51.0.2-10
+- Apply patch for PR 11088.  (BZ 544149)
+
 * Wed Dec  9 2009 Nick Clifton <nickc@redhat.com> - 2.20.51.0.2-9
 - Apply patch for PR 10856.  (BZ 544358)
 
