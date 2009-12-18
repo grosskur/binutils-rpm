@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.20.51.0.2
-Release: 10%{?dist}
+Release: 11%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -35,7 +35,7 @@ Patch09: binutils-2.20.51.0.2-ifunc-ld-s.patch
 Patch10: binutils-2.20.51.0.2-lwp.patch
 Patch11: binutils-2.20.51.0.2-enable-gold.patch
 Patch12: binutils-2.20.51.0.2-gas-expr.patch
-Patch13: binutils-2.20.51.0.2-ppc64-hidden-plt-relocs.patch
+Patch13: binutils-2.20.51.0.2-ppc-hidden-plt-relocs.patch
 
 %define gold_arches %ix86 x86_64
 
@@ -427,6 +427,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Fri Dec  18 2009 Nick Clifton <nickc@redhat.com> - 2.20.51.0.2-11
+- Add missing part of PR 11088 patch.
+
 * Thu Dec  17 2009 Nick Clifton <nickc@redhat.com> - 2.20.51.0.2-10
 - Apply patch for PR 11088.  (BZ 544149)
 
