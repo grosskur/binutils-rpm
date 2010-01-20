@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.20.51.0.2
-Release: 11%{?dist}
+Release: 12%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -427,6 +427,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Wed Jan  20 2010 Nick Clifton <nickc@redhat.com> - 2.20.51.0.2-12
+- Fix --no-copy-dt-needed so that it will not complain about weak references.
+
 * Fri Dec  18 2009 Nick Clifton <nickc@redhat.com> - 2.20.51.0.2-11
 - Add missing part of PR 11088 patch.
 
