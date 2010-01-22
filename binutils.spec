@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.20.51.0.2
-Release: 12%{?dist}
+Release: 13%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -74,6 +74,7 @@ Obsoletes: gnupro <= 1117-1
 %{!?ld_gold_priority:%define ld_gold_priority	30}
 
 %if "%{build_gold}" == "both"
+Requires(post): coreutils
 Requires(post): %{_sbindir}/alternatives
 Requires(preun): %{_sbindir}/alternatives
 %endif
@@ -427,6 +428,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Fri Jan  22 2010 Nick Clifton <nickc@redhat.com> - 2.20.51.0.2-13
+- Add a requirement for the coreutils.  (BZ557006)
+
 * Wed Jan  20 2010 Nick Clifton <nickc@redhat.com> - 2.20.51.0.2-12
 - Fix --no-copy-dt-needed so that it will not complain about weak references.
 
