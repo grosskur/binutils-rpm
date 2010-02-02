@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.20.51.0.2
-Release: 13%{?dist}
+Release: 14%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -36,6 +36,7 @@ Patch10: binutils-2.20.51.0.2-lwp.patch
 Patch11: binutils-2.20.51.0.2-enable-gold.patch
 Patch12: binutils-2.20.51.0.2-gas-expr.patch
 Patch13: binutils-2.20.51.0.2-ppc-hidden-plt-relocs.patch
+Patch14: binutils-2.20.51.0.2-x86-hash-table.patch
 
 %define gold_arches %ix86 x86_64
 
@@ -131,6 +132,7 @@ to consider using libelf instead of BFD.
 %patch11 -p0 -b .enable-gold~
 %patch12 -p0 -b .gas-expr~
 %patch13 -p0 -b .hidden-plt~
+%patch14 -p0 -b .hash-table~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -428,8 +430,11 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Tue Feb   2 2010 Nick Clifton <nickc@redhat.com> - 2.20.51.0.2-14
+- Fix seg-fault when linking mixed x86 and x86_64 binaries.  (BZ 487472)
+
 * Fri Jan  22 2010 Nick Clifton <nickc@redhat.com> - 2.20.51.0.2-13
-- Add a requirement for the coreutils.  (BZ557006)
+- Add a requirement for the coreutils.  (BZ 557006)
 
 * Wed Jan  20 2010 Nick Clifton <nickc@redhat.com> - 2.20.51.0.2-12
 - Fix --no-copy-dt-needed so that it will not complain about weak references.
