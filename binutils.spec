@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.20.51.0.2
-Release: 14%{?dist}
+Release: 15%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -100,7 +100,7 @@ from files), strip (for discarding symbols), and addr2line (for
 converting addresses to file and line).
 
 %package devel
-Summary: BFD and opcodes static libraries and header files
+Summary: BFD and opcodes dynamic libraries and header files
 Group: System Environment/Libraries
 Conflicts: binutils < 2.17.50.0.3-4
 Requires(post): /sbin/install-info
@@ -108,10 +108,20 @@ Requires(preun): /sbin/install-info
 Requires: zlib-devel
 
 %description devel
-This package contains BFD and opcodes static libraries and associated
-header files.  Only *.a libraries are included, because BFD doesn't
-have a stable ABI.  Developers starting new projects are strongly encouraged
+This package contains the generic BFD and opcodes dynamic libraries and
+associated header files.  Developers starting new projects are encouraged
 to consider using libelf instead of BFD.
+
+%package static
+Summary: BFD and opcodes static libraries
+Group: System Environment/Libraries
+Requires(post): /sbin/install-info
+Requires(preun): /sbin/install-info
+
+%description static
+This package contains BFD and opcodes static libraries.  Developers
+starting new projects are strongly encouraged to consider using
+libelf instead of BFD.
 
 %prep
 %setup -q -n binutils-%{version}
@@ -416,6 +426,7 @@ exit 0
 %exclude %{_libdir}/libbfd.so
 %exclude %{_libdir}/libopcodes.so
 %endif
+
 %if %{isnative}
 %{_infodir}/[^b]*info*
 %{_infodir}/binutils*info*
@@ -425,11 +436,18 @@ exit 0
 %{_prefix}/include/*
 %{_libdir}/libbfd.so
 %{_libdir}/libopcodes.so
-%{_libdir}/lib*.a
 %{_infodir}/bfd*info*
+
+%files static
+%defattr(-,root,root,-)
+%{_libdir}/lib*.a
+
 %endif # %{isnative}
 
 %changelog
+* Fri Feb  12 2010 Nick Clifton <nickc@redhat.com> - 2.20.51.0.2-15
+- Create separate static and devel sub-packages.  (BZ 556040)
+
 * Tue Feb   2 2010 Nick Clifton <nickc@redhat.com> - 2.20.51.0.2-14
 - Fix seg-fault when linking mixed x86 and x86_64 binaries.  (BZ 487472)
 
