@@ -16,8 +16,8 @@
 
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
-Version: 2.20.51.0.2
-Release: 17%{?dist}
+Version: 2.20.51.0.7
+Release: 1%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -30,15 +30,9 @@ Patch04: binutils-2.20.51.0.2-envvar-revert.patch
 Patch05: binutils-2.20.51.0.2-version.patch
 Patch06: binutils-2.20.51.0.2-set-long-long.patch
 Patch07: binutils-2.20.51.0.2-build-id.patch
-Patch08: binutils-2.20.51.0.2-add-needed.patch
-Patch09: binutils-2.20.51.0.2-ifunc-ld-s.patch
-Patch10: binutils-2.20.51.0.2-lwp.patch
-Patch11: binutils-2.20.51.0.2-enable-gold.patch
-Patch12: binutils-2.20.51.0.2-gas-expr.patch
-Patch13: binutils-2.20.51.0.2-ppc-hidden-plt-relocs.patch
-Patch14: binutils-2.20.51.0.2-x86-hash-table.patch
-Patch15: binutils-2.20.51.0.2-copy-osabi.patch
-Patch16: binutils-2.20.51.0.2-do-not-set-ifunc.patch
+Patch08: binutils-2.20.51.0.2-copy-osabi.patch
+Patch09: binutils-2.20.51.0.7-do-not-bind-unique-symbols-locally.patch
+Patch10: binutils-2.20.51.0.7-dwarf4.patch
 
 %define gold_arches %ix86 x86_64
 
@@ -138,15 +132,9 @@ libelf instead of BFD.
 %patch05 -p0 -b .version~
 %patch06 -p0 -b .set-long-long~
 %patch07 -p0 -b .build-id~
-%patch08 -p0 -b .add-needed~
-%patch09 -p0 -b .ifunc-ld-s~
-%patch10 -p0 -b .lwp~
-%patch11 -p0 -b .enable-gold~
-%patch12 -p0 -b .gas-expr~
-%patch13 -p0 -b .hidden-plt~
-%patch14 -p0 -b .hash-table~
-%patch15 -p0 -b .copy-osabi~
-%patch16 -p0 -b .no-ifunc~
+%patch08 -p0 -b .copy-osabi~
+%patch09 -p0 -b .do-not-bind-unique~
+%patch10 -p0 -b .dwarf4~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -449,6 +437,20 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Thu Apr   8 2010 Nick Clifton <nickc@redhat.com> - 2.20.51.0.7-1
+- Rebase on 2.20.51.0.7 tarball.
+- Delete redundant patches:
+  binutils-2.20.51.0.2-add-needed.patch,
+  binutils-2.20.51.0.2-do-not-set-ifunc.patch,
+  binutils-2.20.51.0.2-enable-gold.patch,
+  binutils-2.20.51.0.2-gas-expr.patch,
+  binutils-2.20.51.0.2-ifunc-ld-s.patch,
+  binutils-2.20.51.0.2-lwp.patch,
+  binutils-2.20.51.0.2-ppc-hidden-plt-relocs.patch,
+  binutils-2.20.51.0.2-x86-hash-table.patch,
+- Do not allow unique symbols to be bound locally.  (PR ld/11434)
+- Add support for DWARF4 debug information.
+
 * Thu Mar   4 2010 Nick Clifton <nickc@redhat.com> - 2.20.51.0.2-17
 - Do not set ELFOSABI_LINUX on binaries which just link to IFUNC using DSOs.  (BZ 568941)
 
