@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.20.51.0.7
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -95,29 +95,20 @@ of an object or archive file), strings (for listing printable strings
 from files), strip (for discarding symbols), and addr2line (for
 converting addresses to file and line).
 
-%package devel
-Summary: BFD and opcodes dynamic libraries and header files
+%package static
+Summary: BFD and opcodes static and dynamic libraries and header files
 Group: System Environment/Libraries
-Conflicts: binutils < 2.17.50.0.3-4
+Provides: binutils-devel = %{version}-%{release}
 Requires(post): /sbin/install-info
 Requires(preun): /sbin/install-info
 Requires: zlib-devel
 
-%description devel
-This package contains the generic BFD and opcodes dynamic libraries and
-associated header files.  Developers starting new projects are encouraged
-to consider using libelf instead of BFD.
-
-%package static
-Summary: BFD and opcodes static libraries
-Group: System Environment/Libraries
-Requires(post): /sbin/install-info
-Requires(preun): /sbin/install-info
-
 %description static
-This package contains BFD and opcodes static libraries.  Developers
-starting new projects are strongly encouraged to consider using
-libelf instead of BFD.
+This package contains BFD and opcodes static and dynamic libraries.
+The dynamic libraries are in this package, rather than a seperate
+devel package because the API of the BFD library is unstable.
+Developers starting new projects are strongly encouraged to consider
+using libelf instead of BFD.
 
 %prep
 %setup -q -n binutils-%{version}
@@ -383,23 +374,6 @@ exit 0
 
 %if %{isnative}
 %postun -p /sbin/ldconfig
-
-%post devel
-if [ -e %{_infodir}/bfd.info.gz ]
-then
-  /sbin/install-info --info-dir=%{_infodir} %{_infodir}/bfd.info.gz
-fi
-exit 0
-
-%preun devel
-if [ $1 = 0 ]
-then
-  if [ -e %{_infodir}/bfd.info.gz ]
-  then
-    /sbin/install-info --delete --info-dir=%{_infodir} %{_infodir}/bfd.info.gz
-  fi
-fi
-exit 0
 %endif # %{isnative}
 
 %files -f %{?cross}binutils.lang
@@ -423,20 +397,20 @@ exit 0
 %{_infodir}/[^b]*info*
 %{_infodir}/binutils*info*
 
-%files devel
+%files static
 %defattr(-,root,root,-)
 %{_prefix}/include/*
+%{_libdir}/lib*.a
 %{_libdir}/libbfd.so
 %{_libdir}/libopcodes.so
 %{_infodir}/bfd*info*
 
-%files static
-%defattr(-,root,root,-)
-%{_libdir}/lib*.a
-
 %endif # %{isnative}
 
 %changelog
+* Tue Apr  20 2010 Nick Clifton <nickc@redhat.com> - 2.20.51.0.7-2
+- Merge binutils-devel package into binutils-static package.  (BZ 576300)
+
 * Thu Apr   8 2010 Nick Clifton <nickc@redhat.com> - 2.20.51.0.7-1
 - Rebase on 2.20.51.0.7 tarball.
 - Delete redundant patches:
