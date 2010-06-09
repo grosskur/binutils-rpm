@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.20.51.0.7
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -34,6 +34,7 @@ Patch08: binutils-2.20.51.0.2-copy-osabi.patch
 Patch09: binutils-2.20.51.0.7-do-not-bind-unique-symbols-locally.patch
 Patch10: binutils-2.20.51.0.7-dwarf4.patch
 Patch11: binutils-2.20.51.0.7-unique-archive-symbols.patch
+Patch12: binutils-2.20.51.0.7-gold-INPUT.patch
 
 %define gold_arches %ix86 x86_64
 
@@ -128,6 +129,7 @@ using libelf instead of BFD.
 %patch09 -p0 -b .do-not-bind-unique~
 %patch10 -p0 -b .dwarf4~
 %patch11 -p0 -b .unique~
+%patch12 -p0 -b .gold-input~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -410,6 +412,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Wed Jun   9 2010 Nick Clifton <nickc@redhat.com> - 2.20.51.0.7-4
+- Allow GOLD linker to parse "-l<name>" directives inside INPUT statements in linker scripts. (BZ 600553)
+
 * Tue May   4 2010 Nick Clifton <nickc@redhat.com> - 2.20.51.0.7-3
 - Allow unique symbols in archive maps.
 
