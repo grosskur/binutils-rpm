@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.20.51.0.7
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -97,18 +97,25 @@ of an object or archive file), strings (for listing printable strings
 from files), strip (for discarding symbols), and addr2line (for
 converting addresses to file and line).
 
-%package static
+%package devel
 Summary: BFD and opcodes static and dynamic libraries and header files
 Group: System Environment/Libraries
-Provides: binutils-devel = %{version}-%{release}
+Provides: binutils-static = %{version}-%{release}
 Requires(post): /sbin/install-info
 Requires(preun): /sbin/install-info
 Requires: zlib-devel
 
-%description static
+%description devel
 This package contains BFD and opcodes static and dynamic libraries.
+
 The dynamic libraries are in this package, rather than a seperate
-devel package because the API of the BFD library is unstable.
+base package because they are actually linker scripts that force
+the use of the static libraries.  This is because the API of the
+BFD library is too unstable to be used dynamically.
+
+The static libraries are here because they are now needed by the
+dynamic libraries.
+
 Developers starting new projects are strongly encouraged to consider
 using libelf instead of BFD.
 
@@ -401,7 +408,7 @@ exit 0
 %{_infodir}/[^b]*info*
 %{_infodir}/binutils*info*
 
-%files static
+%files devel
 %defattr(-,root,root,-)
 %{_prefix}/include/*
 %{_libdir}/lib*.a
@@ -412,6 +419,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Wed Jun  30 2010 Nick Clifton <nickc@redhat.com> - 2.20.51.0.7-5
+- Rename the binutils-static package to binutils-devel in line with the Fedora packaging guidelines.
+
 * Wed Jun   9 2010 Nick Clifton <nickc@redhat.com> - 2.20.51.0.7-4
 - Allow GOLD linker to parse "-l<name>" directives inside INPUT statements in linker scripts. (BZ 600553)
 
