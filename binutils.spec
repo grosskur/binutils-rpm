@@ -16,25 +16,22 @@
 
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
-Version: 2.20.51.0.7
-Release: 5%{?dist}
+Version: 2.20.51.0.10
+Release: 1%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
 Source2: binutils-2.19.50.0.1-output-format.sed
 Patch01: binutils-2.20.51.0.2-libtool-lib64.patch
-Patch02: binutils-2.20.51.0.2-ppc64-pie.patch
+Patch02: binutils-2.20.51.0.10-ppc64-pie.patch
 Patch03: binutils-2.20.51.0.2-ia64-lib64.patch
 Patch04: binutils-2.20.51.0.2-envvar-revert.patch
 Patch05: binutils-2.20.51.0.2-version.patch
 Patch06: binutils-2.20.51.0.2-set-long-long.patch
 Patch07: binutils-2.20.51.0.2-build-id.patch
-Patch08: binutils-2.20.51.0.2-copy-osabi.patch
-Patch09: binutils-2.20.51.0.7-do-not-bind-unique-symbols-locally.patch
-Patch10: binutils-2.20.51.0.7-dwarf4.patch
-Patch11: binutils-2.20.51.0.7-unique-archive-symbols.patch
-Patch12: binutils-2.20.51.0.7-gold-INPUT.patch
+Patch08: binutils-2.20.51.0.10-copy-osabi.patch
+Patch09: binutils-2.20.51.0.10-update-gold.patch
 
 %define gold_arches %ix86 x86_64
 
@@ -133,10 +130,7 @@ using libelf instead of BFD.
 %patch06 -p0 -b .set-long-long~
 %patch07 -p0 -b .build-id~
 %patch08 -p0 -b .copy-osabi~
-%patch09 -p0 -b .do-not-bind-unique~
-%patch10 -p0 -b .dwarf4~
-%patch11 -p0 -b .unique~
-%patch12 -p0 -b .gold-input~
+%patch09 -p0 -b .update-gold~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -419,6 +413,10 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Tue Aug  10 2010 Nick Clifton <nickc@redhat.com> - 2.20.51.0.10-1
+- Rebase on 2.20.51.0.10 tarball.
+- Import GOLD sources from binutils mainline as of 10 Aug 2010. 
+
 * Wed Jun  30 2010 Nick Clifton <nickc@redhat.com> - 2.20.51.0.7-5
 - Rename the binutils-static package to binutils-devel in line with the Fedora packaging guidelines.
 
