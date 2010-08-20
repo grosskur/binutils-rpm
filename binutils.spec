@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.20.51.0.10
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -32,6 +32,7 @@ Patch06: binutils-2.20.51.0.2-set-long-long.patch
 Patch07: binutils-2.20.51.0.2-build-id.patch
 Patch08: binutils-2.20.51.0.10-copy-osabi.patch
 Patch09: binutils-2.20.51.0.10-update-gold.patch
+Patch10: binutils-2.20.51.0.10-sec-merge-emit.patch
 
 %define gold_arches %ix86 x86_64
 
@@ -131,6 +132,7 @@ using libelf instead of BFD.
 %patch07 -p0 -b .build-id~
 %patch08 -p0 -b .copy-osabi~
 %patch09 -p0 -b .update-gold~
+%patch10 -p0 -b .sec-merge-emit~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -413,6 +415,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Fri Aug  20 2010 Nick Clifton <nickc@redhat.com> - 2.20.51.0.10-2
+- Fix seg fault in sec_merge_emit().  (BZ 623687)
+
 * Tue Aug  10 2010 Nick Clifton <nickc@redhat.com> - 2.20.51.0.10-1
 - Rebase on 2.20.51.0.10 tarball.
 - Import GOLD sources from binutils mainline as of 10 Aug 2010. 
