@@ -28,24 +28,40 @@ diff -rcp ../binutils-2.20.51.0.7.original/bfd/elfcode.h ./bfd/elfcode.h
       }
   
     return TRUE;
-diff -rcp ../binutils-2.20.51.0.7.original/bfd/section.c ./bfd/section.c
-*** ../binutils-2.20.51.0.7.original/bfd/section.c	2010-04-08 15:29:32.000000000 +0100
---- ./bfd/section.c	2010-04-08 15:29:39.000000000 +0100
-*************** bfd_malloc_and_get_section (bfd *abfd, s
-*** 1488,1494 ****
-      return TRUE;
-  
-    p = (bfd_byte *)
-!       bfd_malloc (sec->rawsize > sec->size ? sec->rawsize : sec->size);
-    if (p == NULL)
-      return FALSE;
-    *buf = p;
---- 1488,1494 ----
-      return TRUE;
-  
-    p = (bfd_byte *)
-!       bfd_zmalloc (sec->rawsize > sec->size ? sec->rawsize : sec->size);
-    if (p == NULL)
-      return FALSE;
-    *buf = p;
 diff -rcp ../binutils-2.20.51.0.7.original/bfd/section.c.orig ./bfd/section.c.orig
+*** ../binutils-2.20.51.0.11.orig/bfd/compress.c	2010-09-10 08:44:47.000000000 +0100
+--- bfd/compress.c	2010-09-10 08:46:16.000000000 +0100
+*************** bfd_get_full_section_contents (bfd *abfd
+*** 174,180 ****
+      case COMPRESS_SECTION_NONE:
+        if (p == NULL)
+  	{
+! 	  p = (bfd_byte *) bfd_malloc (sz);
+  	  if (p == NULL)
+  	    return FALSE;
+  	  need_free = TRUE;
+--- 174,180 ----
+      case COMPRESS_SECTION_NONE:
+        if (p == NULL)
+  	{
+! 	  p = (bfd_byte *) bfd_zmalloc (sz);
+  	  if (p == NULL)
+  	    return FALSE;
+  	  need_free = TRUE;
+*************** fail_compressed:
+*** 234,240 ****
+      uncompressed_buffer = p;
+    else
+      {
+!       uncompressed_buffer = (bfd_byte *) bfd_malloc (uncompressed_size);
+        if (uncompressed_buffer == NULL)
+  	goto fail_compressed;
+      }
+--- 234,240 ----
+      uncompressed_buffer = p;
+    else
+      {
+!       uncompressed_buffer = (bfd_byte *) bfd_zmalloc (uncompressed_size);
+        if (uncompressed_buffer == NULL)
+  	goto fail_compressed;
+      }
