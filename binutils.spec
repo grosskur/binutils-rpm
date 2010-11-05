@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.20.51.0.12
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -185,7 +185,9 @@ CFLAGS="$CFLAGS -O0 -ggdb2"
 %configure \
   --build=%{_target_platform} --host=%{_target_platform} \
   --target=%{binutils_target} \
+%ifarch %gold_arches
   --enable-gold=%{build_gold} \
+%endif
 %if !%{isnative}
   --enable-targets=%{_host} \
   --with-sysroot=%{_prefix}/%{binutils_target}/sys-root \
@@ -413,6 +415,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Fri Nov   4 2010 Dan Horák <dan[at]danny.cz> - 2.20.51.0.12-2
+- "no" is not valid option for --enable-gold
+
 * Thu Oct  28 2010 Nick Clifton <nickc@redhat.com> - 2.20.51.0.12-1
 - Rebase on 2.20.51.0.12 tarball.  (BZ 582160)
 
