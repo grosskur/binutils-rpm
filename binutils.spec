@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.21.51.0.5
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -391,7 +391,7 @@ exit 0
 %{_bindir}/%{?cross}ld.*
 %ghost %{_bindir}/%{?cross}ld
 %else
-%{_bindir}/%{?cross}ld
+%{_bindir}/%{?cross}ld*
 %endif
 %{_mandir}/man1/*
 %if %{enable_shared}
@@ -415,6 +415,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Thu Jan   6 2011 Dan Horák <dan[at]danny.cz> - 2.21.51.0.5-2
+- fix build on non-gold arches like s390(x) where both ld and ld.bfd is installed
+
 * Wed Jan   5 2011 Nick Clifton <nickc@redhat.com> - 2.21.51.0.5-1
 - Rebase on 2.21.51.0.5 tarball.
 - Delete redundant patches.
