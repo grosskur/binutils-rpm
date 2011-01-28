@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.21.51.0.5
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -30,6 +30,7 @@ Patch04: binutils-2.20.51.0.2-version.patch
 Patch05: binutils-2.20.51.0.2-set-long-long.patch
 Patch06: binutils-2.20.51.0.10-copy-osabi.patch
 Patch07: binutils-2.20.51.0.10-sec-merge-emit.patch
+Patch08: binutils-2.20.51.0.2-build-id.patch
 
 %define gold_arches %ix86 x86_64
 
@@ -127,6 +128,7 @@ using libelf instead of BFD.
 %patch05 -p0 -b .set-long-long~
 %patch06 -p0 -b .copy-osabi~
 %patch07 -p0 -b .sec-merge-emit~
+%patch08 -p0 -b .build-id~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -415,6 +417,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Fri Jan  28 2011 Jakub Jelinek <jakub@redhat.com> - 2.21.51.0.5-3
+- Readd --build-id fix patch.  (PR ld/12451)
+
 * Thu Jan   6 2011 Dan Horák <dan[at]danny.cz> - 2.21.51.0.5-2
 - fix build on non-gold arches like s390(x) where both ld and ld.bfd is installed
 
