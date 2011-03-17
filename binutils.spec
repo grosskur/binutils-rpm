@@ -16,8 +16,8 @@
 
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
-Version: 2.21.51.0.6
-Release: 2%{?dist}
+Version: 2.21.51.0.7
+Release: 1%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -419,6 +419,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Thu Mar  17 2011 Nick Clifton <nickc@redhat.com> - 2.21.51.0.7-1
+- Rebase on 2.21.51.0.7 tarball.
+
 * Tue Mar  08 2011 Nick Clifton <nickc@redhat.com> - 2.21.51.0.6-2
 - Enable gold plugins.  (BZ 682852)
 
