@@ -16,7 +16,7 @@
 
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
-Version: 2.21.51.0.7
+Version: 2.21.51.0.8
 Release: 1%{?dist}
 License: GPLv3+
 Group: Development/Tools
@@ -419,6 +419,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Mon Apr  11 2011 Nick Clifton <nickc@redhat.com> - 2.21.51.0.8-1
+- Rebase on 2.21.51.0.8 tarball.
+
 * Thu Mar  17 2011 Nick Clifton <nickc@redhat.com> - 2.21.51.0.7-1
 - Rebase on 2.21.51.0.7 tarball.
 
