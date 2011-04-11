@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.21.51.0.8
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -31,7 +31,6 @@ Patch05: binutils-2.20.51.0.2-set-long-long.patch
 Patch06: binutils-2.20.51.0.10-copy-osabi.patch
 Patch07: binutils-2.20.51.0.10-sec-merge-emit.patch
 Patch08: binutils-2.20.51.0.2-build-id.patch
-Patch09: binutils-2.21.51.0.6-gold-plugins.patch
 
 %define gold_arches %ix86 x86_64
 
@@ -130,7 +129,6 @@ using libelf instead of BFD.
 %patch06 -p0 -b .copy-osabi~
 %patch07 -p0 -b .sec-merge-emit~
 %patch08 -p0 -b .build-id~
-%patch09 -p0 -b .gold-plugins~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -203,7 +201,7 @@ CFLAGS="$CFLAGS -O0 -ggdb2"
   --disable-shared \
 %endif
   $CARGS \
-  --disable-werror \
+  --enable-plugins \
   --with-bugurl=http://bugzilla.redhat.com/bugzilla/
 make %{_smp_mflags} tooldir=%{_prefix} all
 make %{_smp_mflags} tooldir=%{_prefix} info
@@ -419,6 +417,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Mon Apr  11 2011 Nick Clifton <nickc@redhat.com> - 2.21.51.0.8-2
+- Delete plugins patch - enable plugins via configure option.
+
 * Mon Apr  11 2011 Nick Clifton <nickc@redhat.com> - 2.21.51.0.8-1
 - Rebase on 2.21.51.0.8 tarball.
 
