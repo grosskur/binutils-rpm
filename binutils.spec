@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.20.51.0.7
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -35,7 +35,8 @@ Patch09: binutils-2.20.51.0.7-do-not-bind-unique-symbols-locally.patch
 Patch10: binutils-2.20.51.0.7-dwarf4.patch
 Patch11: binutils-2.20.51.0.7-unique-archive-symbols.patch
 Patch12: binutils-2.20.51.0.7-gold-INPUT.patch
-Patch13: binutils-2.20.51.0.7-i386-dis.patch
+Patch13: binutils-2.20.51.0.7-gas-long-lines.patch
+Patch14: binutils-2.20.51.0.7-i386-dis.patch
 
 %define gold_arches %ix86 x86_64
 
@@ -138,7 +139,8 @@ using libelf instead of BFD.
 %patch10 -p0 -b .dwarf4~
 %patch11 -p0 -b .unique~
 %patch12 -p0 -b .gold-input~
-%patch13 -p0 -b .i386-dis~
+%patch13 -p0 -b .long-lines~
+%patch14 -p0 -b .i386-dis~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -421,8 +423,11 @@ exit 0
 %endif # %{isnative}
 
 %changelog
-* Tue Apr  12 2011 Nick Clifton <nickc@redhat.com> - 2.20.51.0.7-6
+* Tue Apr  12 2011 Nick Clifton <nickc@redhat.com> - 2.20.51.0.7-7
 - Fix disassembly of i386 objects.  (BZ 695565)
+
+* Mon Nov  15 2010 Nick Clifton <nickc@redhat.com> - 2.20.51.0.7-6
+- Fix problem assembling long lines.  (PR 11456, BZ 643305)
 
 * Wed Jun  30 2010 Nick Clifton <nickc@redhat.com> - 2.20.51.0.7-5
 - Rename the binutils-static package to binutils-devel in line with the Fedora packaging guidelines.
