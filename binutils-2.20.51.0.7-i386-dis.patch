@@ -1,0 +1,87 @@
+*** ../binutils-2.20.51.0.7.orig/opcodes/i386-dis.c	2011-04-12 14:42:20.870382006 +0100
+--- opcodes/i386-dis.c	2011-04-12 14:45:34.074381878 +0100
+*************** get_valid_dis386 (const struct dis386 *d
+*** 11059,11065 ****
+        switch ((*codep & 0x1f))
+  	{
+  	default:
+! 	  BadOp ();
+  	case 0x8:
+  	  vex_table_index = XOP_08;
+  	  break;
+--- 11059,11065 ----
+        switch ((*codep & 0x1f))
+  	{
+  	default:
+! 	  return & bad_opcode;
+  	case 0x8:
+  	  vex_table_index = XOP_08;
+  	  break;
+*************** get_valid_dis386 (const struct dis386 *d
+*** 11078,11084 ****
+        vex.register_specifier = (~(*codep >> 3)) & 0xf;
+        if (address_mode != mode_64bit
+  	  && vex.register_specifier > 0x7)
+! 	BadOp ();
+  
+        vex.length = (*codep & 0x4) ? 256 : 128;
+        switch ((*codep & 0x3))
+--- 11078,11084 ----
+        vex.register_specifier = (~(*codep >> 3)) & 0xf;
+        if (address_mode != mode_64bit
+  	  && vex.register_specifier > 0x7)
+! 	return & bad_opcode;
+  
+        vex.length = (*codep & 0x4) ? 256 : 128;
+        switch ((*codep & 0x3))
+*************** get_valid_dis386 (const struct dis386 *d
+*** 11116,11122 ****
+        switch ((*codep & 0x1f))
+  	{
+  	default:
+! 	  BadOp ();
+  	case 0x1:
+  	  vex_table_index = VEX_0F;
+  	  break;
+--- 11116,11122 ----
+        switch ((*codep & 0x1f))
+  	{
+  	default:
+! 	  return & bad_opcode;
+  	case 0x1:
+  	  vex_table_index = VEX_0F;
+  	  break;
+*************** get_valid_dis386 (const struct dis386 *d
+*** 11135,11141 ****
+        vex.register_specifier = (~(*codep >> 3)) & 0xf;
+        if (address_mode != mode_64bit
+  	  && vex.register_specifier > 0x7)
+! 	BadOp ();
+  
+        vex.length = (*codep & 0x4) ? 256 : 128;
+        switch ((*codep & 0x3))
+--- 11135,11141 ----
+        vex.register_specifier = (~(*codep >> 3)) & 0xf;
+        if (address_mode != mode_64bit
+  	  && vex.register_specifier > 0x7)
+! 	return & bad_opcode;
+  
+        vex.length = (*codep & 0x4) ? 256 : 128;
+        switch ((*codep & 0x3))
+*************** get_valid_dis386 (const struct dis386 *d
+*** 11177,11183 ****
+        vex.register_specifier = (~(*codep >> 3)) & 0xf;
+        if (address_mode != mode_64bit
+  	  && vex.register_specifier > 0x7)
+! 	BadOp ();
+  
+        vex.w = 0;
+  
+--- 11177,11183 ----
+        vex.register_specifier = (~(*codep >> 3)) & 0xf;
+        if (address_mode != mode_64bit
+  	  && vex.register_specifier > 0x7)
+! 	return & bad_opcode;
+  
+        vex.w = 0;
+  
