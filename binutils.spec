@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.20.51.0.7
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -170,7 +170,7 @@ echo target is %{binutils_target}
 export CFLAGS="$RPM_OPT_FLAGS"
 CARGS=
 
-case %{binutils_target} in i?86*|sparc*|ppc*|s390*|sh*)
+case %{binutils_target} in i?86*|sparc*|ppc*|s390*|sh*|arm*)
   CARGS="$CARGS --enable-64-bit-bfd"
   ;;
 esac
@@ -267,7 +267,7 @@ rm -f %{buildroot}%{_libdir}/lib{bfd,opcodes}.la
 # Sanity check --enable-64-bit-bfd really works.
 grep '^#define BFD_ARCH_SIZE 64$' %{buildroot}%{_prefix}/include/bfd.h
 # Fix multilib conflicts of generated values by __WORDSIZE-based expressions.
-%ifarch %{ix86} x86_64 ppc ppc64 s390 s390x sh3 sh4 sparc sparc64
+%ifarch %{ix86} x86_64 ppc ppc64 s390 s390x sh3 sh4 sparc sparc64 arm
 sed -i -e '/^#include "ansidecl.h"/{p;s~^.*$~#include <bits/wordsize.h>~;}' \
     -e 's/^#define BFD_DEFAULT_TARGET_SIZE \(32\|64\) *$/#define BFD_DEFAULT_TARGET_SIZE __WORDSIZE/' \
     -e 's/^#define BFD_HOST_64BIT_LONG [01] *$/#define BFD_HOST_64BIT_LONG (__WORDSIZE == 64)/' \
@@ -423,6 +423,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Mon May   2 2011 Peter Robinson <pbrobinson@gmail.com> - 2.20.51.0.7-8
+- Add ARM to BFD checks
+
 * Tue Apr  12 2011 Nick Clifton <nickc@redhat.com> - 2.20.51.0.7-7
 - Fix disassembly of i386 objects.  (BZ 695565)
 
