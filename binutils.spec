@@ -16,8 +16,8 @@
 
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
-Version: 2.21.51.0.8
-Release: 3%{?dist}
+Version: 2.21.51.0.9
+Release: 1%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -417,6 +417,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Tue May  19 2011 Nick Clifton <nickc@redhat.com> - 2.21.51.0.9-1
+- Rebase on 2.21.51.0.9 tarball.  (BZ 703105)
+
 * Mon May   2 2011 Peter Robinson <pbrobinson@gmail.com> - 2.21.51.0.8-3
 - Add ARM to BFD checks
 
