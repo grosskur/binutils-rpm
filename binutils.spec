@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.21.52.0.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -31,6 +31,7 @@ Patch05: binutils-2.20.51.0.2-set-long-long.patch
 Patch06: binutils-2.20.51.0.10-copy-osabi.patch
 Patch07: binutils-2.20.51.0.10-sec-merge-emit.patch
 Patch08: binutils-2.20.51.0.2-build-id.patch
+Patch09: binutils-2.21.52.0.1-keeping-notes.patch
 
 %define gold_arches %ix86 x86_64
 
@@ -129,6 +130,7 @@ using libelf instead of BFD.
 %patch06 -p0 -b .copy-osabi~
 %patch07 -p0 -b .sec-merge-emit~
 %patch08 -p0 -b .build-id~
+%patch09 -p0 -b .keeping-notes~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -417,6 +419,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Fri Jun  10 2011 Nick Clifton <nickc@redhat.com> - 2.21.52.0.1-2
+- Import fix for PR ld/12851 (BZ 711268)
+
 * Thu Jun  09 2011 Nick Clifton <nickc@redhat.com> - 2.21.52.0.1-1
 - Rebase on 2.21.52.0.1 tarball.  (BZ 712025)
 
