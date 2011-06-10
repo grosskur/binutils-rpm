@@ -1,0 +1,35 @@
+*** ../binutils-2.20.51.0.7.orig/bfd/elflink.c	2011-06-10 15:06:15.160479003 +0100
+--- bfd/elflink.c	2011-06-10 15:08:53.737479004 +0100
+*************** bfd_elf_final_link (bfd *abfd, struct bf
+*** 11126,11131 ****
+--- 11126,11138 ----
+  		    (_("%B: could not find output section %s"), abfd, name);
+  		  goto error_return;
+  		}
++ 	      if (elf_section_data (o->output_section)->this_hdr.sh_type == SHT_NOTE)
++ 		{
++ 		  (*_bfd_error_handler)
++ 		    (_("warning: section '%s' is being made into a note"), name);
++ 		  bfd_set_error (bfd_error_nonrepresentable_section);
++ 		  goto error_return;
++ 		}
+  	      dyn.d_un.d_ptr = o->vma;
+  	      break;
+  
+*************** bfd_elf_final_link (bfd *abfd, struct bf
+*** 11213,11219 ****
+  	    continue;
+  	  if ((elf_section_data (o->output_section)->this_hdr.sh_type
+  	       != SHT_STRTAB)
+! 	      || strcmp (bfd_get_section_name (abfd, o), ".dynstr") != 0)
+  	    {
+  	      /* FIXME: octets_per_byte.  */
+  	      if (! bfd_set_section_contents (abfd, o->output_section,
+--- 11220,11226 ----
+  	    continue;
+  	  if ((elf_section_data (o->output_section)->this_hdr.sh_type
+  	       != SHT_STRTAB)
+! 	      && strcmp (bfd_get_section_name (abfd, o), ".dynstr") != 0)
+  	    {
+  	      /* FIXME: octets_per_byte.  */
+  	      if (! bfd_set_section_contents (abfd, o->output_section,
