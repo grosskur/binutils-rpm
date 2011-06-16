@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.21.52.0.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -32,6 +32,7 @@ Patch06: binutils-2.20.51.0.10-copy-osabi.patch
 Patch07: binutils-2.20.51.0.10-sec-merge-emit.patch
 Patch08: binutils-2.20.51.0.2-build-id.patch
 Patch09: binutils-2.21.52.0.1-keeping-notes.patch
+Patch10: binutils-2.21.52.0.1-finding-without-symbols.patch
 
 %define gold_arches %ix86 x86_64
 
@@ -131,6 +132,7 @@ using libelf instead of BFD.
 %patch07 -p0 -b .sec-merge-emit~
 %patch08 -p0 -b .build-id~
 %patch09 -p0 -b .keeping-notes~
+%patch10 -p0 -b .finding~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -419,6 +421,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Thu Jun  16 2011 Nick Clifton <nickc@redhat.com> - 2.21.52.0.1-3
+- Fix seg-fault attempting to find a function name without a symbol table.  (BZ 713471)
+
 * Fri Jun  10 2011 Nick Clifton <nickc@redhat.com> - 2.21.52.0.1-2
 - Import fix for PR ld/12851 (BZ 711268)
 
