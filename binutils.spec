@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.21.52.0.1
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -33,6 +33,7 @@ Patch07: binutils-2.20.51.0.10-sec-merge-emit.patch
 Patch08: binutils-2.20.51.0.2-build-id.patch
 Patch09: binutils-2.21.52.0.1-keeping-notes.patch
 Patch10: binutils-2.21.52.0.1-finding-without-symbols.patch
+Patch11: binutils-2.21.52.0.1-sh_offset-for-SHT_NOBITS.patch
 
 %define gold_arches %ix86 x86_64
 
@@ -133,6 +134,7 @@ using libelf instead of BFD.
 %patch08 -p0 -b .build-id~
 %patch09 -p0 -b .keeping-notes~
 %patch10 -p0 -b .finding~
+%patch11 -p0 -b .sh_offset~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -422,6 +424,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Fri Jun  24 2011 Nick Clifton <nickc@redhat.com> - 2.21.52.0.1-5
+- Import fix for PR ld/12921.
+
 * Fri Jun  24 2011 Nick Clifton <nickc@redhat.com> - 2.21.52.0.1-4
 - Run "alternatives --auto" to restore ld symbolic link if it was manually configured.  (BZ 661247)
 
