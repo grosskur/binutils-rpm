@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.21.52.0.1
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -347,6 +347,7 @@ rm -rf %{buildroot}
   %{_bindir}/%{?cross}ld.bfd %{ld_bfd_priority}
 %{_sbindir}/alternatives --install %{_bindir}/%{?cross}ld %{?cross}ld \
   %{_bindir}/%{?cross}ld.gold %{ld_gold_priority}
+%{_sbindir}/alternatives --auto %{?cross}ld 
 %endif
 %if %{isnative}
 /sbin/ldconfig
@@ -421,6 +422,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Fri Jun  24 2011 Nick Clifton <nickc@redhat.com> - 2.21.52.0.1-4
+- Run "alternatives --auto" to restore ld symbolic link if it was manually configured.  (BZ 661247)
+
 * Thu Jun  16 2011 Nick Clifton <nickc@redhat.com> - 2.21.52.0.1-3
 - Fix seg-fault attempting to find a function name without a symbol table.  (BZ 713471)
 
