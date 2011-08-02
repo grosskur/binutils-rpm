@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.21.53.0.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -32,6 +32,7 @@ Patch06: binutils-2.20.51.0.10-copy-osabi.patch
 Patch07: binutils-2.20.51.0.10-sec-merge-emit.patch
 Patch08: binutils-2.20.51.0.2-build-id.patch
 Patch09: binutils-2.21.53.0.1-debug_macro.patch
+Patch10: binutils-2.21.53.0.1-demangle.patch
 
 %define gold_arches %ix86 x86_64
 
@@ -131,6 +132,7 @@ using libelf instead of BFD.
 %patch07 -p0 -b .sec-merge-emit~
 %patch08 -p0 -b .build-id~
 %patch09 -p0 -b .debug_macro~
+%patch10 -p1 -b .demangle~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -420,6 +422,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Tue Aug  02 2011 Nick Clifton <nickc@redhat.com> - 2.21.53.0.1-3
+- Update libierty demangling.  (BZ 727453)
+
 * Wed Jul  27 2011 Nick Clifton <nickc@redhat.com> - 2.21.53.0.1-2
 - Import Jakub Jelinek's patch to add support for displaying the contents of .debug_macro sections.
 
