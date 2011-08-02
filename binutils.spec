@@ -423,7 +423,7 @@ exit 0
 
 %changelog
 * Tue Aug  02 2011 Nick Clifton <nickc@redhat.com> - 2.21.53.0.1-3
-- Update libierty demangling.  (BZ 727453)
+- Update libiberty demangling.  (BZ 727453)
 
 * Wed Jul  27 2011 Nick Clifton <nickc@redhat.com> - 2.21.53.0.1-2
 - Import Jakub Jelinek's patch to add support for displaying the contents of .debug_macro sections.
