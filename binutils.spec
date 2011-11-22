@@ -16,12 +16,16 @@
 
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
-Version: 2.21.53.0.2
-Release: 2%{?dist}
+Version: 2.22
+Release: 1%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
-Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
+
+# Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
+# The ftp.kernel.org/pub/linux/devel/binutils/ page is (temporarily) unavailable
+# so we use the GNU site instead.
+Source: http://ftp.gnu.org/gnu/binutils/binutils-%{version}.tar.bz2
 Source2: binutils-2.19.50.0.1-output-format.sed
 Patch01: binutils-2.20.51.0.2-libtool-lib64.patch
 Patch02: binutils-2.20.51.0.10-ppc64-pie.patch
