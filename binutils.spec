@@ -427,6 +427,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Tue Nov  22 2011 Nick Clifton <nickc@redhat.com> - 2.22-1
+- Rebase on 2.22 release.
+
 * Fri Sep  30 2011 Ricky Zhou <ricky@fedoraproject.org> - 2.21.53.0.2-2
 - Rebuild libopcodes.a with -fPIC.
 
