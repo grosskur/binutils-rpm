@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.22
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -429,6 +429,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Fri Jan 13 2012  Nick Clifton <nickc@redhat.com> - 2.22-4
+- Fix bug in GOLD sources parsing signed integers in command line options. 
+
 * Fri Jan 13 2012  Nick Clifton <nickc@redhat.com> - 2.22-3
 - Add casts for building gold with 4.7 version of gcc.
 

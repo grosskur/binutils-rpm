@@ -1,6 +1,6 @@
 diff -cp ../binutils-2.22.orig/gold/dwarf_reader.cc gold/dwarf_reader.cc
 *** ../binutils-2.22.orig/gold/dwarf_reader.cc	2012-01-13 12:20:00.279690374 +0000
---- gold/dwarf_reader.cc	2012-01-13 12:22:26.500694442 +0000
+--- gold/dwarf_reader.cc	2012-01-13 12:31:15.659709094 +0000
 *************** Sized_dwarf_line_info<size, big_endian>:
 *** 491,498 ****
                 && (shndx == -1U || lsm.shndx == -1U || shndx == lsm.shndx))
@@ -20,12 +20,9 @@ diff -cp ../binutils-2.22.orig/gold/dwarf_reader.cc gold/dwarf_reader.cc
   	      std::vector<Offset_to_lineno_entry>&
   		map(this->line_number_map_[lsm.shndx]);
   	      // If we see two consecutive entries with the same
-Common subdirectories: ../binutils-2.22.orig/gold/gcctestdir1 and gold/gcctestdir1
-Common subdirectories: ../binutils-2.22.orig/gold/gcctestdir2 and gold/gcctestdir2
-Common subdirectories: ../binutils-2.22.orig/gold/gcctestdir2-r and gold/gcctestdir2-r
 diff -cp ../binutils-2.22.orig/gold/i386.cc gold/i386.cc
 *** ../binutils-2.22.orig/gold/i386.cc	2012-01-13 12:20:00.355690373 +0000
---- gold/i386.cc	2012-01-13 12:23:48.407696800 +0000
+--- gold/i386.cc	2012-01-13 12:31:15.662709094 +0000
 *************** Target_i386::do_code_fill(section_size_t
 *** 3480,3529 ****
       }
@@ -129,10 +126,29 @@ diff -cp ../binutils-2.22.orig/gold/i386.cc gold/i386.cc
   }
   
   // Return the value to use for the base of a DW_EH_PE_datarel offset
-Common subdirectories: ../binutils-2.22.orig/gold/po and gold/po
+diff -cp ../binutils-2.22.orig/gold/options.cc gold/options.cc
+*** ../binutils-2.22.orig/gold/options.cc	2012-01-13 12:20:00.314690375 +0000
+--- gold/options.cc	2012-01-13 13:59:36.972856052 +0000
+*************** parse_uint(const char* option_name, cons
+*** 198,204 ****
+  {
+    char* endptr;
+    *retval = strtol(arg, &endptr, 0);
+!   if (*endptr != '\0' || retval < 0)
+      gold_fatal(_("%s: invalid option value (expected an integer): %s"),
+                 option_name, arg);
+  }
+--- 198,204 ----
+  {
+    char* endptr;
+    *retval = strtol(arg, &endptr, 0);
+!   if (*endptr != '\0' || *retval < 0)
+      gold_fatal(_("%s: invalid option value (expected an integer): %s"),
+                 option_name, arg);
+  }
 diff -cp ../binutils-2.22.orig/gold/resolve.cc gold/resolve.cc
 *** ../binutils-2.22.orig/gold/resolve.cc	2012-01-13 12:20:00.288690373 +0000
---- gold/resolve.cc	2012-01-13 12:24:29.576697764 +0000
+--- gold/resolve.cc	2012-01-13 12:31:15.663709095 +0000
 *************** Symbol_table::resolve(Sized_symbol<size>
 *** 336,344 ****
         && to->name()[0] == '_' && to->name()[1] == 'Z')
@@ -154,10 +170,9 @@ diff -cp ../binutils-2.22.orig/gold/resolve.cc gold/resolve.cc
         this->candidate_odr_violations_[to->name()].insert(fromloc);
         this->candidate_odr_violations_[to->name()].insert(toloc);
       }
-Common subdirectories: ../binutils-2.22.orig/gold/testsuite and gold/testsuite
 diff -cp ../binutils-2.22.orig/gold/x86_64.cc gold/x86_64.cc
 *** ../binutils-2.22.orig/gold/x86_64.cc	2012-01-13 12:21:24.880692697 +0000
---- gold/x86_64.cc	2012-01-13 12:25:36.219699685 +0000
+--- gold/x86_64.cc	2012-01-13 12:31:15.666709095 +0000
 *************** Target_x86_64::do_code_fill(section_size
 *** 3867,3916 ****
       }
