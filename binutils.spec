@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.22.52.0.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -425,6 +425,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Wed Feb 01 2012  Nick Clifton <nickc@redhat.com> - 2.22.52.0.1-2
+- Drat - forgot to upload the new tarball.  Now done.
+
 * Wed Feb 01 2012  Nick Clifton <nickc@redhat.com> - 2.22.52.0.1-1
 - Rebase on 2.22.52 release.
 - Remove build-id.patch and gold-casts.patch as they are included in the 2.22.52 sources.
