@@ -16,16 +16,16 @@
 
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
-Version: 2.22
-Release: 4%{?dist}
+Version: 2.22.52.0.1
+Release: 1%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 
-# Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
+Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
 # The ftp.kernel.org/pub/linux/devel/binutils/ page is (temporarily) unavailable
 # so we use the GNU site instead.
-Source: http://ftp.gnu.org/gnu/binutils/binutils-%{version}.tar.bz2
+# Source: http://ftp.gnu.org/gnu/binutils/binutils-%{version}.tar.bz2
 Source2: binutils-2.19.50.0.1-output-format.sed
 Patch01: binutils-2.20.51.0.2-libtool-lib64.patch
 Patch02: binutils-2.20.51.0.10-ppc64-pie.patch
@@ -34,8 +34,6 @@ Patch04: binutils-2.20.51.0.2-version.patch
 Patch05: binutils-2.20.51.0.2-set-long-long.patch
 Patch06: binutils-2.20.51.0.10-copy-osabi.patch
 Patch07: binutils-2.20.51.0.10-sec-merge-emit.patch
-Patch08: binutils-2.20.51.0.2-build-id.patch
-Patch09: binutils-2.22-gold-casts.patch
 
 %define gold_arches %ix86 x86_64
 
@@ -133,8 +131,6 @@ using libelf instead of BFD.
 %patch05 -p0 -b .set-long-long~
 %patch06 -p0 -b .copy-osabi~
 %patch07 -p0 -b .sec-merge-emit~
-%patch08 -p0 -b .build-id~
-%patch09 -p0 -b .gold-cast~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -429,6 +425,10 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Wed Feb 01 2012  Nick Clifton <nickc@redhat.com> - 2.22.52.0.1-1
+- Rebase on 2.22.52 release.
+- Remove build-id.patch and gold-casts.patch as they are included in the 2.22.52 sources.
+
 * Fri Jan 13 2012  Nick Clifton <nickc@redhat.com> - 2.22-4
 - Fix bug in GOLD sources parsing signed integers in command line options. 
 
