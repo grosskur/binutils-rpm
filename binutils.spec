@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.22.52.0.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -34,6 +34,9 @@ Patch04: binutils-2.20.51.0.2-version.patch
 Patch05: binutils-2.20.51.0.2-set-long-long.patch
 Patch06: binutils-2.20.51.0.10-copy-osabi.patch
 Patch07: binutils-2.20.51.0.10-sec-merge-emit.patch
+# Upstream http://sourceware.org/git/?p=binutils.git;a=commitdiff;h=f5edd1ac0e79c0356c6a1e2beffcadc0c532be98
+# Fixes RH #788107
+Patch08: binutils-2.22.52.0.1-weakdef.patch
 
 %define gold_arches %ix86 x86_64
 
@@ -425,6 +428,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Wed Feb 08 2012 Adam Williamson <awilliam@redhat.com> - 2.22.52.0.1-3
+- add upstream weakdef.patch to fix RH #788107
+
 * Wed Feb 01 2012  Nick Clifton <nickc@redhat.com> - 2.22.52.0.1-2
 - Drat - forgot to upload the new tarball.  Now done.
 
