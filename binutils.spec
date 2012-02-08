@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.22.52.0.1
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -429,6 +429,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Wed Feb 08 2012 Adam Williamson <awilliam@redhat.com> - 2.22.52.0.1-4
+- actually apply the patch
+
 * Wed Feb 08 2012 Adam Williamson <awilliam@redhat.com> - 2.22.52.0.1-3
 - add upstream weakdef.patch to fix RH #788107
 
