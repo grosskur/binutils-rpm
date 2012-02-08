@@ -134,6 +134,7 @@ using libelf instead of BFD.
 %patch05 -p0 -b .set-long-long~
 %patch06 -p0 -b .copy-osabi~
 %patch07 -p0 -b .sec-merge-emit~
+%patch08 -p1 -b .weakdef~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
