@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.22.52.0.1
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -37,6 +37,8 @@ Patch07: binutils-2.20.51.0.10-sec-merge-emit.patch
 # Upstream http://sourceware.org/git/?p=binutils.git;a=commitdiff;h=f5edd1ac0e79c0356c6a1e2beffcadc0c532be98
 # Fixes RH #788107
 Patch08: binutils-2.22.52.0.1-weakdef.patch
+# From upstream, fixes ld/13621 bug 'dangling global hidden symbol in symtab'
+Patch09: binutils-2.22.52.0.1-ld-13621.patch
 
 %define gold_arches %ix86 x86_64
 
@@ -135,6 +137,7 @@ using libelf instead of BFD.
 %patch06 -p0 -b .copy-osabi~
 %patch07 -p0 -b .sec-merge-emit~
 %patch08 -p1 -b .weakdef~
+%patch09 -p1 -b .ld-13621~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -429,23 +432,26 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Wed Feb 14 2012 Mark Wielaard <mjw@redhat.com> - 2.22.52.0.1-5
+- Add upstream ld/13621 'dangling global hidden symbol in symtab' patch.
+
 * Wed Feb 08 2012 Adam Williamson <awilliam@redhat.com> - 2.22.52.0.1-4
-- actually apply the patch
+- Actually apply the patch
 
 * Wed Feb 08 2012 Adam Williamson <awilliam@redhat.com> - 2.22.52.0.1-3
-- add upstream weakdef.patch to fix RH #788107
+- Add upstream weakdef.patch to fix RH #788107
 
-* Wed Feb 01 2012  Nick Clifton <nickc@redhat.com> - 2.22.52.0.1-2
+* Wed Feb 01 2012 Nick Clifton <nickc@redhat.com> - 2.22.52.0.1-2
 - Drat - forgot to upload the new tarball.  Now done.
 
-* Wed Feb 01 2012  Nick Clifton <nickc@redhat.com> - 2.22.52.0.1-1
+* Wed Feb 01 2012 Nick Clifton <nickc@redhat.com> - 2.22.52.0.1-1
 - Rebase on 2.22.52 release.
 - Remove build-id.patch and gold-casts.patch as they are included in the 2.22.52 sources.
 
-* Fri Jan 13 2012  Nick Clifton <nickc@redhat.com> - 2.22-4
+* Fri Jan 13 2012 Nick Clifton <nickc@redhat.com> - 2.22-4
 - Fix bug in GOLD sources parsing signed integers in command line options. 
 
-* Fri Jan 13 2012  Nick Clifton <nickc@redhat.com> - 2.22-3
+* Fri Jan 13 2012 Nick Clifton <nickc@redhat.com> - 2.22-3
 - Add casts for building gold with 4.7 version of gcc.
 
 * Thu Jan 12 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.22-2
