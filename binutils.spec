@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.22.52.0.1
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -39,6 +39,8 @@ Patch07: binutils-2.20.51.0.10-sec-merge-emit.patch
 Patch08: binutils-2.22.52.0.1-weakdef.patch
 # From upstream, fixes ld/13621 bug 'dangling global hidden symbol in symtab'
 Patch09: binutils-2.22.52.0.1-ld-13621.patch
+# From upstream
+Patch10: binutils-rh797752.patch
 
 %define gold_arches %ix86 x86_64
 
@@ -138,6 +140,7 @@ using libelf instead of BFD.
 %patch07 -p0 -b .sec-merge-emit~
 %patch08 -p1 -b .weakdef~
 %patch09 -p1 -b .ld-13621~
+%patch10 -p1 -b .cxxfilt-docs~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -432,6 +435,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Mon Feb 27 2012 Jeff Law <law@redhat.com> - 2.22.52.0.1-6
+- Fix c++filt docs (#797752)
+
 * Wed Feb 14 2012 Mark Wielaard <mjw@redhat.com> - 2.22.52.0.1-5
 - Add upstream ld/13621 'dangling global hidden symbol in symtab' patch.
 
