@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.22.52.0.1
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -41,6 +41,8 @@ Patch08: binutils-2.22.52.0.1-weakdef.patch
 Patch09: binutils-2.22.52.0.1-ld-13621.patch
 # From upstream
 Patch10: binutils-rh797752.patch
+# Enable -zrelro by default: BZ #621983
+Patch11: binutils-2.22.52.0.1-relro-on-by-default.patch
 
 %define gold_arches %ix86 x86_64
 
@@ -141,6 +143,7 @@ using libelf instead of BFD.
 %patch08 -p1 -b .weakdef~
 %patch09 -p1 -b .ld-13621~
 %patch10 -p1 -b .cxxfilt-docs~
+%patch11 -p0 -b .relro~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -435,6 +438,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Tue Mar 06 2012 Nick Clifton <nickc@redhat.com> - 2.22.52.0.1-7
+- Enable -zrelro be default. (#621983)
+
 * Mon Feb 27 2012 Jeff Law <law@redhat.com> - 2.22.52.0.1-6
 - Fix c++filt docs (#797752)
 
