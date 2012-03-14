@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.22.52.0.1
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -446,6 +446,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Mon Feb 27 2012 Jeff Law <law@redhat.com> - 2.22.52.0.1-9
+- Fix c++filt docs (2nd instance) (#797752)
+
 * Wed Mar 07 2012 Jakub Jelinek <jakub@redhat.com> - 2.22.52.0.1-8
 - Fix up handling of hidden ifunc relocs on x86_64
 - Add Intel TSX support
