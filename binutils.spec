@@ -446,7 +446,7 @@ exit 0
 %endif # %{isnative}
 
 %changelog
-* Mon Feb 27 2012 Jeff Law <law@redhat.com> - 2.22.52.0.1-9
+* Wed Mar 13 2012 Jeff Law <law@redhat.com> - 2.22.52.0.1-9
 - Fix c++filt docs (2nd instance) (#797752)
 
 * Wed Mar 07 2012 Jakub Jelinek <jakub@redhat.com> - 2.22.52.0.1-8
