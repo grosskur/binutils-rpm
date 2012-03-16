@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.22.52.0.1
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -47,6 +47,8 @@ Patch11: binutils-2.22.52.0.1-relro-on-by-default.patch
 Patch12: binutils-2.22.52.0.1-x86_64-hidden-ifunc.patch
 # From upstream
 Patch13: binutils-2.22.52.0.1-tsx.patch
+# From upstream
+Patch14: binutils-2.22.52.0.1-hidden-ifunc.patch
 
 %define gold_arches %ix86 x86_64
 
@@ -152,6 +154,7 @@ using libelf instead of BFD.
 %endif
 %patch12 -p0 -b .x86_64-hidden-ifunc~
 %patch13 -p0 -b .tsx~
+%patch14 -p0 -b .hidden-ifunc~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -446,6 +449,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Fri Mar 16 2012 Jakub Jelinek <jakub@redhat.com> - 2.22.52.0.1-10
+- Fix up handling of hidden ifunc relocs on i?86
+
 * Wed Mar 13 2012 Jeff Law <law@redhat.com> - 2.22.52.0.1-9
 - Fix c++filt docs (2nd instance) (#797752)
 
