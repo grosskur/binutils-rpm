@@ -149,7 +149,7 @@ using libelf instead of BFD.
 %patch08 -p1 -b .weakdef~
 %patch09 -p1 -b .ld-13621~
 %patch10 -p1 -b .cxxfilt-docs~
-%if 0%{?fedora} >= 18
+%if 0%{?fedora} >= 18 || 0%{?rhel} >= 7
 %patch11 -p0 -b .relro~
 %endif
 %patch12 -p0 -b .x86_64-hidden-ifunc~
@@ -459,9 +459,9 @@ exit 0
 - Fix up handling of hidden ifunc relocs on x86_64
 - Add Intel TSX support
 
-%if 0%{?fedora} >= 18
+%if 0%{?fedora} >= 18 || 0%{?rhel} >= 7
 * Tue Mar 06 2012 Nick Clifton <nickc@redhat.com> - 2.22.52.0.1-7
-- Enable -zrelro be default. (#621983)
+- Enable -zrelro be default. (#621983 #807831)
 %endif
 
 * Mon Feb 27 2012 Jeff Law <law@redhat.com> - 2.22.52.0.1-6
