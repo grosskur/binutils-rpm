@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.22.52.0.1
-Release: 10%{?dist}
+Release: 11%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -449,6 +449,11 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+%if 0%{?rhel} >= 7
+* Tue Apr 03 2012 Nick Clifton <nickc@redhat.com> - 2.22.52.0.1-11
+- Enable -zrelro by default for RHEL 7+. (#807831)
+%endif
+
 * Fri Mar 16 2012 Jakub Jelinek <jakub@redhat.com> - 2.22.52.0.1-10
 - Fix up handling of hidden ifunc relocs on i?86
 
@@ -459,9 +464,9 @@ exit 0
 - Fix up handling of hidden ifunc relocs on x86_64
 - Add Intel TSX support
 
-%if 0%{?fedora} >= 18 || 0%{?rhel} >= 7
+%if 0%{?fedora} >= 18
 * Tue Mar 06 2012 Nick Clifton <nickc@redhat.com> - 2.22.52.0.1-7
-- Enable -zrelro be default. (#621983 #807831)
+- Enable -zrelro by default. (#621983 #807831)
 %endif
 
 * Mon Feb 27 2012 Jeff Law <law@redhat.com> - 2.22.52.0.1-6
