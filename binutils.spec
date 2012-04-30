@@ -16,8 +16,8 @@
 
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
-Version: 2.22.52.0.1
-Release: 12%{?dist}
+Version: 2.22.52.0.2
+Release: 1%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -34,23 +34,10 @@ Patch04: binutils-2.20.51.0.2-version.patch
 Patch05: binutils-2.20.51.0.2-set-long-long.patch
 Patch06: binutils-2.20.51.0.10-copy-osabi.patch
 Patch07: binutils-2.20.51.0.10-sec-merge-emit.patch
-# Upstream http://sourceware.org/git/?p=binutils.git;a=commitdiff;h=f5edd1ac0e79c0356c6a1e2beffcadc0c532be98
-# Fixes RH #788107
-Patch08: binutils-2.22.52.0.1-weakdef.patch
-# From upstream, fixes ld/13621 bug 'dangling global hidden symbol in symtab'
-Patch09: binutils-2.22.52.0.1-ld-13621.patch
-# From upstream
-Patch10: binutils-rh797752.patch
 # Enable -zrelro by default: BZ #621983
-Patch11: binutils-2.22.52.0.1-relro-on-by-default.patch
-# From upstream
-Patch12: binutils-2.22.52.0.1-x86_64-hidden-ifunc.patch
-# From upstream
-Patch13: binutils-2.22.52.0.1-tsx.patch
-# From upstream
-Patch14: binutils-2.22.52.0.1-hidden-ifunc.patch
-# Soon to be from upstream
-Patch15: binutils-2.22.52.0.1-export-demangle.h.patch
+Patch08: binutils-2.22.52.0.1-relro-on-by-default.patch
+# Local patch - export demangle.h with the binutils-devel rpm.
+Patch09: binutils-2.22.52.0.1-export-demangle.h.patch
 
 %define gold_arches %ix86 x86_64
 
@@ -148,16 +135,10 @@ using libelf instead of BFD.
 %patch05 -p0 -b .set-long-long~
 %patch06 -p0 -b .copy-osabi~
 %patch07 -p0 -b .sec-merge-emit~
-%patch08 -p1 -b .weakdef~
-%patch09 -p1 -b .ld-13621~
-%patch10 -p1 -b .cxxfilt-docs~
 %if 0%{?fedora} >= 18 || 0%{?rhel} >= 7
-%patch11 -p0 -b .relro~
+%patch08 -p0 -b .relro~
 %endif
-%patch12 -p0 -b .x86_64-hidden-ifunc~
-%patch13 -p0 -b .tsx~
-%patch14 -p0 -b .hidden-ifunc~
-%patch15 -p0 -b .export-demangle-h~
+%patch09 -p0 -b .export-demangle-h~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -452,6 +433,11 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Mon Apr 30 2012 Nick Clifton <nickc@redhat.com> - 2.22.52.0.2-1
+- Rebase on 2.22.52.0.2 release.  (#816514)
+- Retire binutils-2.22.52.0.1-weakdef.patch, binutils-2.22.52.0.1-ld-13621.patch, binutils-rh797752.patch, binutils-2.22.52.0.1-x86_64-hidden-ifunc.patch, binutils-2.22.52.0.1-tsx.patch and binutils-2.22.52.0.1-hidden-ifunc.patch.
+- Update binutils-2.22.52.0.1-reloc-on-by-default.patch.
+
 * Fri Apr 27 2012 Nick Clifton <nickc@redhat.com> - 2.22.52.0.1-12
 - Include demangle.h in the devel rpm.
 
