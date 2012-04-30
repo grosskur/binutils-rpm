@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.22.52.0.1
-Release: 11%{?dist}
+Release: 12%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -49,6 +49,8 @@ Patch12: binutils-2.22.52.0.1-x86_64-hidden-ifunc.patch
 Patch13: binutils-2.22.52.0.1-tsx.patch
 # From upstream
 Patch14: binutils-2.22.52.0.1-hidden-ifunc.patch
+# Soon to be from upstream
+Patch15: binutils-2.22.52.0.1-export-demangle.h.patch
 
 %define gold_arches %ix86 x86_64
 
@@ -155,6 +157,7 @@ using libelf instead of BFD.
 %patch12 -p0 -b .x86_64-hidden-ifunc~
 %patch13 -p0 -b .tsx~
 %patch14 -p0 -b .hidden-ifunc~
+%patch15 -p0 -b .export-demangle-h~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -449,6 +452,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Fri Apr 27 2012 Nick Clifton <nickc@redhat.com> - 2.22.52.0.1-12
+- Include demangle.h in the devel rpm.
+
 %if 0%{?rhel} >= 7
 * Tue Apr 03 2012 Nick Clifton <nickc@redhat.com> - 2.22.52.0.1-11
 - Enable -zrelro by default for RHEL 7+. (#807831)
