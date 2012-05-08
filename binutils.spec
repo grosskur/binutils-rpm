@@ -16,7 +16,7 @@
 
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
-Version: 2.22.52.0.2
+Version: 2.22.52.0.3
 Release: 1%{?dist}
 License: GPLv3+
 Group: Development/Tools
@@ -433,6 +433,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Tue May 08 2012 Nick Clifton <nickc@redhat.com> - 2.22.52.0.2-3
+- Rebase on 2.22.52.0.3 release.  (#819823)
+
 * Mon Apr 30 2012 Nick Clifton <nickc@redhat.com> - 2.22.52.0.2-1
 - Rebase on 2.22.52.0.2 release.  (#816514)
 - Retire binutils-2.22.52.0.1-weakdef.patch, binutils-2.22.52.0.1-ld-13621.patch, binutils-rh797752.patch, binutils-2.22.52.0.1-x86_64-hidden-ifunc.patch, binutils-2.22.52.0.1-tsx.patch and binutils-2.22.52.0.1-hidden-ifunc.patch.
