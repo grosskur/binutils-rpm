@@ -16,7 +16,7 @@
 
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
-Version: 2.22.52.0.3
+Version: 2.22.52.0.4
 Release: 1%{?dist}
 License: GPLv3+
 Group: Development/Tools
@@ -433,7 +433,10 @@ exit 0
 %endif # %{isnative}
 
 %changelog
-* Tue May 08 2012 Nick Clifton <nickc@redhat.com> - 2.22.52.0.2-3
+* Wed Jun 06 2012 Nick Clifton <nickc@redhat.com> - 2.22.52.0.4-1
+- Rebase on 2.22.52.0.4 release.  (#829027)
+
+* Tue May 08 2012 Nick Clifton <nickc@redhat.com> - 2.22.52.0.3-1
 - Rebase on 2.22.52.0.3 release.  (#819823)
 
 * Mon Apr 30 2012 Nick Clifton <nickc@redhat.com> - 2.22.52.0.2-1
