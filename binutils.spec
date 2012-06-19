@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.22.52.0.4
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -38,6 +38,8 @@ Patch07: binutils-2.20.51.0.10-sec-merge-emit.patch
 Patch08: binutils-2.22.52.0.1-relro-on-by-default.patch
 # Local patch - export demangle.h with the binutils-devel rpm.
 Patch09: binutils-2.22.52.0.1-export-demangle.h.patch
+# Backport for https://fedoraproject.org/wiki/Features/DwarfCompressor
+Patch10: binutils-2.22.52.0.4-dwz.patch
 
 %define gold_arches %ix86 x86_64
 
@@ -139,6 +141,7 @@ using libelf instead of BFD.
 %patch08 -p0 -b .relro~
 %endif
 %patch09 -p0 -b .export-demangle-h~
+%patch10 -p0 -b .dwz~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -433,6 +436,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Tue Jun 19 2012 Jakub Jelinek <jakub@redhat.com> - 2.22.52.0.4-2
+- Add minimal dwz -m support.
+
 * Wed Jun 06 2012 Nick Clifton <nickc@redhat.com> - 2.22.52.0.4-1
 - Rebase on 2.22.52.0.4 release.  (#829027)
 
