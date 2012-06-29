@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.22.52.0.4
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -40,6 +40,8 @@ Patch08: binutils-2.22.52.0.1-relro-on-by-default.patch
 Patch09: binutils-2.22.52.0.1-export-demangle.h.patch
 # Backport for https://fedoraproject.org/wiki/Features/DwarfCompressor
 Patch10: binutils-2.22.52.0.4-dwz.patch
+# Import of FSF PR #14302
+Patch11: binutils-2.22.52.0.4-ar-4Gb.patch
 
 %define gold_arches %ix86 x86_64
 
@@ -142,6 +144,7 @@ using libelf instead of BFD.
 %endif
 %patch09 -p0 -b .export-demangle-h~
 %patch10 -p0 -b .dwz~
+%patch11 -p0 -b .ar4Gb~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -436,6 +439,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Fri Jun 30 2012 Nick Clifton <nickc@redhat.com> - 2.22.52.0.4-3
+- Fix handling of archives > 4Gb in size by importing patch for PR binutils/14302.  (#835957)
+
 * Tue Jun 19 2012 Jakub Jelinek <jakub@redhat.com> - 2.22.52.0.4-2
 - Add minimal dwz -m support.
 

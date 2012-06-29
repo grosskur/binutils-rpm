@@ -1,0 +1,136 @@
+diff -cp ../binutils-2.22.52.0.4.orig/binutils/ar.c binutils/ar.c
+*** ../binutils-2.22.52.0.4.orig/binutils/ar.c	2012-06-29 11:29:55.846149902 +0100
+--- binutils/ar.c	2012-06-29 11:31:22.249147172 +0100
+*************** open_inarch (const char *archive_filenam
+*** 937,946 ****
+  static void
+  print_contents (bfd *abfd)
+  {
+!   size_t ncopied = 0;
+    char *cbuf = (char *) xmalloc (BUFSIZE);
+    struct stat buf;
+!   size_t size;
+    if (bfd_stat_arch_elt (abfd, &buf) != 0)
+      /* xgettext:c-format */
+      fatal (_("internal stat error on %s"), bfd_get_filename (abfd));
+--- 937,946 ----
+  static void
+  print_contents (bfd *abfd)
+  {
+!   bfd_size_type ncopied = 0;
+    char *cbuf = (char *) xmalloc (BUFSIZE);
+    struct stat buf;
+!   bfd_size_type size;
+    if (bfd_stat_arch_elt (abfd, &buf) != 0)
+      /* xgettext:c-format */
+      fatal (_("internal stat error on %s"), bfd_get_filename (abfd));
+*************** print_contents (bfd *abfd)
+*** 954,965 ****
+    while (ncopied < size)
+      {
+  
+!       size_t nread;
+!       size_t tocopy = size - ncopied;
+        if (tocopy > BUFSIZE)
+  	tocopy = BUFSIZE;
+  
+!       nread = bfd_bread (cbuf, (bfd_size_type) tocopy, abfd);
+        if (nread != tocopy)
+  	/* xgettext:c-format */
+  	fatal (_("%s is not a valid archive"),
+--- 954,965 ----
+    while (ncopied < size)
+      {
+  
+!       bfd_size_type nread;
+!       bfd_size_type tocopy = size - ncopied;
+        if (tocopy > BUFSIZE)
+  	tocopy = BUFSIZE;
+  
+!       nread = bfd_bread (cbuf, tocopy, abfd);
+        if (nread != tocopy)
+  	/* xgettext:c-format */
+  	fatal (_("%s is not a valid archive"),
+*************** extract_file (bfd *abfd)
+*** 990,998 ****
+  {
+    FILE *ostream;
+    char *cbuf = (char *) xmalloc (BUFSIZE);
+!   size_t nread, tocopy;
+!   size_t ncopied = 0;
+!   size_t size;
+    struct stat buf;
+  
+    if (bfd_stat_arch_elt (abfd, &buf) != 0)
+--- 990,998 ----
+  {
+    FILE *ostream;
+    char *cbuf = (char *) xmalloc (BUFSIZE);
+!   bfd_size_type nread, tocopy;
+!   bfd_size_type ncopied = 0;
+!   bfd_size_type size;
+    struct stat buf;
+  
+    if (bfd_stat_arch_elt (abfd, &buf) != 0)
+*************** extract_file (bfd *abfd)
+*** 1027,1033 ****
+  	if (tocopy > BUFSIZE)
+  	  tocopy = BUFSIZE;
+  
+! 	nread = bfd_bread (cbuf, (bfd_size_type) tocopy, abfd);
+  	if (nread != tocopy)
+  	  /* xgettext:c-format */
+  	  fatal (_("%s is not a valid archive"),
+--- 1027,1033 ----
+  	if (tocopy > BUFSIZE)
+  	  tocopy = BUFSIZE;
+  
+! 	nread = bfd_bread (cbuf, tocopy, abfd);
+  	if (nread != tocopy)
+  	  /* xgettext:c-format */
+  	  fatal (_("%s is not a valid archive"),
+diff -cp ../binutils-2.22.52.0.4.orig/binutils/bucomm.c binutils/bucomm.c
+*** ../binutils-2.22.52.0.4.orig/binutils/bucomm.c	2012-06-29 11:29:56.852149873 +0100
+--- binutils/bucomm.c	2012-06-29 11:31:22.250147172 +0100
+*************** print_arelt_descr (FILE *file, bfd *abfd
+*** 427,442 ****
+  	  char timebuf[40];
+  	  time_t when = buf.st_mtime;
+  	  const char *ctime_result = (const char *) ctime (&when);
+  
+  	  /* POSIX format:  skip weekday and seconds from ctime output.  */
+  	  sprintf (timebuf, "%.12s %.4s", ctime_result + 4, ctime_result + 20);
+  
+  	  mode_string (buf.st_mode, modebuf);
+  	  modebuf[10] = '\0';
+  	  /* POSIX 1003.2/D11 says to skip first character (entry type).  */
+! 	  fprintf (file, "%s %ld/%ld %6ld %s ", modebuf + 1,
+  		   (long) buf.st_uid, (long) buf.st_gid,
+! 		   (long) buf.st_size, timebuf);
+  	}
+      }
+  
+--- 427,444 ----
+  	  char timebuf[40];
+  	  time_t when = buf.st_mtime;
+  	  const char *ctime_result = (const char *) ctime (&when);
++ 	  bfd_size_type size;
+  
+  	  /* POSIX format:  skip weekday and seconds from ctime output.  */
+  	  sprintf (timebuf, "%.12s %.4s", ctime_result + 4, ctime_result + 20);
+  
+  	  mode_string (buf.st_mode, modebuf);
+  	  modebuf[10] = '\0';
++ 	  size = buf.st_size;
+  	  /* POSIX 1003.2/D11 says to skip first character (entry type).  */
+! 	  fprintf (file, "%s %ld/%ld %6" BFD_VMA_FMT "u %s ", modebuf + 1,
+  		   (long) buf.st_uid, (long) buf.st_gid,
+! 		   size, timebuf);
+  	}
+      }
+  
+Common subdirectories: ../binutils-2.22.52.0.4.orig/binutils/doc and binutils/doc
+Common subdirectories: ../binutils-2.22.52.0.4.orig/binutils/.libs and binutils/.libs
+Common subdirectories: ../binutils-2.22.52.0.4.orig/binutils/po and binutils/po
+Common subdirectories: ../binutils-2.22.52.0.4.orig/binutils/testsuite and binutils/testsuite
+Common subdirectories: ../binutils-2.22.52.0.4.orig/binutils/tmpdir and binutils/tmpdir
