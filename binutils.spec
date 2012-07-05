@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.22.52.0.4
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -442,6 +442,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Thu Jul 05 2012 Nick Clifton <nickc@redhat.com> - 2.22.52.0.4-5
+- Catch attempts to create a broken symbol index with archives > 4Gb in size.  (#835957)
+
 * Fri Jun 30 2012 Nick Clifton <nickc@redhat.com> - 2.22.52.0.4-4
 - Import fix for ld/14189.  (#829311)
 
