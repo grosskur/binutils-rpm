@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.22.52.0.4
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -117,6 +117,7 @@ Provides: binutils-static = %{version}-%{release}
 Requires(post): /sbin/install-info
 Requires(preun): /sbin/install-info
 Requires: zlib-devel
+Requires: binutils = %{version}-%{release}
 
 %description devel
 This package contains BFD and opcodes static and dynamic libraries.
@@ -448,6 +449,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Thu Aug 02 2012 Nick Clifton <nickc@redhat.com> - 2.22.52.0.4-8
+- Make the binutils-devel package depend upon the binutils package. (#845082)
+
 * Thu Aug 02 2012 Nick Clifton <nickc@redhat.com> - 2.22.52.0.4-7
 - Disable checks that config.h is included before system headers.  (#845084)
 
