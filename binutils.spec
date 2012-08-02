@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.22.52.0.4
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -44,8 +44,10 @@ Patch10: binutils-2.22.52.0.4-dwz.patch
 Patch11: binutils-2.22.52.0.4-ar-4Gb.patch
 # Import of patch for FSF PR #14189
 Patch12: binutils-2.22.52.0.4-arm-plt-refcount.patch
-# Potential patch to fix BZ835957
+# Use 64-bit symbox index tables in s390 archives.  BZ #835957
 Patch13: binutils-2.22.52.0.4-s390-64bit-archive.patch
+# Disable checks that config.h has been included before system headers.  BZ #845084
+Patch14: binutils-2.22.52.0.4-no-config-h-check.patch
 
 %define gold_arches %ix86 x86_64
 
@@ -151,6 +153,7 @@ using libelf instead of BFD.
 %patch11 -p0 -b .ar4Gb~
 %patch12 -p0 -b .arm-plt-refcount~
 %patch13 -p0 -b .s390-64bit-archive~
+%patch14 -p0 -b .no-config-h-check~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -445,6 +448,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Thu Aug 02 2012 Nick Clifton <nickc@redhat.com> - 2.22.52.0.4-7
+- Disable checks that config.h is included before system headers.  (#845084)
+
 * Tue Jul 17 2012 Nick Clifton <nickc@redhat.com> - 2.22.52.0.4-6
 - Use 64bit indicies in archives for s390 binaries.  (#835957)
 
