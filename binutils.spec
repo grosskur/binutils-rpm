@@ -16,8 +16,8 @@
 
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
-Version: 2.22.52.0.4
-Release: 8%{?dist}
+Version: 2.23.51.0.1
+Release: 1%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -38,16 +38,8 @@ Patch07: binutils-2.20.51.0.10-sec-merge-emit.patch
 Patch08: binutils-2.22.52.0.1-relro-on-by-default.patch
 # Local patch - export demangle.h with the binutils-devel rpm.
 Patch09: binutils-2.22.52.0.1-export-demangle.h.patch
-# Backport for https://fedoraproject.org/wiki/Features/DwarfCompressor
-Patch10: binutils-2.22.52.0.4-dwz.patch
-# Import of patch for FSF PR #14302
-Patch11: binutils-2.22.52.0.4-ar-4Gb.patch
-# Import of patch for FSF PR #14189
-Patch12: binutils-2.22.52.0.4-arm-plt-refcount.patch
-# Use 64-bit symbox index tables in s390 archives.  BZ #835957
-Patch13: binutils-2.22.52.0.4-s390-64bit-archive.patch
 # Disable checks that config.h has been included before system headers.  BZ #845084
-Patch14: binutils-2.22.52.0.4-no-config-h-check.patch
+Patch10: binutils-2.22.52.0.4-no-config-h-check.patch
 
 %define gold_arches %ix86 x86_64
 
@@ -150,11 +142,7 @@ using libelf instead of BFD.
 %patch08 -p0 -b .relro~
 %endif
 %patch09 -p0 -b .export-demangle-h~
-%patch10 -p0 -b .dwz~
-%patch11 -p0 -b .ar4Gb~
-%patch12 -p0 -b .arm-plt-refcount~
-%patch13 -p0 -b .s390-64bit-archive~
-%patch14 -p0 -b .no-config-h-check~
+%patch10 -p0 -b .no-config-h-check~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -449,6 +437,10 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Wed Aug 08 2012 Nick Clifton <nickc@redhat.com> - 2.23.51.0.1-1
+- Rebase on 2.23.51.0.1 release.  (#846433)
+- Retire binutils-2.22.52.0.4-dwz.patch, binutils-2.22.52.0.4-ar-4Gb.patch, binutils-2.22.52.0.4-arm-plt-refcount.patch, binutils-2.22.52.0.4-s390-64bit-archive.patch.
+
 * Thu Aug 02 2012 Nick Clifton <nickc@redhat.com> - 2.22.52.0.4-8
 - Make the binutils-devel package depend upon the binutils package. (#845082)
 
