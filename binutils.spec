@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.23.51.0.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -40,6 +40,8 @@ Patch08: binutils-2.22.52.0.1-relro-on-by-default.patch
 Patch09: binutils-2.22.52.0.1-export-demangle.h.patch
 # Disable checks that config.h has been included before system headers.  BZ #845084
 Patch10: binutils-2.22.52.0.4-no-config-h-check.patch
+# Make GOLD honour the KEEP directive in linker scripts.
+Patch11: binutils-2.23.51.0.1-gold-keep.patch
 
 %define gold_arches %ix86 x86_64
 
@@ -143,6 +145,7 @@ using libelf instead of BFD.
 %endif
 %patch09 -p0 -b .export-demangle-h~
 %patch10 -p0 -b .no-config-h-check~
+%patch11 -p0 -b .gold-keep~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -437,6 +440,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Tue Aug 14 2012 Nick Clifton <nickc@redhat.com> - 2.23.51.0.1-2
+- Make GOLD honour KEEP directives in linker scripts  (#8333355)
+
 * Wed Aug 08 2012 Nick Clifton <nickc@redhat.com> - 2.23.51.0.1-1
 - Rebase on 2.23.51.0.1 release.  (#846433)
 - Retire binutils-2.22.52.0.4-dwz.patch, binutils-2.22.52.0.4-ar-4Gb.patch, binutils-2.22.52.0.4-arm-plt-refcount.patch, binutils-2.22.52.0.4-s390-64bit-archive.patch.
