@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.23.51.0.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -170,6 +170,10 @@ do
 done
 touch */configure
 
+%ifarch %{power64}
+%define _target_platform %{_arch}-%{_vendor}-%{_host_os}
+%endif
+
 %build
 echo target is %{binutils_target}
 export CFLAGS="$RPM_OPT_FLAGS"
@@ -283,7 +287,7 @@ rm -f %{buildroot}%{_libdir}/lib{bfd,opcodes}.la
 # Sanity check --enable-64-bit-bfd really works.
 grep '^#define BFD_ARCH_SIZE 64$' %{buildroot}%{_prefix}/include/bfd.h
 # Fix multilib conflicts of generated values by __WORDSIZE-based expressions.
-%ifarch %{ix86} x86_64 ppc ppc64 s390 s390x sh3 sh4 sparc sparc64 arm
+%ifarch %{ix86} x86_64 ppc %{power64} s390 s390x sh3 sh4 sparc sparc64 arm
 sed -i -e '/^#include "ansidecl.h"/{p;s~^.*$~#include <bits/wordsize.h>~;}' \
     -e 's/^#define BFD_DEFAULT_TARGET_SIZE \(32\|64\) *$/#define BFD_DEFAULT_TARGET_SIZE __WORDSIZE/' \
     -e 's/^#define BFD_HOST_64BIT_LONG [01] *$/#define BFD_HOST_64BIT_LONG (__WORDSIZE == 64)/' \
@@ -440,6 +444,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Tue Aug 14 2012 Karsten Hopp <karsten@redhat.com> 2.23.51.0.1-3
+- apply F17 commit cd2fda5 to honour {powerpc64} macro (#834651)
+
 * Tue Aug 14 2012 Nick Clifton <nickc@redhat.com> - 2.23.51.0.1-2
 - Make GOLD honour KEEP directives in linker scripts  (#8333355)
 
