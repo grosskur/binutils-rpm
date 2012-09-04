@@ -1,0 +1,121 @@
+From binutils-return-76960-listarch-binutils=sources dot redhat dot com at sourceware dot org Mon Sep 03 12:05:02 2012
+Return-Path: <binutils-return-76960-listarch-binutils=sources dot redhat dot com at sourceware dot org>
+Delivered-To: listarch-binutils at sources dot redhat dot com
+Received: (qmail 24023 invoked by alias); 3 Sep 2012 12:05:00 -0000
+Received: (qmail 24010 invoked by uid 22791); 3 Sep 2012 12:05:00 -0000
+X-SWARE-Spam-Status: No, hits=-3.6 required=5.0	tests=AWL,BAYES_00,KHOP_RCVD_UNTRUST,RCVD_IN_HOSTKARMA_W,RCVD_IN_HOSTKARMA_WL,RP_MATCHES_RCVD
+X-Spam-Check-By: sourceware.org
+Received: from e06smtp15.uk.ibm.com (HELO e06smtp15.uk.ibm.com) (195.75.94.111)    by sourceware.org (qpsmtpd/0.43rc1) with ESMTP; Mon, 03 Sep 2012 12:04:46 +0000
+Received: from /spool/local	by e06smtp15.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted	for <binutils@sourceware.org> from <andreas@de.ibm.com>;	Mon, 3 Sep 2012 13:04:44 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)	by e06smtp15.uk.ibm.com (192.168.101.145) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;	Mon, 3 Sep 2012 13:04:41 +0100
+Received: from d06av09.portsmouth.uk.ibm.com (d06av09.portsmouth.uk.ibm.com [9.149.37.250])	by b06cxnps4076.portsmouth.uk.ibm.com (8.13.8/8.13.8/NCO v10.0) with ESMTP id q83C4YZx40435740	for <binutils@sourceware.org>; Mon, 3 Sep 2012 12:04:34 GMT
+Received: from d06av09.portsmouth.uk.ibm.com (loopback [127.0.0.1])	by d06av09.portsmouth.uk.ibm.com (8.14.4/8.13.1/NCO v10.0 AVout) with ESMTP id q83C4eFA012810	for <binutils@sourceware.org>; Mon, 3 Sep 2012 06:04:40 -0600
+Received: from bart (dyn-9-152-212-238.boeblingen.de.ibm.com [9.152.212.238])	by d06av09.portsmouth.uk.ibm.com (8.14.4/8.13.1/NCO v10.0 AVin) with SMTP id q83C4dDC012768	for <binutils@sourceware.org>; Mon, 3 Sep 2012 06:04:39 -0600
+Received: by bart (sSMTP sendmail emulation); Mon, 03 Sep 2012 14:04:39 +0200
+From: "Andreas Krebbel" <andreas at de dot ibm dot com>
+Date: Mon, 3 Sep 2012 14:04:39 +0200
+To: binutils at sourceware dot org
+Subject: [Committed] S/390: Handle PLTOFF for IFUNC symbols correctly
+Message-ID: <20120903120439.GA10593@bart>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
+x-cbid: 12090312-0342-0000-0000-000002BC4237
+Mailing-List: contact binutils-help at sourceware dot org; run by ezmlm
+Precedence: bulk
+List-Id: <binutils.sourceware.org>
+List-Subscribe: <mailto:binutils-subscribe at sourceware dot org>
+List-Archive: <http://sourceware.org/ml/binutils/>
+List-Post: <mailto:binutils at sourceware dot org>
+List-Help: <mailto:binutils-help at sourceware dot org>, <http://sourceware dot org/ml/#faqs>
+Sender: binutils-owner at sourceware dot org
+Delivered-To: mailing list binutils at sourceware dot org
+
+Hi,
+
+the s390 IFUNC support so far didn't deal correctly with PLTOFF
+relocs.  Fixed with the attached patch.
+
+Committed.
+
+Bye,
+
+-Andreas-
+
+2012-09-03  Andreas Krebbel  <Andreas.Krebbel@de.ibm.com>
+
+	* elf32-s390.c (elf_s390_relocate_section): Handle PLTOFF for
+	local and global ifunc symbols.
+	* elf64-s390.c (elf_s390_relocate_section): Likewise.
+
+---
+ bfd/elf32-s390.c |    8 ++++++--
+ bfd/elf64-s390.c |   11 ++++++++---
+ 2 files changed, 14 insertions(+), 5 deletions(-)
+
+Index: binutils/bfd/elf32-s390.c
+===================================================================
+--- binutils.orig/bfd/elf32-s390.c
++++ binutils/bfd/elf32-s390.c
+@@ -2349,6 +2349,10 @@ elf_s390_relocate_section (bfd *output_b
+ 
+ 	      switch (r_type)
+ 		{
++		case R_390_PLTOFF16:
++		case R_390_PLTOFF32:
++		  relocation -= htab->elf.sgot->output_section->vma;
++		  break;
+ 		case R_390_GOTPLT12:
+ 		case R_390_GOTPLT16:
+ 		case R_390_GOTPLT20:
+@@ -2625,9 +2629,9 @@ elf_s390_relocate_section (bfd *output_b
+ 
+ 	  /* For local symbols or if we didn't make a PLT entry for
+ 	     this symbol resolve the symbol directly.  */
+-	  if (   h == NULL
++	  if (h == NULL
+ 	      || h->plt.offset == (bfd_vma) -1
+-	      || htab->elf.splt == NULL)
++	      || (htab->elf.splt == NULL && !s390_is_ifunc_symbol_p (h)))
+ 	    {
+ 	      relocation -= htab->elf.sgot->output_section->vma;
+ 	      break;
+Index: binutils/bfd/elf64-s390.c
+===================================================================
+--- binutils.orig/bfd/elf64-s390.c
++++ binutils/bfd/elf64-s390.c
+@@ -2306,6 +2306,11 @@ elf_s390_relocate_section (bfd *output_b
+ 
+ 	      switch (r_type)
+ 		{
++		case R_390_PLTOFF16:
++		case R_390_PLTOFF32:
++		case R_390_PLTOFF64:
++		  relocation -= htab->elf.sgot->output_section->vma;
++		  break;
+ 		case R_390_GOTPLT12:
+ 		case R_390_GOTPLT16:
+ 		case R_390_GOTPLT20:
+@@ -2561,7 +2566,7 @@ elf_s390_relocate_section (bfd *output_b
+ 	    break;
+ 
+ 	  if (h->plt.offset == (bfd_vma) -1
+-	      || (htab->elf.splt == NULL && htab->elf.iplt == NULL))
++	      || (htab->elf.splt == NULL && !s390_is_ifunc_symbol_p (h)))
+ 	    {
+ 	      /* We didn't make a PLT entry for this symbol.  This
+ 		 happens when statically linking PIC code, or when
+@@ -2587,9 +2592,9 @@ elf_s390_relocate_section (bfd *output_b
+ 
+ 	  /* For local symbols or if we didn't make a PLT entry for
+ 	     this symbol resolve the symbol directly.  */
+-	  if (   h == NULL
++	  if (h == NULL
+ 	      || h->plt.offset == (bfd_vma) -1
+-	      || htab->elf.splt == NULL)
++	      || (htab->elf.splt == NULL && !s390_is_ifunc_symbol_p (h)))
+ 	    {
+ 	      relocation -= htab->elf.sgot->output_section->vma;
+ 	      break;
+

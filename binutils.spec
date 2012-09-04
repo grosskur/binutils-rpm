@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.23.51.0.1
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -42,6 +42,8 @@ Patch09: binutils-2.22.52.0.1-export-demangle.h.patch
 Patch10: binutils-2.22.52.0.4-no-config-h-check.patch
 # Make GOLD honour the KEEP directive in linker scripts.
 Patch11: binutils-2.23.51.0.1-gold-keep.patch
+# Bugfix for s390[x] IFUNC support
+Patch12: binutils-rh805974.patch
 
 %define gold_arches %ix86 x86_64
 
@@ -146,6 +148,7 @@ using libelf instead of BFD.
 %patch09 -p0 -b .export-demangle-h~
 %patch10 -p0 -b .no-config-h-check~
 %patch11 -p0 -b .gold-keep~
+%patch12 -p1 
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -444,6 +447,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Tue Sep 4 2012 Jeff Law <law@redhat.com> 2.23.51.0.1-4
+- Correctly handle PLTOFF relocs for s390 IFUNCs.
+
 * Tue Aug 14 2012 Karsten Hopp <karsten@redhat.com> 2.23.51.0.1-3
 - apply F17 commit cd2fda5 to honour {powerpc64} macro (#834651)
 
