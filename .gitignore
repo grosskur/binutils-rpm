@@ -27,3 +27,4 @@ i686
 *.log
 HOWTO
 build-sources
+/binutils-2.23.51.0.2.tar.bz2
