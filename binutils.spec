@@ -16,7 +16,7 @@
 
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
-Version: 2.23.51.0.2
+Version: 2.23.51.0.3
 Release: 1%{?dist}
 License: GPLv3+
 Group: Development/Tools
@@ -441,6 +441,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Tue Oct 02 2012 Nick Clifton <nickc@redhat.com> - 2.23.51.0.3-1
+- Rebase on 2.23.51.0.3 release.  (#858560)
+
 * Tue Sep 11 2012 Nick Clifton <nickc@redhat.com> - 2.23.51.0.2-1
 - Rebase on 2.23.51.0.2 release.  (#856119)
 - Retire binutils-2.23.51.0.1-gold-keep.patch and binutils-rh805974.patch.
