@@ -16,7 +16,7 @@
 
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
-Version: 2.23.51.0.5
+Version: 2.23.51.0.6
 Release: 1%{?dist}
 License: GPLv3+
 Group: Development/Tools
@@ -443,6 +443,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Tue Nov 27 2012 Nick Clifton <nickc@redhat.com> - 2.23.51.0.5-6
+- Rebase on 2.23.51.0.6 release.  (#880508)
+
 * Tue Nov 13 2012 Nick Clifton <nickc@redhat.com> - 2.23.51.0.5-1
 - Rebase on 2.23.51.0.5 release.  (#876141)
 - Retire binutils-2.23.51.0.3-arm-ldralt.patch
