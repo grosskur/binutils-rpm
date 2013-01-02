@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.23.51.0.8
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -315,7 +315,8 @@ tee %{buildroot}%{_libdir}/libbfd.so <<EOH
 $OUTPUT_FORMAT
 
 /* The libz dependency is unexpected by legacy build scripts.  */
-INPUT ( %{_libdir}/libbfd.a -liberty -lz )
+/* The libdl dependency is for plugin support.  (BZ 889134)  */
+INPUT ( %{_libdir}/libbfd.a -liberty -lz -ldl )
 EOH
 
 tee %{buildroot}%{_libdir}/libopcodes.so <<EOH
@@ -443,6 +444,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Wed Jan 02 2013 Nick Clifton <nickc@redhat.com> - 2.23.51.0.8-2
+- Add dependency upon libdl.  (#889134)
+
 * Wed Jan 02 2013 Nick Clifton <nickc@redhat.com> - 2.23.51.0.8-1
 - Rebase on 2.23.51.0.8 release.  (#890382)
 
