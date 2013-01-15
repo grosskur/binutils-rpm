@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.23.51.0.8
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -66,7 +66,8 @@ BuildRequires: texinfo >= 4.0, gettext, flex, bison, zlib-devel
 # Required for: ld-bootstrap/bootstrap.exp bootstrap with --static
 # It should not be required for: ld-elf/elf.exp static {preinit,init,fini} array
 %if %{run_testsuite}
-BuildRequires: dejagnu, zlib-static, glibc-static, sharutils
+# relro_test.sh uses dc which is part of the bc rpm, hence its inclusion here.
+BuildRequires: dejagnu, zlib-static, glibc-static, sharutils, bc
 %endif
 Conflicts: gcc-c++ < 4.0.0
 Requires(post): /sbin/install-info
@@ -444,8 +445,11 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Tue Jan 15 2013 Patsy Franklin <pfrankli@redhat.com> - 2.23.51.0.8-3
+- Add bc to BuildRequires when running the testsuite.  (#895321)
+
 * Wed Jan 02 2013 Nick Clifton <nickc@redhat.com> - 2.23.51.0.8-2
-- Add dependency upon libdl.  (#889134)
+- Add runtime link with libdl.  (#889134)
 
 * Wed Jan 02 2013 Nick Clifton <nickc@redhat.com> - 2.23.51.0.8-1
 - Rebase on 2.23.51.0.8 release.  (#890382)
