@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.23.51.0.9
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -179,7 +179,7 @@ echo target is %{binutils_target}
 export CFLAGS="$RPM_OPT_FLAGS"
 CARGS=
 
-case %{binutils_target} in i?86*|sparc*|ppc*|s390*|sh*|arm*)
+case %{binutils_target} in i?86*|sparc*|ppc*|s390*|sh*|arm*|aarch64*)
   CARGS="$CARGS --enable-64-bit-bfd"
   ;;
 esac
@@ -445,6 +445,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Fri Feb 08 2013 Nick Clifton <nickc@redhat.com> - 2.23.51.0.9-2
+- Enable 64-bit BFD for aarch64.  (#908904)
+
 * Mon Feb 04 2013 Nick Clifton <nickc@redhat.com> - 2.23.51.0.9-1
 - Rebase on 2.23.51.0.9 release.  (#907089)
 - Retire binutils-2.23.51.0.8-arm-whitespace.patch.
