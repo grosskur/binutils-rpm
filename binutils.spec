@@ -16,8 +16,8 @@
 
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
-Version: 2.23.51.0.9
-Release: 2%{?dist}
+Version: 2.23.52.0.1
+Release: 1%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -445,6 +445,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Thu Feb 28 2013 Nick Clifton <nickc@redhat.com> - 2.23.52.0.1-1
+- Rebase on 2.23.51.0.1 release.  (#916516)
+
 * Fri Feb 08 2013 Nick Clifton <nickc@redhat.com> - 2.23.51.0.9-2
 - Enable 64-bit BFD for aarch64.  (#908904)
 
