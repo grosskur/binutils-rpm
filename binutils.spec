@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.23.52.0.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -40,6 +40,8 @@ Patch08: binutils-2.22.52.0.1-relro-on-by-default.patch
 Patch09: binutils-2.22.52.0.1-export-demangle.h.patch
 # Disable checks that config.h has been included before system headers.  BZ #845084
 Patch10: binutils-2.22.52.0.4-no-config-h-check.patch
+# Fix the creation of the index table in 64-bit thin archives.
+Patch11: binutils-2.23.52.0.1-64-bit-thin-archives.patch
 
 Provides: bundled(libiberty)
 
@@ -146,6 +148,7 @@ using libelf instead of BFD.
 %endif
 %patch09 -p0 -b .export-demangle-h~
 %patch10 -p0 -b .no-config-h-check~
+%patch11 -p0 -b .64bit-thin-archives~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -445,6 +448,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Fri Mar 01 2013 Nick Clifton <nickc@redhat.com> - 2.23.52.0.1-2
+- Fix the creation of index tables in 64-bit thin archives.  (#915411)
+
 * Thu Feb 28 2013 Nick Clifton <nickc@redhat.com> - 2.23.52.0.1-1
 - Rebase on 2.23.51.0.1 release.  (#916516)
 
