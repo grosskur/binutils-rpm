@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.23.52.0.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -42,6 +42,8 @@ Patch09: binutils-2.22.52.0.1-export-demangle.h.patch
 Patch10: binutils-2.22.52.0.4-no-config-h-check.patch
 # Fix the creation of the index table in 64-bit thin archives.
 Patch11: binutils-2.23.52.0.1-64-bit-thin-archives.patch
+# Fix errors reported by version 5.0 of texinfo
+Patch12: binutils-2.23.52.0.1-as-doc-texinfo-fixes.patch
 
 Provides: bundled(libiberty)
 
@@ -149,6 +151,7 @@ using libelf instead of BFD.
 %patch09 -p0 -b .export-demangle-h~
 %patch10 -p0 -b .no-config-h-check~
 %patch11 -p0 -b .64bit-thin-archives~
+%patch12 -p0 -b .gas-texinfo~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -448,6 +451,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Mon Mar 04 2013 Nick Clifton <nickc@redhat.com> - 2.23.52.0.1-3
+- Fix errors reported by version 5.0 of texinfo.
+
 * Fri Mar 01 2013 Nick Clifton <nickc@redhat.com> - 2.23.52.0.1-2
 - Fix the creation of index tables in 64-bit thin archives.  (#915411)
 
@@ -521,10 +527,10 @@ exit 0
 * Thu Jul 05 2012 Nick Clifton <nickc@redhat.com> - 2.22.52.0.4-5
 - Catch attempts to create a broken symbol index with archives > 4Gb in size.  (#835957)
 
-* Fri Jun 30 2012 Nick Clifton <nickc@redhat.com> - 2.22.52.0.4-4
+* Fri Jun 29 2012 Nick Clifton <nickc@redhat.com> - 2.22.52.0.4-4
 - Import fix for ld/14189.  (#829311)
 
-* Fri Jun 30 2012 Nick Clifton <nickc@redhat.com> - 2.22.52.0.4-3
+* Fri Jun 29 2012 Nick Clifton <nickc@redhat.com> - 2.22.52.0.4-3
 - Fix handling of archives > 4Gb in size by importing patch for PR binutils/14302.  (#835957)
 
 * Tue Jun 19 2012 Jakub Jelinek <jakub@redhat.com> - 2.22.52.0.4-2
@@ -552,7 +558,7 @@ exit 0
 * Fri Mar 16 2012 Jakub Jelinek <jakub@redhat.com> - 2.22.52.0.1-10
 - Fix up handling of hidden ifunc relocs on i?86
 
-* Wed Mar 13 2012 Jeff Law <law@redhat.com> - 2.22.52.0.1-9
+* Wed Mar 14 2012 Jeff Law <law@redhat.com> - 2.22.52.0.1-9
 - Fix c++filt docs (2nd instance) (#797752)
 
 * Wed Mar 07 2012 Jakub Jelinek <jakub@redhat.com> - 2.22.52.0.1-8
@@ -567,7 +573,7 @@ exit 0
 * Mon Feb 27 2012 Jeff Law <law@redhat.com> - 2.22.52.0.1-6
 - Fix c++filt docs (#797752)
 
-* Wed Feb 14 2012 Mark Wielaard <mjw@redhat.com> - 2.22.52.0.1-5
+* Wed Feb 15 2012 Mark Wielaard <mjw@redhat.com> - 2.22.52.0.1-5
 - Add upstream ld/13621 'dangling global hidden symbol in symtab' patch.
 
 * Wed Feb 08 2012 Adam Williamson <awilliam@redhat.com> - 2.22.52.0.1-4
@@ -598,7 +604,7 @@ exit 0
 * Fri Sep  30 2011 Ricky Zhou <ricky@fedoraproject.org> - 2.21.53.0.2-2
 - Rebuild libopcodes.a with -fPIC.
 
-* Tue Aug  08 2011 Nick Clifton <nickc@redhat.com> - 2.21.53.0.2-1
+* Tue Aug  09 2011 Nick Clifton <nickc@redhat.com> - 2.21.53.0.2-1
 - Rebase on 2.21.53.0.2 tarball.  Delete unneeded patches.  (BZ 728677)
 
 * Tue Aug  02 2011 Nick Clifton <nickc@redhat.com> - 2.21.53.0.1-3
@@ -625,7 +631,7 @@ exit 0
 * Thu Jun  09 2011 Nick Clifton <nickc@redhat.com> - 2.21.52.0.1-1
 - Rebase on 2.21.52.0.1 tarball.  (BZ 712025)
 
-* Tue May  19 2011 Nick Clifton <nickc@redhat.com> - 2.21.51.0.9-1
+* Tue May  17 2011 Nick Clifton <nickc@redhat.com> - 2.21.51.0.9-1
 - Rebase on 2.21.51.0.9 tarball.  (BZ 703105)
 
 * Mon May   2 2011 Peter Robinson <pbrobinson@gmail.com> - 2.21.51.0.8-3
@@ -660,7 +666,7 @@ exit 0
 - Delete redundant patches.
 - Fix gold+ld configure command line option.
 
-* Fri Nov   4 2010 Dan Horák <dan[at]danny.cz> - 2.20.51.0.12-2
+* Fri Nov   5 2010 Dan Horák <dan[at]danny.cz> - 2.20.51.0.12-2
 - "no" is not valid option for --enable-gold
 
 * Thu Oct  28 2010 Nick Clifton <nickc@redhat.com> - 2.20.51.0.12-1
@@ -1180,18 +1186,18 @@ exit 0
 - fix -z relro to make sure end of PT_GNU_RELRO segment is always
   COMMONPAGESIZE aligned
 
-* Wed Aug 16 2004 Jakub Jelinek <jakub@redhat.com> 2.15.91.0.2-8
+* Wed Aug 18 2004 Jakub Jelinek <jakub@redhat.com> 2.15.91.0.2-8
 - fix linker segfaults on input objects with SHF_LINK_ORDER with
   incorrect sh_link (H.J.Lu, Nick Clifton, #130198, BZ #290)
 
-* Wed Aug 16 2004 Jakub Jelinek <jakub@redhat.com> 2.15.91.0.2-7
+* Wed Aug 18 2004 Jakub Jelinek <jakub@redhat.com> 2.15.91.0.2-7
 - resolve all undefined ppc64 .* syms to the function bodies through
   .opd, not just those used in brach instructions (Alan Modra)
 
-* Tue Aug 16 2004 Jakub Jelinek <jakub@redhat.com> 2.15.91.0.2-6
+* Tue Aug 17 2004 Jakub Jelinek <jakub@redhat.com> 2.15.91.0.2-6
 - fix ppc64 ld --dotsyms (Alan Modra)
 
-* Tue Aug 16 2004 Jakub Jelinek <jakub@redhat.com> 2.15.91.0.2-5
+* Tue Aug 17 2004 Jakub Jelinek <jakub@redhat.com> 2.15.91.0.2-5
 - various ppc64 make check fixes when using non-dot-syms gcc (Alan Modra)
 - fix --gc-sections
 - on ia64 create empty .gnu.linkonce.ia64unw*.* sections for
