@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.23.52.0.1
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -47,7 +47,7 @@ Patch12: binutils-2.23.52.0.1-as-doc-texinfo-fixes.patch
 
 Provides: bundled(libiberty)
 
-%define gold_arches %ix86 x86_64
+%define gold_arches %ix86 x86_64 %arm
 
 %ifarch %gold_arches
 %define build_gold	both
@@ -451,6 +451,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Wed Mar 06 2013 Nick Clifton <nickc@redhat.com> - 2.23.52.0.1-4
+- Enable building of GOLD for the ARM.  (#908966)
+
 * Mon Mar 04 2013 Nick Clifton <nickc@redhat.com> - 2.23.52.0.1-3
 - Fix errors reported by version 5.0 of texinfo.
 
