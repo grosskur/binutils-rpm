@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.23.52.0.1
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -44,6 +44,8 @@ Patch10: binutils-2.22.52.0.4-no-config-h-check.patch
 Patch11: binutils-2.23.52.0.1-64-bit-thin-archives.patch
 # Fix errors reported by version 5.0 of texinfo
 Patch12: binutils-2.23.52.0.1-as-doc-texinfo-fixes.patch
+# Revert HJ's patch for  PR15149.  This stops the reporting of weak DT_NEEDED symbols.
+Patch13: binutils-2.23.52.0.1-revert-pr15149.patch
 
 Provides: bundled(libiberty)
 
@@ -152,6 +154,7 @@ using libelf instead of BFD.
 %patch10 -p0 -b .no-config-h-check~
 %patch11 -p0 -b .64bit-thin-archives~
 %patch12 -p0 -b .gas-texinfo~
+%patch13 -p0 -b .revert-pr15149~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -451,6 +454,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Fri Mar 08 2013 Nick Clifton <nickc@redhat.com> - 2.23.52.0.1-5
+- Reverts patch for PR15149 - prevents report weak DT_NEEDED symbols.  (#918003)
+
 * Wed Mar 06 2013 Nick Clifton <nickc@redhat.com> - 2.23.52.0.1-4
 - Enable building of GOLD for the ARM.  (#908966)
 
