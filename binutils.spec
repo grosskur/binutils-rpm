@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.23.52.0.1
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -68,7 +68,9 @@ Provides: bundled(libiberty)
 %endif
 
 Buildroot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-BuildRequires: texinfo >= 4.0, gettext, flex, bison, zlib-devel, perl
+BuildRequires: texinfo >= 4.0, gettext, flex, bison, zlib-devel
+# BZ 920545: We need pod2man in order to build the manual pages.
+BuildRequires: /usr/bin/pod2man
 # Required for: ld-bootstrap/bootstrap.exp bootstrap with --static
 # It should not be required for: ld-elf/elf.exp static {preinit,init,fini} array
 %if %{run_testsuite}
@@ -454,6 +456,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Wed Mar 13 2013 Nick Clifton <nickc@redhat.com> - 2.23.52.0.1-7
+- Change requirement to explicitly depend upon /usr/bin/pod2man.  (#920545)
+
 * Wed Mar 13 2013 Nick Clifton <nickc@redhat.com> - 2.23.52.0.1-6
 - Require perl for pod2man for building man pages.  (#920545)
 
