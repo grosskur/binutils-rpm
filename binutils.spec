@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.23.52.0.1
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -46,6 +46,8 @@ Patch11: binutils-2.23.52.0.1-64-bit-thin-archives.patch
 Patch12: binutils-2.23.52.0.1-as-doc-texinfo-fixes.patch
 # Revert HJ's patch for  PR15149.  This stops the reporting of weak DT_NEEDED symbols.
 Patch13: binutils-2.23.52.0.1-revert-pr15149.patch
+# Fix addr2line to use the dynamic symbol table if it could not find any ordinary symbols.
+Patch14: binutils-2.23.52.0.1-addr2line-dynsymtab.patch
 
 Provides: bundled(libiberty)
 
@@ -157,6 +159,7 @@ using libelf instead of BFD.
 %patch11 -p0 -b .64bit-thin-archives~
 %patch12 -p0 -b .gas-texinfo~
 %patch13 -p0 -b .revert-pr15149~
+%patch14 -p0 -b .addr2line~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -456,6 +459,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Wed Mar 13 2013 Nick Clifton <nickc@redhat.com> - 2.23.52.0.1-8
+- Fix addr2line to use dynamic symbols if it failed to canonicalize ordinary symbols.  (#920542)
+
 * Wed Mar 13 2013 Nick Clifton <nickc@redhat.com> - 2.23.52.0.1-7
 - Change requirement to explicitly depend upon /usr/bin/pod2man.  (#920545)
 
