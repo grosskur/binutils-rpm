@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.23.52.0.1
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -68,7 +68,7 @@ Provides: bundled(libiberty)
 %endif
 
 Buildroot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
-BuildRequires: texinfo >= 4.0, gettext, flex, bison, zlib-devel
+BuildRequires: texinfo >= 4.0, gettext, flex, bison, zlib-devel, perl
 # Required for: ld-bootstrap/bootstrap.exp bootstrap with --static
 # It should not be required for: ld-elf/elf.exp static {preinit,init,fini} array
 %if %{run_testsuite}
@@ -454,6 +454,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Wed Mar 13 2013 Nick Clifton <nickc@redhat.com> - 2.23.52.0.1-6
+- Require perl for pod2man for building man pages.  (#920545)
+
 * Fri Mar 08 2013 Nick Clifton <nickc@redhat.com> - 2.23.52.0.1-5
 - Reverts patch for PR15149 - prevents report weak DT_NEEDED symbols.  (#918003)
 
