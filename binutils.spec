@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.23.52.0.1
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -459,6 +459,10 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Thu Mar 14 2013 Nick Clifton <nickc@redhat.com> - 2.23.52.0.1-9
+- Enhance opncls.c:find_separate_debug_file() to look in Fedora specific locations.
+- Enhance dwarf2.c:find_line() to work with shared libraries.  (#920542)
+
 * Wed Mar 13 2013 Nick Clifton <nickc@redhat.com> - 2.23.52.0.1-8
 - Fix addr2line to use dynamic symbols if it failed to canonicalize ordinary symbols.  (#920542)
 
