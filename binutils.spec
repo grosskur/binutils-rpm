@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.23.52.0.1
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -48,6 +48,8 @@ Patch12: binutils-2.23.52.0.1-as-doc-texinfo-fixes.patch
 Patch13: binutils-2.23.52.0.1-revert-pr15149.patch
 # Fix addr2line to use the dynamic symbol table if it could not find any ordinary symbols.
 Patch14: binutils-2.23.52.0.1-addr2line-dynsymtab.patch
+# Check regular references without non-GOT references when building shared libraries.
+Patch15: binutils-2.23.52.0.1-check-regular-ifunc-refs.patch
 
 Provides: bundled(libiberty)
 
@@ -160,6 +162,7 @@ using libelf instead of BFD.
 %patch12 -p0 -b .gas-texinfo~
 %patch13 -p0 -b .revert-pr15149~
 %patch14 -p0 -b .addr2line~
+%patch15 -p0 -b .check-ifunc~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -459,6 +462,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Wed Apr 17 2013 Nick Clifton <nickc@redhat.com> - 2.23.52.0.1-10
+- Import patch for FSF mainline PR 15371 to fix ifunc references in shared libraries.  (#927818)
+
 * Thu Mar 14 2013 Nick Clifton <nickc@redhat.com> - 2.23.52.0.1-9
 - Enhance opncls.c:find_separate_debug_file() to look in Fedora specific locations.
 - Enhance dwarf2.c:find_line() to work with shared libraries.  (#920542)
