@@ -16,16 +16,30 @@
 
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
-Version: 2.23.52.0.1
-Release: 10%{?dist}
+# Note - this version number is a lie.  It should actually be 2.23.2 since
+# that is the version of the base sources.  But we have decided to switch
+# from tracking the Linux Kernel binutils releases to tracking the FSF
+# binutils releases half way through the FSF binutils release cycle.  The
+# version prior to this change was 2.23.52.0.1, but if we just set the new
+# version definition to be 2.23.2 then we would have a regression in the
+# binutils rpm numbers, which would break the rpm update mechanism.  So
+# instead we create a bogus, higher, version number here.  Once the next
+# official binutils release happens (2.24.0) we will be able to restore
+# Version to an honest value and everything will be good again.
+Version: 2.23.88.0.1
+Release: 1%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 
-Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
-# The ftp.kernel.org/pub/linux/devel/binutils/ page is (temporarily) unavailable
-# so we use the GNU site instead.
-# Source: http://ftp.gnu.org/gnu/binutils/binutils-%{version}.tar.bz2
+# Note - see comment about the definition of Version above.  Once Version is
+# restored to a proper value the definition of Source below should be changed
+# to use %{version} instead of 2.23.2
+#
+# Note - the Linux Kernel binutils releases are too unstable and contain too
+# many controversial patches so we stick with the official FSF version
+# instead.
+Source: http://ftp.gnu.org/gnu/binutils/binutils-2.23.2.tar.bz2
 Source2: binutils-2.19.50.0.1-output-format.sed
 Patch01: binutils-2.20.51.0.2-libtool-lib64.patch
 Patch02: binutils-2.20.51.0.10-ppc64-pie.patch
@@ -44,12 +58,10 @@ Patch10: binutils-2.22.52.0.4-no-config-h-check.patch
 Patch11: binutils-2.23.52.0.1-64-bit-thin-archives.patch
 # Fix errors reported by version 5.0 of texinfo
 Patch12: binutils-2.23.52.0.1-as-doc-texinfo-fixes.patch
-# Revert HJ's patch for  PR15149.  This stops the reporting of weak DT_NEEDED symbols.
-Patch13: binutils-2.23.52.0.1-revert-pr15149.patch
 # Fix addr2line to use the dynamic symbol table if it could not find any ordinary symbols.
-Patch14: binutils-2.23.52.0.1-addr2line-dynsymtab.patch
+Patch13: binutils-2.23.52.0.1-addr2line-dynsymtab.patch
 # Check regular references without non-GOT references when building shared libraries.
-Patch15: binutils-2.23.52.0.1-check-regular-ifunc-refs.patch
+Patch14: binutils-2.23.52.0.1-check-regular-ifunc-refs.patch
 
 Provides: bundled(libiberty)
 
@@ -141,7 +153,10 @@ Developers starting new projects are strongly encouraged to consider
 using libelf instead of BFD.
 
 %prep
-%setup -q -n binutils-%{version}
+# Note - see comment about the definition of Version above.  Once Version is
+# restored to a proper value the definition of setup below should be changed
+# to use %{version} instead of 2.23.2
+%setup -q -n binutils-2.23.2
 %patch01 -p0 -b .libtool-lib64~
 %patch02 -p0 -b .ppc64-pie~
 %ifarch ia64
@@ -160,9 +175,8 @@ using libelf instead of BFD.
 %patch10 -p0 -b .no-config-h-check~
 %patch11 -p0 -b .64bit-thin-archives~
 %patch12 -p0 -b .gas-texinfo~
-%patch13 -p0 -b .revert-pr15149~
-%patch14 -p0 -b .addr2line~
-%patch15 -p0 -b .check-ifunc~
+%patch13 -p0 -b .addr2line~
+%patch14 -p0 -b .check-ifunc~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -462,6 +476,11 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Wed Apr 24 2013 Nick Clifton <nickc@redhat.com> - 2.23.88.0.1-1
+- Switch over to basing sources on the official FSF binutils releases.
+- Retire binutils-2.23.52.0.1-revert-pr15149.patch.
+- Update binutils-2.22.52.0.1-relro-on-by-default.patch and binutils-2.23.52.0.1-as-doc-texinfo-fixes.patch.
+
 * Wed Apr 17 2013 Nick Clifton <nickc@redhat.com> - 2.23.52.0.1-10
 - Import patch for FSF mainline PR 15371 to fix ifunc references in shared libraries.  (#927818)
 
