@@ -27,7 +27,7 @@ Name: %{?cross}binutils%{?_with_debug:-debug}
 # official binutils release happens (2.24.0) we will be able to restore
 # Version to an honest value and everything will be good again.
 Version: 2.23.88.0.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -56,12 +56,14 @@ Patch09: binutils-2.22.52.0.1-export-demangle.h.patch
 Patch10: binutils-2.22.52.0.4-no-config-h-check.patch
 # Fix the creation of the index table in 64-bit thin archives.
 Patch11: binutils-2.23.52.0.1-64-bit-thin-archives.patch
-# Fix errors reported by version 5.0 of texinfo
+# Fix errors reported by version 5.0 of texinfo in gas documentation
 Patch12: binutils-2.23.52.0.1-as-doc-texinfo-fixes.patch
 # Fix addr2line to use the dynamic symbol table if it could not find any ordinary symbols.
 Patch13: binutils-2.23.52.0.1-addr2line-dynsymtab.patch
 # Check regular references without non-GOT references when building shared libraries.
 Patch14: binutils-2.23.52.0.1-check-regular-ifunc-refs.patch
+# Fix errors reported by version 5.0 of texinfo in ld documentation
+Patch15: binutils-2.23.2-ld-texinfo-fixes.patch
 
 Provides: bundled(libiberty)
 
@@ -177,6 +179,7 @@ using libelf instead of BFD.
 %patch12 -p0 -b .gas-texinfo~
 %patch13 -p0 -b .addr2line~
 %patch14 -p0 -b .check-ifunc~
+%patch15 -p0 -b .ld-texinfo~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -476,6 +479,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Thu Apr 25 2013 Nick Clifton <nickc@redhat.com> - 2.23.88.0.1-2
+- Fix errors reported by version 5.0 of texinfo when parsing linker documentation.
+
 * Wed Apr 24 2013 Nick Clifton <nickc@redhat.com> - 2.23.88.0.1-1
 - Switch over to basing sources on the official FSF binutils releases.
 - Retire binutils-2.23.52.0.1-revert-pr15149.patch.
@@ -504,7 +510,7 @@ exit 0
 - Enable building of GOLD for the ARM.  (#908966)
 
 * Mon Mar 04 2013 Nick Clifton <nickc@redhat.com> - 2.23.52.0.1-3
-- Fix errors reported by version 5.0 of texinfo.
+- Fix errors reported by version 5.0 of texinfo when parsing assembler documentaion.
 
 * Fri Mar 01 2013 Nick Clifton <nickc@redhat.com> - 2.23.52.0.1-2
 - Fix the creation of index tables in 64-bit thin archives.  (#915411)
