@@ -27,7 +27,7 @@ Name: %{?cross}binutils%{?_with_debug:-debug}
 # official binutils release happens (2.24.0) we will be able to restore
 # Version to an honest value and everything will be good again.
 Version: 2.23.88.0.1
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -479,6 +479,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Fri Apr 26 2013 Nick Clifton <nickc@redhat.com> - 2.23.88.0.1-3
+- Fix errors reported by version 5.0 of texinfo when parsing assembler documentation.
+
 * Thu Apr 25 2013 Nick Clifton <nickc@redhat.com> - 2.23.88.0.1-2
 - Fix errors reported by version 5.0 of texinfo when parsing linker documentation.
 

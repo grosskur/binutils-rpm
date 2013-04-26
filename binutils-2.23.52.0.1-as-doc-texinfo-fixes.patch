@@ -260,3 +260,109 @@ diff -cp ../binutils-2.23.52.0.1.orig/gas/doc/c-arm.texi gas/doc/c-arm.texi
    ldx     #_label,16,a    ; loads extended bits of _label
    or      #_label,a       ; loads lower 16 bits of _label
    bacc    a               ; full address is in accumulator A
+diff -cp ../binutils-2.23.2.orig/gas/doc/c-mips.texi gas/doc/c-mips.texi
+*** ../binutils-2.23.2.orig/gas/doc/c-mips.texi	2013-04-25 16:43:35.115767923 +0100
+--- gas/doc/c-mips.texi	2013-04-26 08:07:10.338304064 +0100
+*************** the @samp{mad} and @samp{madu} instructi
+*** 234,240 ****
+  instructions around accesses to the @samp{HI} and @samp{LO} registers.
+  @samp{-no-m4650} turns off this option.
+  
+! @itemx -m3900
+  @itemx -no-m3900
+  @itemx -m4100
+  @itemx -no-m4100
+--- 234,240 ----
+  instructions around accesses to the @samp{HI} and @samp{LO} registers.
+  @samp{-no-m4650} turns off this option.
+  
+! @item -m3900
+  @itemx -no-m3900
+  @itemx -m4100
+  @itemx -no-m4100
+diff -cp ../binutils-2.23.2.orig/gas/doc/c-score.texi gas/doc/c-score.texi
+*** ../binutils-2.23.2.orig/gas/doc/c-score.texi	2013-04-25 16:43:35.043767921 +0100
+--- gas/doc/c-score.texi	2013-04-26 08:07:37.975304830 +0100
+*************** implicitly with the @code{gp} register.
+*** 37,43 ****
+  @item -EB
+  Assemble code for a big-endian cpu
+  
+! @itemx -EL
+  Assemble code for a little-endian cpu
+  
+  @item -FIXDD 
+--- 37,43 ----
+  @item -EB
+  Assemble code for a big-endian cpu
+  
+! @item -EL
+  Assemble code for a little-endian cpu
+  
+  @item -FIXDD 
+*************** Assemble code for no warning message for
+*** 49,61 ****
+  @item -SCORE5
+  Assemble code for target is SCORE5
+  
+! @itemx -SCORE5U
+  Assemble code for target is SCORE5U
+  
+! @itemx -SCORE7
+  Assemble code for target is SCORE7, this is default setting
+  
+! @itemx -SCORE3
+  Assemble code for target is SCORE3
+  
+  @item -march=score7
+--- 49,61 ----
+  @item -SCORE5
+  Assemble code for target is SCORE5
+  
+! @item -SCORE5U
+  Assemble code for target is SCORE5U
+  
+! @item -SCORE7
+  Assemble code for target is SCORE7, this is default setting
+  
+! @item -SCORE3
+  Assemble code for target is SCORE3
+  
+  @item -march=score7
+diff -cp ../binutils-2.23.2.orig/gas/doc/c-tic54x.texi gas/doc/c-tic54x.texi
+*** ../binutils-2.23.2.orig/gas/doc/c-tic54x.texi	2013-04-25 16:43:35.042767921 +0100
+--- gas/doc/c-tic54x.texi	2013-04-26 08:08:02.418305508 +0100
+*************** LAB:X:  add     #x, a
+*** 133,139 ****
+  
+  When assembled becomes:
+  
+! @smallexample @code
+  LAB10  add     #10, a
+  @end smallexample
+  
+--- 133,139 ----
+  
+  When assembled becomes:
+  
+! @smallexample 
+  LAB10  add     #10, a
+  @end smallexample
+  
+*************** Assign @var{name} the string @var{string
+*** 345,351 ****
+  performed on @var{string} before assignment.
+  
+  @cindex @code{eval} directive, TIC54X
+! @itemx .eval @var{string}, @var{name}
+  Evaluate the contents of string @var{string} and assign the result as a
+  string to the subsym @var{name}.  String replacement is performed on
+  @var{string} before assignment. 
+--- 345,351 ----
+  performed on @var{string} before assignment.
+  
+  @cindex @code{eval} directive, TIC54X
+! @item .eval @var{string}, @var{name}
+  Evaluate the contents of string @var{string} and assign the result as a
+  string to the subsym @var{name}.  String replacement is performed on
+  @var{string} before assignment. 
