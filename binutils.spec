@@ -65,6 +65,7 @@ Patch14: binutils-2.23.52.0.1-check-regular-ifunc-refs.patch
 # Fix errors reported by version 5.0 of texinfo in ld documentation
 Patch15: binutils-2.23.2-ld-texinfo-fixes.patch
 Patch16: binutils-2.23.2-kernel-ld-r.patch
+Patch17: binutils-2.23.2-bfd-texinfo-fixes.patch
 
 Provides: bundled(libiberty)
 
@@ -182,6 +183,7 @@ using libelf instead of BFD.
 %patch14 -p0 -b .check-ifunc~
 %patch15 -p0 -b .ld-texinfo~
 %patch16 -p0 -b .kernel-ld-r~
+%patch17 -p0 -b .bfd-texinfo~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -483,6 +485,7 @@ exit 0
 %changelog
 * Fri May 17 2013 Nick Clifton <nickc@redhat.com> - 2.23.88.0.1-4
 - Import H.J.'s patch to add support for kernel ld -r modules.
+- Fix errors reported by version 5.0 of texinfo when parsing bfd documentation.
 
 * Fri Apr 26 2013 Nick Clifton <nickc@redhat.com> - 2.23.88.0.1-3
 - Fix errors reported by version 5.0 of texinfo when parsing assembler documentation.
