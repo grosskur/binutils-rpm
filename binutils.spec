@@ -27,7 +27,7 @@ Name: %{?cross}binutils%{?_with_debug:-debug}
 # official binutils release happens (2.24.0) we will be able to restore
 # Version to an honest value and everything will be good again.
 Version: 2.23.88.0.1
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -64,6 +64,7 @@ Patch13: binutils-2.23.52.0.1-addr2line-dynsymtab.patch
 Patch14: binutils-2.23.52.0.1-check-regular-ifunc-refs.patch
 # Fix errors reported by version 5.0 of texinfo in ld documentation
 Patch15: binutils-2.23.2-ld-texinfo-fixes.patch
+Patch16: binutils-2.23.2-kernel-ld-r.patch
 
 Provides: bundled(libiberty)
 
@@ -180,6 +181,7 @@ using libelf instead of BFD.
 %patch13 -p0 -b .addr2line~
 %patch14 -p0 -b .check-ifunc~
 %patch15 -p0 -b .ld-texinfo~
+%patch16 -p0 -b .kernel-ld-r~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -479,6 +481,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Fri May 17 2013 Nick Clifton <nickc@redhat.com> - 2.23.88.0.1-4
+- Import H.J.'s patch to add support for kernel ld -r modules.
+
 * Fri Apr 26 2013 Nick Clifton <nickc@redhat.com> - 2.23.88.0.1-3
 - Fix errors reported by version 5.0 of texinfo when parsing assembler documentation.
 
