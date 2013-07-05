@@ -27,7 +27,7 @@ Name: %{?cross}binutils%{?_with_debug:-debug}
 # official binutils release happens (2.24.0) we will be able to restore
 # Version to an honest value and everything will be good again.
 Version: 2.23.88.0.1
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -100,6 +100,10 @@ BuildRequires: /usr/bin/pod2man
 %if %{run_testsuite}
 # relro_test.sh uses dc which is part of the bc rpm, hence its inclusion here.
 BuildRequires: dejagnu, zlib-static, glibc-static, sharutils, bc
+%if "%{build_gold}" == "both"
+# The GOLD testsuite needs a static libc++
+BuildRequires: libstdc++-static
+%endif
 %endif
 Conflicts: gcc-c++ < 4.0.0
 Requires(post): /sbin/install-info
@@ -489,6 +493,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Fri Jul 07 2013 Nick Clifton <nickc@redhat.com> - 2.23.88.0.1-7
+- Add a requirement for libstdc++-static when running the GOLD testsuite.
+
 * Wed Jun 05 2013 Nick Clifton <nickc@redhat.com> - 2.23.88.0.1-6
 - Fix building of aarch64 targets after applying the patch for kernel ld -r modules.
 - Fix building when "--with debug" is specified.
