@@ -27,7 +27,7 @@ Name: %{?cross}binutils%{?_with_debug:-debug}
 # official binutils release happens (2.24.0) we will be able to restore
 # Version to an honest value and everything will be good again.
 Version: 2.23.88.0.1
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -70,6 +70,8 @@ Patch17: binutils-2.23.2-bfd-texinfo-fixes.patch
 Patch18: binutils-2.23.2-dwz-alt-debuginfo.patch
 # Correct bug introduced by patch 16
 Patch19: binutils-2.23.2-aarch64-em.patch
+# Add support for the .machinemode pseudo-op to the S/390 assembler.
+patch20: binutils-2.23.2-s390-gas-machinemode.patch
 
 Provides: bundled(libiberty)
 
@@ -194,6 +196,7 @@ using libelf instead of BFD.
 %patch17 -p0 -b .bfd-texinfo~
 %patch18 -p0 -b .dwz~
 %patch19 -p0 -b .aarch64~
+%patch20 -p0 -b .machinemode~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -493,6 +496,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Fri Jul 19 2013 Nick Clifton <nickc@redhat.com> - 2.23.88.0.1-8
+- Add support for the S/390 .machinemode pseudo-op to GAS.  (#986031)
+
 * Fri Jul 07 2013 Nick Clifton <nickc@redhat.com> - 2.23.88.0.1-7
 - Add a requirement for libstdc++-static when running the GOLD testsuite.
 
