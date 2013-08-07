@@ -27,7 +27,7 @@ Name: %{?cross}binutils%{?_with_debug:-debug}
 # official binutils release happens (2.24.0) we will be able to restore
 # Version to an honest value and everything will be good again.
 Version: 2.23.88.0.1
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -227,7 +227,13 @@ touch */configure
 
 %build
 echo target is %{binutils_target}
+%ifarch %{power64}
+#CFLAGS=`echo $RPM_OPT_FLAGS | sed -e -s "s/-Werror//g"`
+#export CFLAGS
+export CFLAGS="$RPM_OPT_FLAGS -Wno-error"
+%else
 export CFLAGS="$RPM_OPT_FLAGS"
+%endif
 CARGS=
 
 case %{binutils_target} in i?86*|sparc*|ppc*|s390*|sh*|arm*|aarch64*)
@@ -496,6 +502,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Wed Aug 07 2013 Karsten Hopp <karsten@redhat.com> 2.23.88.0.1-10
+- disable -Werror on ppc64p7 for #918189
+
 * Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 2.23.88.0.1-9
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
