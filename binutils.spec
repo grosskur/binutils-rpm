@@ -27,7 +27,7 @@ Name: %{?cross}binutils%{?_with_debug:-debug}
 # official binutils release happens (2.24.0) we will be able to restore
 # Version to an honest value and everything will be good again.
 Version: 2.23.88.0.1
-Release: 10%{?dist}
+Release: 11%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -71,7 +71,9 @@ Patch18: binutils-2.23.2-dwz-alt-debuginfo.patch
 # Correct bug introduced by patch 16
 Patch19: binutils-2.23.2-aarch64-em.patch
 # Add support for the .machinemode pseudo-op to the S/390 assembler.
-patch20: binutils-2.23.2-s390-gas-machinemode.patch
+Patch20: binutils-2.23.2-s390-gas-machinemode.patch
+# Fix a snafu in the xtensa BFD sources
+Patch21: binutils-2.23.2-xtensa.memset.patch
 
 Provides: bundled(libiberty)
 
@@ -197,6 +199,7 @@ using libelf instead of BFD.
 %patch18 -p0 -b .dwz~
 %patch19 -p0 -b .aarch64~
 %patch20 -p0 -b .machinemode~
+%patch21 -p0 -b .xtensa~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -502,6 +505,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Mon Aug 12 2013 Nick Clifton <nickc@redhat.com> 2.23.88.0.1-11
+- Fix typos in invocations of memset in elf32-xtensa.c
+
 * Wed Aug 07 2013 Karsten Hopp <karsten@redhat.com> 2.23.88.0.1-10
 - disable -Werror on ppc64p7 for #918189
 
