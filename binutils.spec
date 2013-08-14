@@ -27,7 +27,7 @@ Name: %{?cross}binutils%{?_with_debug:-debug}
 # official binutils release happens (2.24.0) we will be able to restore
 # Version to an honest value and everything will be good again.
 Version: 2.23.88.0.1
-Release: 11%{?dist}
+Release: 12%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -74,6 +74,8 @@ Patch19: binutils-2.23.2-aarch64-em.patch
 Patch20: binutils-2.23.2-s390-gas-machinemode.patch
 # Fix a snafu in the xtensa BFD sources
 Patch21: binutils-2.23.2-xtensa.memset.patch
+# Add support for the s/390 zEC12 architecture variant to assembler.
+Patch22: binutils-2.23.2-s390-zEC12.patch
 
 Provides: bundled(libiberty)
 
@@ -200,6 +202,7 @@ using libelf instead of BFD.
 %patch19 -p0 -b .aarch64~
 %patch20 -p0 -b .machinemode~
 %patch21 -p0 -b .xtensa~
+%patch22 -p0 -b .s390-zec12~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -505,6 +508,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Wed Aug 14 2013 Nick Clifton <nickc@redhat.com> 2.23.88.0.1-14
+- Add support for the s/390 zEC12 architecture to gas.  (#996395)
+
 * Mon Aug 12 2013 Nick Clifton <nickc@redhat.com> 2.23.88.0.1-11
 - Fix typos in invocations of memset in elf32-xtensa.c
 
