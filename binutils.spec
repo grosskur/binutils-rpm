@@ -27,7 +27,7 @@ Name: %{?cross}binutils%{?_with_debug:-debug}
 # official binutils release happens (2.24.0) we will be able to restore
 # Version to an honest value and everything will be good again.
 Version: 2.23.88.0.1
-Release: 12%{?dist}
+Release: 13%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -76,6 +76,8 @@ Patch20: binutils-2.23.2-s390-gas-machinemode.patch
 Patch21: binutils-2.23.2-xtensa.memset.patch
 # Add support for the s/390 zEC12 architecture variant to assembler.
 Patch22: binutils-2.23.2-s390-zEC12.patch
+# Add ARM floating point ABI to the ELF header flags
+Patch23: binutils-2.23.2-arm-add-float-abi-to-e_flags.patch
 
 Provides: bundled(libiberty)
 
@@ -203,6 +205,7 @@ using libelf instead of BFD.
 %patch20 -p0 -b .machinemode~
 %patch21 -p0 -b .xtensa~
 %patch22 -p0 -b .s390-zec12~
+%patch23 -p1 -b .arm-float~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -508,7 +511,12 @@ exit 0
 %endif # %{isnative}
 
 %changelog
-* Wed Aug 14 2013 Nick Clifton <nickc@redhat.com> 2.23.88.0.1-14
+* Fri Aug 30 2013 Kyle McMartin <kyle@redhat.com> 2.23.88.0.1-13
+- Add the hard-float/soft-float ABI flag as appropriate for
+  ET_DYN/ET_EXEC in EABI_VER5.
+- Fix last changelog entry, it was release 12, not 14.
+
+* Wed Aug 14 2013 Nick Clifton <nickc@redhat.com> 2.23.88.0.1-12
 - Add support for the s/390 zEC12 architecture to gas.  (#996395)
 
 * Mon Aug 12 2013 Nick Clifton <nickc@redhat.com> 2.23.88.0.1-11
