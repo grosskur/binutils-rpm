@@ -27,7 +27,7 @@ Name: %{?cross}binutils%{?_with_debug:-debug}
 # official binutils release happens (2.24.0) we will be able to restore
 # Version to an honest value and everything will be good again.
 Version: 2.23.88.0.1
-Release: 13%{?dist}
+Release: 14%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -78,6 +78,8 @@ Patch21: binutils-2.23.2-xtensa.memset.patch
 Patch22: binutils-2.23.2-s390-zEC12.patch
 # Add ARM floating point ABI to the ELF header flags
 Patch23: binutils-2.23.2-arm-add-float-abi-to-e_flags.patch
+# Make readelf flush stdout before emitting an error or warning message.
+Patch24: binutils-2.23.51.0.1-readelf-flush-stdout.patch
 
 Provides: bundled(libiberty)
 
@@ -206,6 +208,7 @@ using libelf instead of BFD.
 %patch21 -p0 -b .xtensa~
 %patch22 -p0 -b .s390-zec12~
 %patch23 -p1 -b .arm-float~
+%patch24 -p0 -b .flush~ 
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -511,6 +514,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Mon Sep 09 2013 Nick Clifton <nickc@redhat.com> - 2.23.88.0.1-14
+- Make readelf flush stdout before emitting an error or warning message.  (#1005182)
+
 * Fri Aug 30 2013 Kyle McMartin <kyle@redhat.com> 2.23.88.0.1-13
 - Add the hard-float/soft-float ABI flag as appropriate for
   ET_DYN/ET_EXEC in EABI_VER5.
@@ -531,7 +537,7 @@ exit 0
 * Fri Jul 19 2013 Nick Clifton <nickc@redhat.com> - 2.23.88.0.1-8
 - Add support for the S/390 .machinemode pseudo-op to GAS.  (#986031)
 
-* Fri Jul 07 2013 Nick Clifton <nickc@redhat.com> - 2.23.88.0.1-7
+* Fri Jul 05 2013 Nick Clifton <nickc@redhat.com> - 2.23.88.0.1-7
 - Add a requirement for libstdc++-static when running the GOLD testsuite.
 
 * Wed Jun 05 2013 Nick Clifton <nickc@redhat.com> - 2.23.88.0.1-6
