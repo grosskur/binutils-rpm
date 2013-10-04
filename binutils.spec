@@ -16,7 +16,7 @@
 
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
-Version: 2.24.51
+Version: 2.24.0
 Release: 1%{?dist}
 License: GPLv3+
 Group: Development/Tools
@@ -25,7 +25,10 @@ URL: http://sources.redhat.com/binutils
 # Note - the Linux Kernel binutils releases are too unstable and contain too
 # many controversial patches so we stick with the official FSF version
 # instead.
-Source: http://ftp.gnu.org/gnu/binutils/binutils-2.24.51.tar.bz2
+# Note - 2.24.51 is a snapshot of the mainline FSF sources, not the 2.24 release.
+# There are no 2.24 tarballs yet, so this is the closest thing...
+Source: ftp://sourceware.org/pub/binutils/snapshots/binutils-2.24.51.tar.bz2
+# Source: http://ftp.gnu.org/gnu/binutils/binutils-2.24.tar.bz2
 Source2: binutils-2.19.50.0.1-output-format.sed
 Patch01: binutils-2.20.51.0.2-libtool-lib64.patch
 Patch02: binutils-2.20.51.0.10-ppc64-pie.patch
@@ -139,8 +142,9 @@ dynamic libraries.
 Developers starting new projects are strongly encouraged to consider
 using libelf instead of BFD.
 
+# Note - change 2.24.51 to %{version} once we are tracking the 2.24 branch...
 %prep
-%setup -q -n binutils-%{version}
+%setup -q -n binutils-2.24.51
 %patch01 -p0 -b .libtool-lib64~
 %patch02 -p0 -b .ppc64-pie~
 %ifarch ia64
@@ -465,7 +469,7 @@ exit 0
 %endif # %{isnative}
 
 %changelog
-* Fri Oct 04 2013 Nick Clifton <nickc@redhat.com> - 2.24.51-1
+* Fri Oct 04 2013 Nick Clifton <nickc@redhat.com> - 2.24.0-1
 - Rebase on binutils 2.24 snapshot.
 - Retire: binutils-2.23.52.0.1-64-bit-thin-archives.patch,
 -         binutils-2.23.52.0.1-as-doc-texinfo-fixes.patch,
