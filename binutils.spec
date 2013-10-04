@@ -25,10 +25,21 @@ URL: http://sources.redhat.com/binutils
 # Note - the Linux Kernel binutils releases are too unstable and contain too
 # many controversial patches so we stick with the official FSF version
 # instead.
-# Note - 2.24.51 is a snapshot of the mainline FSF sources, not the 2.24 release.
-# There are no 2.24 tarballs yet, so this is the closest thing...
-Source: ftp://sourceware.org/pub/binutils/snapshots/binutils-2.24.51.tar.bz2
+
+%global DATE 2013-10-04
+# Note - There are no 2.24 tarballs yet, so instead we use a manually created
+# tarball.  The sources were pulled from the upstream binutils CVS repository.
+# The current tarball was created from sources checked in to the 2.24 branch
+# in the repository as of %{DATE}.  Use following commands to generate the tarball:
+# cvs -z 9 -d :pserver:anoncvs@sourceware.org:/cvs/src login
+#  {enter "anoncvs" as the password}
+# cvs -z 9 -d :pserver:anoncvs@sourceware.org:/cvs/src co -D %{DATE} -r binutils-2_24-branch binutils
+# mv src binutils-%{version}-%{DATE}
+# tar cf - binutils-%{version}-%{DATE} | bzip2 -9 > binutils-%{version}-%{DATE}.tar.bz2
+Source: binutils-%{version}-%{DATE}.tar.bz2
+# Once there is an official 2.24 release this source can be used:
 # Source: http://ftp.gnu.org/gnu/binutils/binutils-2.24.tar.bz2
+
 Source2: binutils-2.19.50.0.1-output-format.sed
 Patch01: binutils-2.20.51.0.2-libtool-lib64.patch
 Patch02: binutils-2.20.51.0.10-ppc64-pie.patch
@@ -142,9 +153,9 @@ dynamic libraries.
 Developers starting new projects are strongly encouraged to consider
 using libelf instead of BFD.
 
-# Note - change 2.24.51 to %{version} once we are tracking the 2.24 branch...
+# Note - change %{version}-%{DATE} to just %{version} once we are tracking the 2.24 branch...
 %prep
-%setup -q -n binutils-2.24.51
+%setup -q -n binutils-%{version}-%{DATE}
 %patch01 -p0 -b .libtool-lib64~
 %patch02 -p0 -b .ppc64-pie~
 %ifarch ia64
