@@ -16,7 +16,7 @@
 
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
-Version: 2.24.0
+Version: 2.24
 Release: 1%{?dist}
 License: GPLv3+
 Group: Development/Tools
@@ -480,7 +480,7 @@ exit 0
 %endif # %{isnative}
 
 %changelog
-* Fri Oct 04 2013 Nick Clifton <nickc@redhat.com> - 2.24.0-1
+* Fri Oct 04 2013 Nick Clifton <nickc@redhat.com> - 2.24-1
 - Rebase on binutils 2.24 snapshot.
 - Retire: binutils-2.23.52.0.1-64-bit-thin-archives.patch,
 -         binutils-2.23.52.0.1-as-doc-texinfo-fixes.patch,
