@@ -224,9 +224,9 @@ diff -cpr ../binutils-2.23.2.orig/bfd/format.c bfd/format.c
 +     }
 + }
 + 
-  /*
-  FUNCTION
-  	bfd_check_format_matches
+  struct bfd_preserve
+  {
+    void *marker;
 *************** bfd_check_format_matches (bfd *abfd, bfd
 *** 136,142 ****
       }
@@ -234,8 +234,8 @@ diff -cpr ../binutils-2.23.2.orig/bfd/format.c bfd/format.c
     if (abfd->format != bfd_unknown)
 !     return abfd->format == format;
   
-    /* Since the target type was defaulted, check them
-       all in the hope that one will be uniquely recognized.  */
+    if (matching != NULL || *bfd_associated_vector != NULL)
+      {
 --- 163,172 ----
       }
   
@@ -245,8 +245,8 @@ diff -cpr ../binutils-2.23.2.orig/bfd/format.c bfd/format.c
 !       return abfd->format == format;
 !     }
   
-    /* Since the target type was defaulted, check them
-       all in the hope that one will be uniquely recognized.  */
+    if (matching != NULL || *bfd_associated_vector != NULL)
+      {
 *************** bfd_check_format_matches (bfd *abfd, bfd
 *** 322,327 ****
 --- 352,360 ----
@@ -256,9 +256,9 @@ diff -cpr ../binutils-2.23.2.orig/bfd/format.c bfd/format.c
 + 
 +       bfd_set_lto_type (abfd);
 + 
-        return TRUE;			/* File position has moved, BTW.  */
-      }
   
+        /* File position has moved, BTW.  */
+        return TRUE;
 diff -cpr ../binutils-2.23.2.orig/bfd/opncls.c bfd/opncls.c
 *** ../binutils-2.23.2.orig/bfd/opncls.c	2013-05-14 16:39:23.701717732 +0100
 --- bfd/opncls.c	2013-05-14 16:40:07.008718933 +0100
@@ -2457,7 +2457,7 @@ diff -cpr ../binutils-2.23.2.orig/ld/ldmain.h ld/ldmain.h
 *************** extern void add_ysym (const char *);
 *** 43,46 ****
 --- 43,48 ----
-  extern void add_wrap (const char *);
+  extern void add_ignoresym (struct bfd_link_info *, const char *);
   extern void add_keepsyms_file (const char *);
   
 + extern void ld_parse_linker_script (void);

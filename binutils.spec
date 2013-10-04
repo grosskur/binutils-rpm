@@ -16,30 +16,16 @@
 
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
-# Note - this version number is a lie.  It should actually be 2.23.2 since
-# that is the version of the base sources.  But we have decided to switch
-# from tracking the Linux Kernel binutils releases to tracking the FSF
-# binutils releases half way through the FSF binutils release cycle.  The
-# version prior to this change was 2.23.52.0.1, but if we just set the new
-# version definition to be 2.23.2 then we would have a regression in the
-# binutils rpm numbers, which would break the rpm update mechanism.  So
-# instead we create a bogus, higher, version number here.  Once the next
-# official binutils release happens (2.24.0) we will be able to restore
-# Version to an honest value and everything will be good again.
-Version: 2.23.88.0.1
-Release: 14%{?dist}
+Version: 2.24.51
+Release: 1%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
 
-# Note - see comment about the definition of Version above.  Once Version is
-# restored to a proper value the definition of Source below should be changed
-# to use %{version} instead of 2.23.2
-#
 # Note - the Linux Kernel binutils releases are too unstable and contain too
 # many controversial patches so we stick with the official FSF version
 # instead.
-Source: http://ftp.gnu.org/gnu/binutils/binutils-2.23.2.tar.bz2
+Source: http://ftp.gnu.org/gnu/binutils/binutils-2.24.51.tar.bz2
 Source2: binutils-2.19.50.0.1-output-format.sed
 Patch01: binutils-2.20.51.0.2-libtool-lib64.patch
 Patch02: binutils-2.20.51.0.10-ppc64-pie.patch
@@ -54,32 +40,11 @@ Patch08: binutils-2.22.52.0.1-relro-on-by-default.patch
 Patch09: binutils-2.22.52.0.1-export-demangle.h.patch
 # Disable checks that config.h has been included before system headers.  BZ #845084
 Patch10: binutils-2.22.52.0.4-no-config-h-check.patch
-# Fix the creation of the index table in 64-bit thin archives.
-Patch11: binutils-2.23.52.0.1-64-bit-thin-archives.patch
-# Fix errors reported by version 5.0 of texinfo in gas documentation
-Patch12: binutils-2.23.52.0.1-as-doc-texinfo-fixes.patch
 # Fix addr2line to use the dynamic symbol table if it could not find any ordinary symbols.
-Patch13: binutils-2.23.52.0.1-addr2line-dynsymtab.patch
-# Check regular references without non-GOT references when building shared libraries.
-Patch14: binutils-2.23.52.0.1-check-regular-ifunc-refs.patch
-# Fix errors reported by version 5.0 of texinfo in ld documentation
-Patch15: binutils-2.23.2-ld-texinfo-fixes.patch
-Patch16: binutils-2.23.2-kernel-ld-r.patch
-Patch17: binutils-2.23.2-bfd-texinfo-fixes.patch
-# Add support for the alternate debug info files created by the DWZ program.
-Patch18: binutils-2.23.2-dwz-alt-debuginfo.patch
-# Correct bug introduced by patch 16
-Patch19: binutils-2.23.2-aarch64-em.patch
-# Add support for the .machinemode pseudo-op to the S/390 assembler.
-Patch20: binutils-2.23.2-s390-gas-machinemode.patch
-# Fix a snafu in the xtensa BFD sources
-Patch21: binutils-2.23.2-xtensa.memset.patch
-# Add support for the s/390 zEC12 architecture variant to assembler.
-Patch22: binutils-2.23.2-s390-zEC12.patch
-# Add ARM floating point ABI to the ELF header flags
-Patch23: binutils-2.23.2-arm-add-float-abi-to-e_flags.patch
-# Make readelf flush stdout before emitting an error or warning message.
-Patch24: binutils-2.23.51.0.1-readelf-flush-stdout.patch
+Patch11: binutils-2.23.52.0.1-addr2line-dynsymtab.patch
+Patch12: binutils-2.23.2-kernel-ld-r.patch
+# Correct bug introduced by patch 12
+Patch13: binutils-2.23.2-aarch64-em.patch
 
 Provides: bundled(libiberty)
 
@@ -175,10 +140,7 @@ Developers starting new projects are strongly encouraged to consider
 using libelf instead of BFD.
 
 %prep
-# Note - see comment about the definition of Version above.  Once Version is
-# restored to a proper value the definition of setup below should be changed
-# to use %{version} instead of 2.23.2
-%setup -q -n binutils-2.23.2
+%setup -q -n binutils-%{version}
 %patch01 -p0 -b .libtool-lib64~
 %patch02 -p0 -b .ppc64-pie~
 %ifarch ia64
@@ -195,20 +157,9 @@ using libelf instead of BFD.
 %endif
 %patch09 -p0 -b .export-demangle-h~
 %patch10 -p0 -b .no-config-h-check~
-%patch11 -p0 -b .64bit-thin-archives~
-%patch12 -p0 -b .gas-texinfo~
-%patch13 -p0 -b .addr2line~
-%patch14 -p0 -b .check-ifunc~
-%patch15 -p0 -b .ld-texinfo~
-%patch16 -p0 -b .kernel-ld-r~
-%patch17 -p0 -b .bfd-texinfo~
-%patch18 -p0 -b .dwz~
-%patch19 -p0 -b .aarch64~
-%patch20 -p0 -b .machinemode~
-%patch21 -p0 -b .xtensa~
-%patch22 -p0 -b .s390-zec12~
-%patch23 -p1 -b .arm-float~
-%patch24 -p0 -b .flush~ 
+%patch11 -p0 -b .addr2line~
+%patch12 -p0 -b .kernel-ld-r~
+%patch13 -p0 -b .aarch64~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -514,6 +465,20 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Fri Oct 04 2013 Nick Clifton <nickc@redhat.com> - 2.24.51-1
+- Rebase on binutils 2.24 snapshot.
+- Retire: binutils-2.23.52.0.1-64-bit-thin-archives.patch,
+-         binutils-2.23.52.0.1-as-doc-texinfo-fixes.patch,
+-         binutils-2.23.52.0.1-check-regular-ifunc-refs.patch,
+-         binutils-2.23.2-ld-texinfo-fixes.patch,
+-         binutils-2.23.2-bfd-texinfo-fixes.patch,
+-         binutils-2.23.2-dwz-alt-debuginfo.patch
+-         binutils-2.23.2-s390-gas-machinemode.patch
+-         binutils-2.23.2-xtensa.memset.patch
+-         binutils-2.23.2-s390-zEC12.patch
+-         binutils-2.23.2-arm-add-float-abi-to-e_flags.patch
+-         binutils-2.23.51.0.1-readelf-flush-stdout.patch
+
 * Mon Sep 09 2013 Nick Clifton <nickc@redhat.com> - 2.23.88.0.1-14
 - Make readelf flush stdout before emitting an error or warning message.  (#1005182)
 
