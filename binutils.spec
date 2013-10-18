@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.24
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -26,7 +26,7 @@ URL: http://sources.redhat.com/binutils
 # many controversial patches so we stick with the official FSF version
 # instead.
 
-%global DATE 2013-10-11
+%global DATE 2013-10-18
 # Note - There are no 2.24 tarballs yet, so instead we use a manually created
 # tarball.  The sources were pulled from the upstream binutils CVS repository.
 # The current tarball was created from sources checked in to the 2.24 branch
@@ -34,7 +34,7 @@ URL: http://sources.redhat.com/binutils
 # cvs -z 9 -d :pserver:anoncvs@sourceware.org:/cvs/src login
 #  {enter "anoncvs" as the password}
 # cvs -z 9 -d :pserver:anoncvs@sourceware.org:/cvs/src co -D %{DATE} -r binutils-2_24-branch binutils
-# mv src binutils-%{version}-%{DATE}
+# mv src binutils-%{version}-%{DATE} mv src binutils-%{version}-%{DATE}
 # tar cf - binutils-%{version}-%{DATE} | bzip2 -9 > binutils-%{version}-%{DATE}.tar.bz2
 Source: binutils-%{version}-%{DATE}.tar.bz2
 # Once there is an official 2.24 release this source can be used:
@@ -480,6 +480,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Fri Oct 18 2013 Nick Clifton <nickc@redhat.com> - 2.24-3
+- Update binutils 2.24 snapshot.
+
 * Fri Oct 11 2013 Nick Clifton <nickc@redhat.com> - 2.24-2
 - Update binutils 2.24 snapshot.
 
