@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.24
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -26,16 +26,18 @@ URL: http://sources.redhat.com/binutils
 # many controversial patches so we stick with the official FSF version
 # instead.
 
-%global DATE 2013-10-25
+%global DATE 2013-11-11
 # Note - There are no 2.24 tarballs yet, so instead we use a manually created
 # tarball.  The sources were pulled from the upstream binutils CVS repository.
 # The current tarball was created from sources checked in to the 2.24 branch
 # in the repository as of %{DATE}.  Use following commands to generate the tarball:
-# cvs -z 9 -d :pserver:anoncvs@sourceware.org:/cvs/src login
-#  {enter "anoncvs" as the password}
-# cvs -z 9 -d :pserver:anoncvs@sourceware.org:/cvs/src co -D %{DATE} -r binutils-2_24-branch binutils
-# mv src binutils-%{version}-%{DATE} mv src binutils-%{version}-%{DATE}
-# tar cf - binutils-%{version}-%{DATE} | bzip2 -9 > binutils-%{version}-%{DATE}.tar.bz2
+#
+#  git clone -b binutils-2_24-branch ssh://sourceware.org/git/binutils-gdb.git \
+#     binutils-%{version}-%{DATE}
+#
+#  tar cf - binutils-%{version}-%{DATE} | \
+#     bzip2 -9 > binutils-%{version}-%{DATE}.tar.bz2
+#
 Source: binutils-%{version}-%{DATE}.tar.bz2
 # Once there is an official 2.24 release this source can be used:
 # Source: http://ftp.gnu.org/gnu/binutils/binutils-2.24.tar.bz2
@@ -59,8 +61,6 @@ Patch11: binutils-2.23.52.0.1-addr2line-dynsymtab.patch
 Patch12: binutils-2.23.2-kernel-ld-r.patch
 # Correct bug introduced by patch 12
 Patch13: binutils-2.23.2-aarch64-em.patch
-# Fix NM displaying dynamic symbols in multiple files.  BZ #1022845
-Patch14: binutils-2.24-nm-dynsym.patch
 
 Provides: bundled(libiberty)
 
@@ -177,7 +177,6 @@ using libelf instead of BFD.
 %patch11 -p0 -b .addr2line~
 %patch12 -p0 -b .kernel-ld-r~
 %patch13 -p0 -b .aarch64~
-%patch14 -p0 -b .nm-dynsym~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -483,6 +482,11 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Mon Nov 11 2013 Nick Clifton <nickc@redhat.com> - 2.24-5
+- Update binutils 2.24 snapshot.
+- Switch to using GIT instead of CVS to access the FSF repository.
+- Retire binutils-2.24-nm-dynsym.patch
+
 * Fri Oct 25 2013 Nick Clifton <nickc@redhat.com> - 2.24-4
 - Update binutils 2.24 snapshot.
 - Stop NM from halting if it encounters a file with no symbols when displaying dynamic symbols in multiple files.  (#1022845)
