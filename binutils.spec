@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.24
-Release: 5%{?dist}
+Release: 6%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -26,7 +26,7 @@ URL: http://sources.redhat.com/binutils
 # many controversial patches so we stick with the official FSF version
 # instead.
 
-%global DATE 2013-11-11
+%global DATE 2013-11-21
 # Note - There are no 2.24 tarballs yet, so instead we use a manually created
 # tarball.  The sources were pulled from the upstream binutils CVS repository.
 # The current tarball was created from sources checked in to the 2.24 branch
@@ -35,8 +35,10 @@ URL: http://sources.redhat.com/binutils
 #  git clone -b binutils-2_24-branch ssh://sourceware.org/git/binutils-gdb.git \
 #     binutils-%{version}-%{DATE}
 #
+#  rm -fr binutils-%{version}-%{DATE}/.git
+#
 #  tar cf - binutils-%{version}-%{DATE} | \
-#     bzip2 -9 > binutils-%{version}-%{DATE}.tar.bz2
+#     bzip2 -c -9 > binutils-%{version}-%{DATE}.tar.bz2
 #
 Source: binutils-%{version}-%{DATE}.tar.bz2
 # Once there is an official 2.24 release this source can be used:
@@ -482,6 +484,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Thu Nov 21 2013 Nick Clifton <nickc@redhat.com> - 2.24-6
+- Update binutils 2.24 snapshot.
+
 * Mon Nov 11 2013 Nick Clifton <nickc@redhat.com> - 2.24-5
 - Update binutils 2.24 snapshot.
 - Switch to using GIT instead of CVS to access the FSF repository.
