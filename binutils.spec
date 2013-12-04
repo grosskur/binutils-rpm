@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.24
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -26,23 +26,7 @@ URL: http://sources.redhat.com/binutils
 # many controversial patches so we stick with the official FSF version
 # instead.
 
-%global DATE 2013-11-21
-# Note - There are no 2.24 tarballs yet, so instead we use a manually created
-# tarball.  The sources were pulled from the upstream binutils CVS repository.
-# The current tarball was created from sources checked in to the 2.24 branch
-# in the repository as of %{DATE}.  Use following commands to generate the tarball:
-#
-#  git clone -b binutils-2_24-branch ssh://sourceware.org/git/binutils-gdb.git \
-#     binutils-%{version}-%{DATE}
-#
-#  rm -fr binutils-%{version}-%{DATE}/.git
-#
-#  tar cf - binutils-%{version}-%{DATE} | \
-#     bzip2 -c -9 > binutils-%{version}-%{DATE}.tar.bz2
-#
-Source: binutils-%{version}-%{DATE}.tar.bz2
-# Once there is an official 2.24 release this source can be used:
-# Source: http://ftp.gnu.org/gnu/binutils/binutils-2.24.tar.bz2
+Source: http://ftp.gnu.org/gnu/binutils/binutils-2.24.tar.bz2
 
 Source2: binutils-2.19.50.0.1-output-format.sed
 Patch01: binutils-2.20.51.0.2-libtool-lib64.patch
@@ -157,9 +141,8 @@ dynamic libraries.
 Developers starting new projects are strongly encouraged to consider
 using libelf instead of BFD.
 
-# Note - change %{version}-%{DATE} to just %{version} once we are tracking the 2.24 branch...
 %prep
-%setup -q -n binutils-%{version}-%{DATE}
+%setup -q -n binutils-%{version}
 %patch01 -p0 -b .libtool-lib64~
 %patch02 -p0 -b .ppc64-pie~
 %ifarch ia64
@@ -484,6 +467,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Wed Dec 04 2013 Jeff Law <law@redhat.com> - 2.24-7
+- Update to official binutils 2.24 release.
+
 * Thu Nov 21 2013 Nick Clifton <nickc@redhat.com> - 2.24-6
 - Update binutils 2.24 snapshot.
 
