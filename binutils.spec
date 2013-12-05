@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.24
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -47,6 +47,8 @@ Patch11: binutils-2.23.52.0.1-addr2line-dynsymtab.patch
 Patch12: binutils-2.23.2-kernel-ld-r.patch
 # Correct bug introduced by patch 12
 Patch13: binutils-2.23.2-aarch64-em.patch
+# Fix building opcodes library with -Werror=format-security
+Patch14: binutils-2.24-s390-mkopc.patch
 
 Provides: bundled(libiberty)
 
@@ -162,6 +164,7 @@ using libelf instead of BFD.
 %patch11 -p0 -b .addr2line~
 %patch12 -p0 -b .kernel-ld-r~
 %patch13 -p0 -b .aarch64~
+%patch14 -p0 -b .mkopc~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -467,6 +470,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Thu Dec 05 2013 Nick Clifton <nickc@redhat.com> - 2.24-8
+- Fix building opcodes library with -Werror=format-security.  (#1037026)
+
 * Wed Dec 04 2013 Jeff Law <law@redhat.com> - 2.24-7
 - Update to official binutils 2.24 release.
 
