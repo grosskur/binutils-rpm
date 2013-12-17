@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.24
-Release: 8%{?dist}
+Release: 9%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -49,6 +49,8 @@ Patch12: binutils-2.23.2-kernel-ld-r.patch
 Patch13: binutils-2.23.2-aarch64-em.patch
 # Fix building opcodes library with -Werror=format-security
 Patch14: binutils-2.24-s390-mkopc.patch
+# Import fixes for IFUNC and PLT handling for AArch64.
+Patch15: binutils-2.24-elfnn-aarch64.patch
 
 Provides: bundled(libiberty)
 
@@ -165,6 +167,7 @@ using libelf instead of BFD.
 %patch12 -p0 -b .kernel-ld-r~
 %patch13 -p0 -b .aarch64~
 %patch14 -p0 -b .mkopc~
+%patch15 -p0 -b .elf-aarch64~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -470,6 +473,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Tue Dec 17 2013 Nick Clifton <nickc@redhat.com> - 2.24-9
+- Import fixes on 2.24 branch that affect AArch64 IFUNC and PLT handling.
+
 * Thu Dec 05 2013 Nick Clifton <nickc@redhat.com> - 2.24-8
 - Fix building opcodes library with -Werror=format-security.  (#1037026)
 
