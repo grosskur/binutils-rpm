@@ -27,7 +27,7 @@ Name: %{?cross}binutils%{?_with_debug:-debug}
 # official binutils release happens (2.24.0) we will be able to restore
 # Version to an honest value and everything will be good again.
 Version: 2.23.88.0.1
-Release: 14%{?dist}
+Release: 15%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -80,6 +80,8 @@ Patch22: binutils-2.23.2-s390-zEC12.patch
 Patch23: binutils-2.23.2-arm-add-float-abi-to-e_flags.patch
 # Make readelf flush stdout before emitting an error or warning message.
 Patch24: binutils-2.23.51.0.1-readelf-flush-stdout.patch
+# Fix disassembly of 8086 binaries.
+Patch25: binutils-2.23.2-i386-dis.patch
 
 Provides: bundled(libiberty)
 
@@ -209,6 +211,7 @@ using libelf instead of BFD.
 %patch22 -p0 -b .s390-zec12~
 %patch23 -p1 -b .arm-float~
 %patch24 -p0 -b .flush~ 
+%patch25 -p0 -b .i386-dis~ 
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -514,6 +517,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Tue Jan 07 2014 Nick Clifton <nickc@redhat.com> - 2.23.88.0.1-15
+- Fix disassembly of 8086 instructions.  (#1036190)
+
 * Mon Sep 09 2013 Nick Clifton <nickc@redhat.com> - 2.23.88.0.1-14
 - Make readelf flush stdout before emitting an error or warning message.  (#1005182)
 
