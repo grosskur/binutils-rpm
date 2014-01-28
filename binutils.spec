@@ -27,7 +27,7 @@ Name: %{?cross}binutils%{?_with_debug:-debug}
 # official binutils release happens (2.24.0) we will be able to restore
 # Version to an honest value and everything will be good again.
 Version: 2.23.88.0.1
-Release: 15%{?dist}
+Release: 16%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -82,6 +82,8 @@ Patch23: binutils-2.23.2-arm-add-float-abi-to-e_flags.patch
 Patch24: binutils-2.23.51.0.1-readelf-flush-stdout.patch
 # Fix disassembly of 8086 binaries.
 Patch25: binutils-2.23.2-i386-dis.patch
+# Fix decoding of abstract instance names using DW_FORM_ref_addr.
+Patch26: binutils-2.23.2-DW_FORM_ref_addr.patch
 
 Provides: bundled(libiberty)
 
@@ -212,6 +214,7 @@ using libelf instead of BFD.
 %patch23 -p1 -b .arm-float~
 %patch24 -p0 -b .flush~ 
 %patch25 -p0 -b .i386-dis~ 
+%patch26 -p0 -b .ref_addr~ 
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -517,6 +520,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Tue Jan 28 2014 Nick Clifton <nickc@redhat.com> - 2.23.88.0.1-16
+- Fix decoding of abbrevs using a DW_FORM_ref_addr attribute.  (#1056797)
+
 * Tue Jan 07 2014 Nick Clifton <nickc@redhat.com> - 2.23.88.0.1-15
 - Fix disassembly of 8086 instructions.  (#1036190)
 
