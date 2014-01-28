@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.24
-Release: 9%{?dist}
+Release: 10%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -51,6 +51,8 @@ Patch13: binutils-2.23.2-aarch64-em.patch
 Patch14: binutils-2.24-s390-mkopc.patch
 # Import fixes for IFUNC and PLT handling for AArch64.
 Patch15: binutils-2.24-elfnn-aarch64.patch
+# Fix decoding of abstract instance names using DW_FORM_ref_addr.
+Patch16: binutils-2.24-DW_FORM_ref_addr.patch
 
 Provides: bundled(libiberty)
 
@@ -168,6 +170,7 @@ using libelf instead of BFD.
 %patch13 -p0 -b .aarch64~
 %patch14 -p0 -b .mkopc~
 %patch15 -p0 -b .elf-aarch64~
+%patch16 -p0 -b .ref-addr~
 
 # We cannot run autotools as there is an exact requirement of autoconf-2.59.
 
@@ -473,6 +476,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Tue Jan 28 2014 Nick Clifton <nickc@redhat.com> - 2.24-10
+- Fix decoding of abbrevs using a DW_FORM_ref_addr attribute.  (#1056797)
+
 * Tue Dec 17 2013 Nick Clifton <nickc@redhat.com> - 2.24-9
 - Import fixes on 2.24 branch that affect AArch64 IFUNC and PLT handling.
 
