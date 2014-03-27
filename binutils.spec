@@ -17,7 +17,7 @@
 Summary: A GNU collection of binary utilities
 Name: %{?cross}binutils%{?_with_debug:-debug}
 Version: 2.24
-Release: 10%{?dist}
+Release: 11%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
@@ -26,7 +26,7 @@ URL: http://sources.redhat.com/binutils
 # many controversial patches so we stick with the official FSF version
 # instead.
 
-Source: http://ftp.gnu.org/gnu/binutils/binutils-2.24.tar.bz2
+Source: http://ftp.gnu.org/gnu/binutils/binutils-%{version}.tar.bz2
 
 Source2: binutils-2.19.50.0.1-output-format.sed
 Patch01: binutils-2.20.51.0.2-libtool-lib64.patch
@@ -476,6 +476,9 @@ exit 0
 %endif # %{isnative}
 
 %changelog
+* Thu Mar 27 2014 Nick Clifton <nickc@redhat.com> - 2.24-11
+- Use %{version} in Source string.  Delete unused patches.
+
 * Tue Jan 28 2014 Nick Clifton <nickc@redhat.com> - 2.24-10
 - Fix decoding of abbrevs using a DW_FORM_ref_addr attribute.  (#1056797)
 
