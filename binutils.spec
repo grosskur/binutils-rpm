@@ -102,7 +102,11 @@ Provides: bundled(libiberty)
 %define debug_package %{nil}
 %define run_testsuite 0%{?_with_testsuite:1}
 %else
+%if 0%{?rhel} && 0%{?rhel} < 7
+%define run_testsuite 0%{?_with_testsuite:1}
+%else
 %define run_testsuite 0%{!?_without_testsuite:1}
+%endif
 %endif
 
 Buildroot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
