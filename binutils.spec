@@ -21,7 +21,7 @@ Release: 9%{?dist}
 License: GPLv3+
 Group: Development/Tools
 URL: http://sources.redhat.com/binutils
-Source: ftp://ftp.kernel.org/pub/linux/devel/binutils/binutils-%{version}.tar.bz2
+Source: http://s3.amazonaws.com/cb-mirror/binutils-%{version}.tar.bz2
 Source2: binutils-2.19.50.0.1-output-format.sed
 Patch01: binutils-2.20.51.0.2-libtool-lib64.patch
 Patch02: binutils-2.20.51.0.2-ppc64-pie.patch
